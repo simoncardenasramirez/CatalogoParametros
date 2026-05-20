@@ -4,15 +4,13 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.parametro.CrearParametroRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.ParametroDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroDescripcionLengthIsValidRule;
+import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroFuncionalidadIsValidRule;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroNameDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroNameFormatIsValidRule;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroNameIsNotEmptyRule;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroNameIsNotNullRule;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroNameLengthIsValidRule;
-import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroValueIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroValueIsNotNullRule;
-import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroValueLengthIsValidRule;
+import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.rules.ParametroTipoParametroIsValidRule;
 
 @Service
 public class CrearParametroRuleValidatorImpl implements CrearParametroRuleValidator {
@@ -21,29 +19,23 @@ public class CrearParametroRuleValidatorImpl implements CrearParametroRuleValida
     private final ParametroNameIsNotEmptyRule parametroNameIsNotEmptyRule;
     private final ParametroNameLengthIsValidRule parametroNameLengthIsValidRule;
     private final ParametroNameFormatIsValidRule parametroNameFormatIsValidRule;
-    private final ParametroValueIsNotNullRule parametroValueIsNotNullRule;
-    private final ParametroValueIsNotEmptyRule parametroValueIsNotEmptyRule;
-    private final ParametroValueLengthIsValidRule parametroValueLengthIsValidRule;
-    private final ParametroDescripcionLengthIsValidRule parametroDescripcionLengthIsValidRule;
+    private final ParametroFuncionalidadIsValidRule parametroFuncionalidadIsValidRule;
+    private final ParametroTipoParametroIsValidRule parametroTipoParametroIsValidRule;
     private final ParametroNameDoesNotExistRule parametroNameDoesNotExistRule;
 
     public CrearParametroRuleValidatorImpl(final ParametroNameIsNotNullRule parametroNameIsNotNullRule,
             final ParametroNameIsNotEmptyRule parametroNameIsNotEmptyRule,
             final ParametroNameLengthIsValidRule parametroNameLengthIsValidRule,
             final ParametroNameFormatIsValidRule parametroNameFormatIsValidRule,
-            final ParametroValueIsNotNullRule parametroValueIsNotNullRule,
-            final ParametroValueIsNotEmptyRule parametroValueIsNotEmptyRule,
-            final ParametroValueLengthIsValidRule parametroValueLengthIsValidRule,
-            final ParametroDescripcionLengthIsValidRule parametroDescripcionLengthIsValidRule,
+            final ParametroFuncionalidadIsValidRule parametroFuncionalidadIsValidRule,
+            final ParametroTipoParametroIsValidRule parametroTipoParametroIsValidRule,
             final ParametroNameDoesNotExistRule parametroNameDoesNotExistRule) {
         this.parametroNameIsNotNullRule = parametroNameIsNotNullRule;
         this.parametroNameIsNotEmptyRule = parametroNameIsNotEmptyRule;
         this.parametroNameLengthIsValidRule = parametroNameLengthIsValidRule;
         this.parametroNameFormatIsValidRule = parametroNameFormatIsValidRule;
-        this.parametroValueIsNotNullRule = parametroValueIsNotNullRule;
-        this.parametroValueIsNotEmptyRule = parametroValueIsNotEmptyRule;
-        this.parametroValueLengthIsValidRule = parametroValueLengthIsValidRule;
-        this.parametroDescripcionLengthIsValidRule = parametroDescripcionLengthIsValidRule;
+        this.parametroFuncionalidadIsValidRule = parametroFuncionalidadIsValidRule;
+        this.parametroTipoParametroIsValidRule = parametroTipoParametroIsValidRule;
         this.parametroNameDoesNotExistRule = parametroNameDoesNotExistRule;
     }
 
@@ -53,10 +45,8 @@ public class CrearParametroRuleValidatorImpl implements CrearParametroRuleValida
         parametroNameIsNotEmptyRule.execute(data);
         parametroNameLengthIsValidRule.execute(data);
         parametroNameFormatIsValidRule.execute(data);
-        parametroValueIsNotNullRule.execute(data);
-        parametroValueIsNotEmptyRule.execute(data);
-        parametroValueLengthIsValidRule.execute(data);
-        parametroDescripcionLengthIsValidRule.execute(data);
+        parametroFuncionalidadIsValidRule.execute(data);
+        parametroTipoParametroIsValidRule.execute(data);
         parametroNameDoesNotExistRule.execute(data);
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
@@ -29,13 +31,13 @@ public class SurrealDbParametroRepository implements ParametroRepository {
                 BEGIN TRANSACTION;
                 CREATE type::record('%s', '%s') CONTENT {
                     nombre: '%s',
-                    valor: '%s',
-                    descripcion: '%s',
+                    idFuncionalidad: '%s',
+                    idTipoParametro: '%s',
                     activo: %s
                 };
                 COMMIT TRANSACTION;
-                """.formatted(TABLE_NAME, parametro.getId(), escape(parametro.getNombre()), escape(parametro.getValor()),
-                escape(parametro.getDescripcion()), parametro.isActivo());
+                """.formatted(TABLE_NAME, parametro.getId(), escape(parametro.getNombre()),
+                parametro.getIdFuncionalidad(), parametro.getIdTipoParametro(), parametro.isActivo());
 
         surrealDbClient.execute(query);
         return parametro;
@@ -77,7 +79,8 @@ public class SurrealDbParametroRepository implements ParametroRepository {
 
     private ParametroEntity toEntity(final JsonNode node) {
         return ParametroEntity.create(extractUuid(node.path("id")), node.path("nombre").asText(),
-                node.path("valor").asText(), node.path("descripcion").asText(), node.path("activo").asBoolean());
+                extractUuid(node.path("idFuncionalidad")), extractUuid(node.path("idTipoParametro")),
+                node.path("activo").asBoolean());
     }
 
     private UUID extractUuid(final JsonNode idNode) {
@@ -87,6 +90,9 @@ public class SurrealDbParametroRepository implements ParametroRepository {
             value = value.substring(separatorIndex + 1);
         }
         value = value.replace("`", "");
+        if (TextHelper.isBlank(value)) {
+            return UUIDHelper.getDefault();
+        }
         return UUID.fromString(value);
     }
 

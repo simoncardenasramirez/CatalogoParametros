@@ -25,8 +25,8 @@ public class CrearParametroImpl implements CrearParametro {
         crearParametroRuleValidator.validate(data);
         data.generateId();
 
-        var entity = ParametroEntity.create(data.getId(), data.getNombre(), data.getValor(), data.getDescripcion(),
-                data.isActivo());
+        var entity = ParametroEntity.create(data.getId(), data.getNombre(), data.getIdFuncionalidad(),
+                data.getIdTipoParametro(), data.isActivo());
         parametroRepository.save(entity);
     }
 }

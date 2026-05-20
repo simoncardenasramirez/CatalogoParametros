@@ -3,27 +3,28 @@ package co.edu.uco.CatalogoParametrosUcoLab.domain.parametro;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.domain.Domain;
 
 public final class ParametroDomain extends Domain {
 
     private String nombre;
-    private String valor;
-    private String descripcion;
+    private UUID idFuncionalidad;
+    private UUID idTipoParametro;
     private boolean activo;
 
-    private ParametroDomain(final UUID id, final String nombre, final String valor, final String descripcion,
+    private ParametroDomain(final UUID id, final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
             final boolean activo) {
         super(id);
         setNombre(nombre);
-        setValor(valor);
-        setDescripcion(descripcion);
+        setIdFuncionalidad(idFuncionalidad);
+        setIdTipoParametro(idTipoParametro);
         setActivo(activo);
     }
 
-    public static ParametroDomain create(final UUID id, final String nombre, final String valor,
-            final String descripcion, final boolean activo) {
-        return new ParametroDomain(id, nombre, valor, descripcion, activo);
+    public static ParametroDomain create(final UUID id, final String nombre, final UUID idFuncionalidad,
+            final UUID idTipoParametro, final boolean activo) {
+        return new ParametroDomain(id, nombre, idFuncionalidad, idTipoParametro, activo);
     }
 
     public String getNombre() {
@@ -34,20 +35,20 @@ public final class ParametroDomain extends Domain {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public String getValor() {
-        return valor;
+    public UUID getIdFuncionalidad() {
+        return idFuncionalidad;
     }
 
-    private void setValor(final String valor) {
-        this.valor = TextHelper.applyTrim(valor);
+    private void setIdFuncionalidad(final UUID idFuncionalidad) {
+        this.idFuncionalidad = UUIDHelper.getDefault(idFuncionalidad);
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public UUID getIdTipoParametro() {
+        return idTipoParametro;
     }
 
-    private void setDescripcion(final String descripcion) {
-        this.descripcion = TextHelper.applyTrim(descripcion);
+    private void setIdTipoParametro(final UUID idTipoParametro) {
+        this.idTipoParametro = UUIDHelper.getDefault(idTipoParametro);
     }
 
     public boolean isActivo() {

@@ -8,7 +8,8 @@ public enum CrearParametroDtoMapper {
     INSTANCE;
 
     public ParametroDomain toDomain(final CrearParametroDto dto) {
-        return ParametroDomain.create(UUIDHelper.getDefault(), dto.getNombre(), dto.getValor(), dto.getDescripcion(),
-                dto.isActivo());
+        var dtoToMap = dto == null ? new CrearParametroDto() : dto;
+        return ParametroDomain.create(UUIDHelper.getDefault(), dtoToMap.getNombre(), dtoToMap.getIdFuncionalidad(),
+                dtoToMap.getIdTipoParametro(), dtoToMap.isActivo());
     }
 }

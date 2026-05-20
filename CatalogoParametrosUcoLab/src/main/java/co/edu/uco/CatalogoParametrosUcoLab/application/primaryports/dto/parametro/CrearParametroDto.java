@@ -1,31 +1,35 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.dto.parametro;
 
+import java.util.UUID;
+
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public final class CrearParametroDto {
 
     private String nombre;
-    private String valor;
-    private String descripcion;
+    private UUID idFuncionalidad;
+    private UUID idTipoParametro;
     private boolean activo;
 
     public CrearParametroDto() {
         setNombre(TextHelper.EMPTY);
-        setValor(TextHelper.EMPTY);
-        setDescripcion(TextHelper.EMPTY);
+        setIdFuncionalidad(UUIDHelper.getDefault());
+        setIdTipoParametro(UUIDHelper.getDefault());
         setActivo(true);
     }
 
-    public CrearParametroDto(final String nombre, final String valor, final String descripcion, final boolean activo) {
+    public CrearParametroDto(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
+            final boolean activo) {
         setNombre(nombre);
-        setValor(valor);
-        setDescripcion(descripcion);
+        setIdFuncionalidad(idFuncionalidad);
+        setIdTipoParametro(idTipoParametro);
         setActivo(activo);
     }
 
-    public static CrearParametroDto create(final String nombre, final String valor, final String descripcion,
+    public static CrearParametroDto create(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
             final boolean activo) {
-        return new CrearParametroDto(nombre, valor, descripcion, activo);
+        return new CrearParametroDto(nombre, idFuncionalidad, idTipoParametro, activo);
     }
 
     public String getNombre() {
@@ -36,20 +40,20 @@ public final class CrearParametroDto {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public String getValor() {
-        return valor;
+    public UUID getIdFuncionalidad() {
+        return idFuncionalidad;
     }
 
-    public void setValor(final String valor) {
-        this.valor = TextHelper.applyTrim(valor);
+    public void setIdFuncionalidad(final UUID idFuncionalidad) {
+        this.idFuncionalidad = UUIDHelper.getDefault(idFuncionalidad);
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public UUID getIdTipoParametro() {
+        return idTipoParametro;
     }
 
-    public void setDescripcion(final String descripcion) {
-        this.descripcion = TextHelper.applyTrim(descripcion);
+    public void setIdTipoParametro(final UUID idTipoParametro) {
+        this.idTipoParametro = UUIDHelper.getDefault(idTipoParametro);
     }
 
     public boolean isActivo() {
