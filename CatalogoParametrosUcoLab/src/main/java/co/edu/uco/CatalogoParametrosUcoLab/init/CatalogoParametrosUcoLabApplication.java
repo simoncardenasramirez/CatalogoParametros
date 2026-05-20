@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab;
+package co.edu.uco.CatalogoParametrosUcoLab.init;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
