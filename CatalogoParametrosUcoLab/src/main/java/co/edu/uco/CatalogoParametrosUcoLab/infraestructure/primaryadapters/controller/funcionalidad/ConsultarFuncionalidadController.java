@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.interactor.funcionalidad.ConsultarFuncionalidadInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor.ConsultarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.response.FuncionalidadResponse;
 
 @RestController

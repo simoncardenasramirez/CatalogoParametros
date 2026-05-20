@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.modulo;
 
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.CrearModuloInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.dto.modulo.CrearModuloDto;
-import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.interactor.modulo.CrearModuloInteractor;
-import co.edu.uco.CatalogoParametrosUcoLab.domain.modulo.exception.ModuloException;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.response.ParametroResponse;
 
 @RestController
