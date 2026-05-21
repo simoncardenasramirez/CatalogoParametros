@@ -6,7 +6,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Fun
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.CrearFuncionalidad;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.CrearFuncionalidadRuleValidator;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.FuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 
 @Service
 public class CrearFuncionalidadImpl implements CrearFuncionalidad {
@@ -21,7 +21,7 @@ public class CrearFuncionalidadImpl implements CrearFuncionalidad {
     }
 
     @Override
-    public void execute(final FuncionalidadDomain data) {
+    public void execute(final CrearFuncionalidadDomain data) {
         crearFuncionalidadRuleValidator.validate(data);
         data.generateId();
 

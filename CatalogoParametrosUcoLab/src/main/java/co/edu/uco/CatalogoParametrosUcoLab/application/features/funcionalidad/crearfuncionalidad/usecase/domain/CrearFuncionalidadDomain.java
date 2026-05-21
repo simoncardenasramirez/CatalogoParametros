@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -7,27 +7,27 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.Domain;
 
-public final class ModuloDomain extends Domain {
+public final class CrearFuncionalidadDomain extends Domain {
 
     private String nombre;
-    private UUID idAplicacion;
+    private UUID idModulo;
     private boolean activo;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFinal;
 
-    private ModuloDomain(final UUID id, final String nombre, final UUID idAplicacion, final boolean activo,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    private CrearFuncionalidadDomain(final UUID id, final String nombre, final UUID idModulo, final boolean activo,
+                                     final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
         super(id);
         setNombre(nombre);
-        setIdAplicacion(idAplicacion);
+        setIdModulo(idModulo);
         setActivo(activo);
         setFechaInicio(fechaInicio);
         setFechaFinal(fechaFinal);
     }
 
-    public static ModuloDomain create(final UUID id, final String nombre, final UUID idAplicacion,
-            final boolean activo, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
-        return new ModuloDomain(id, nombre, idAplicacion, activo, fechaInicio, fechaFinal);
+    public static CrearFuncionalidadDomain create(final UUID id, final String nombre, final UUID idModulo,
+                                                  final boolean activo, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+        return new CrearFuncionalidadDomain(id, nombre, idModulo, activo, fechaInicio, fechaFinal);
     }
 
     public String getNombre() {
@@ -38,12 +38,12 @@ public final class ModuloDomain extends Domain {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public UUID getIdAplicacion() {
-        return idAplicacion;
+    public UUID getIdModulo() {
+        return idModulo;
     }
 
-    private void setIdAplicacion(final UUID idAplicacion) {
-        this.idAplicacion = UUIDHelper.getDefault(idAplicacion);
+    private void setIdModulo(final UUID idModulo) {
+        this.idModulo = UUIDHelper.getDefault(idModulo);
     }
 
     public boolean isActivo() {

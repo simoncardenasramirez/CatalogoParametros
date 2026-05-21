@@ -6,15 +6,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.Domain;
 
-public final class ParametroDomain extends Domain {
+public final class CrearParametroDomain extends Domain {
 
     private String nombre;
     private UUID idFuncionalidad;
     private UUID idTipoParametro;
     private boolean activo;
 
-    private ParametroDomain(final UUID id, final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
-            final boolean activo) {
+    private CrearParametroDomain(final UUID id, final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
+                                 final boolean activo) {
         super(id);
         setNombre(nombre);
         setIdFuncionalidad(idFuncionalidad);
@@ -22,9 +22,9 @@ public final class ParametroDomain extends Domain {
         setActivo(activo);
     }
 
-    public static ParametroDomain create(final UUID id, final String nombre, final UUID idFuncionalidad,
-            final UUID idTipoParametro, final boolean activo) {
-        return new ParametroDomain(id, nombre, idFuncionalidad, idTipoParametro, activo);
+    public static CrearParametroDomain create(final UUID id, final String nombre, final UUID idFuncionalidad,
+                                              final UUID idTipoParametro, final boolean activo) {
+        return new CrearParametroDomain(id, nombre, idFuncionalidad, idTipoParametro, activo);
     }
 
     public String getNombre() {

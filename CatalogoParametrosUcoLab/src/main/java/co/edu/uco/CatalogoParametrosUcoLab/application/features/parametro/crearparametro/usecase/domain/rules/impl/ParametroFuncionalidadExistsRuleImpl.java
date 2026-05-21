@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.impl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.ParametroDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.ParametroFuncionalidadExistsRule;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public final class ParametroFuncionalidadExistsRuleImpl implements ParametroFunc
     }
 
     @Override
-    public void execute(final ParametroDomain data) {
+    public void execute(final CrearParametroDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getIdFuncionalidad())) {
             throw new ParametroException("La funcionalidad asociada al parametro es obligatoria.");
         }

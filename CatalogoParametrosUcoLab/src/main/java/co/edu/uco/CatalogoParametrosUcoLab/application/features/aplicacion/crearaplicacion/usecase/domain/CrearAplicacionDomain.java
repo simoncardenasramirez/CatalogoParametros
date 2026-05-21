@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.domain.aplicacion;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -7,7 +7,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.Domain;
 
-public final class AplicacionDomain extends Domain {
+public final class CrearAplicacionDomain extends Domain {
 
     private String nombre;
     private UUID idOrganizacion;
@@ -15,8 +15,8 @@ public final class AplicacionDomain extends Domain {
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFinal;
 
-    private AplicacionDomain(final UUID id, final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    private CrearAplicacionDomain(final UUID id, final String nombre, final UUID idOrganizacion, final boolean activa,
+                                  final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
         super(id);
         setNombre(nombre);
         setIdOrganizacion(idOrganizacion);
@@ -25,9 +25,9 @@ public final class AplicacionDomain extends Domain {
         setFechaFinal(fechaFinal);
     }
 
-    public static AplicacionDomain create(final UUID id, final String nombre, final UUID idOrganizacion,
-            final boolean activa, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
-        return new AplicacionDomain(id, nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
+    public static CrearAplicacionDomain create(final UUID id, final String nombre, final UUID idOrganizacion,
+                                               final boolean activa, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+        return new CrearAplicacionDomain(id, nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
     }
 
     public String getNombre() {

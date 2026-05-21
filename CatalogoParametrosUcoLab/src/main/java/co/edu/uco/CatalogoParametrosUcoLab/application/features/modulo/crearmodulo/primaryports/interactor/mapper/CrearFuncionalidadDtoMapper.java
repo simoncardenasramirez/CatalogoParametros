@@ -1,7 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.mapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDto;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.FuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ public final class CrearFuncionalidadDtoMapper {
         super();
     }
 
-    public FuncionalidadDomain toDomain(final CrearFuncionalidadDto dto) {
-        return FuncionalidadDomain.create(
+    public CrearFuncionalidadDomain toDomain(final CrearFuncionalidadDto dto) {
+        return CrearFuncionalidadDomain.create(
                 UUID.randomUUID(),
                 dto.getNombre(),
                 dto.getIdModulo(),

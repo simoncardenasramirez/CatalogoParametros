@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.impl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.ParametroDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.ParametroNameDoesNotExistRule;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public final class ParametroNameDoesNotExistRuleImpl implements ParametroNameDoe
     }
 
     @Override
-    public void execute(final ParametroDomain data) {
+    public void execute(final CrearParametroDomain data) {
         if (parametroRepository.existsByNombre(data.getNombre())) {
             throw new ParametroException("Ya existe un parametro con ese nombre.");
         }

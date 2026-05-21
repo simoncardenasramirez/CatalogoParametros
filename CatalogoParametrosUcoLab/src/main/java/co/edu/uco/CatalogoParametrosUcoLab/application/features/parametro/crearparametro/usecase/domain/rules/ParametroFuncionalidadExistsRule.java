@@ -1,7 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.ParametroDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.DomainRule;
 
-public interface ParametroFuncionalidadExistsRule extends DomainRule<ParametroDomain> {
+public interface ParametroFuncionalidadExistsRule extends DomainRule<CrearParametroDomain> {
 }

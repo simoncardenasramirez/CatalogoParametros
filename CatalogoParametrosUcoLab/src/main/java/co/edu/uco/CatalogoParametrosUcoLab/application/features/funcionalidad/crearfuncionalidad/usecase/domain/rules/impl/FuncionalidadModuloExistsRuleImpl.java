@@ -3,7 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.c
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.FuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadModuloExistsRule;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public final class FuncionalidadModuloExistsRuleImpl
     }
 
     @Override
-    public void execute(final FuncionalidadDomain data) {
+    public void execute(final CrearFuncionalidadDomain data) {
 
         if (data == null
                 || UUIDHelper.getDefault().equals(data.getIdModulo())) {

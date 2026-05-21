@@ -1,5 +1,6 @@
-package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository;
+package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.funcionalidad;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,40 +8,43 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbParametroRepository implements ParametroRepository {
+public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository {
 
-    private static final String TABLE_NAME = "parametros";
+    private static final String TABLE_NAME = "funcionalidades";
 
     private final SurrealDbClient surrealDbClient;
 
-    public SurrealDbParametroRepository(final SurrealDbClient surrealDbClient) {
+    public SurrealDbFuncionalidadRepository(final SurrealDbClient surrealDbClient) {
         this.surrealDbClient = surrealDbClient;
     }
 
     @Override
-    public ParametroEntity save(final ParametroEntity parametro) {
+    public FuncionalidadEntity save(final FuncionalidadEntity funcionalidad) {
         var query = """
                 BEGIN TRANSACTION;
                 CREATE type::record('%s', '%s') CONTENT {
                     nombre: '%s',
-                    idFuncionalidad: '%s',
-                    idTipoParametro: '%s',
-                    activo: %s
+                    idModulo: '%s',
+                    activo: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
                 };
                 COMMIT TRANSACTION;
-                """.formatted(TABLE_NAME, parametro.getId(), escape(parametro.getNombre()),
-                parametro.getIdFuncionalidad(), parametro.getIdTipoParametro(), parametro.isActivo());
+                """.formatted(TABLE_NAME, funcionalidad.getId(), escape(funcionalidad.getNombre()),
+                funcionalidad.getIdModulo(), funcionalidad.isActivo(),
+                formatDateTime(funcionalidad.getFechaInicio()),
+                formatDateTime(funcionalidad.getFechaFinal()));
 
         surrealDbClient.execute(query);
-        return parametro;
+        return funcionalidad;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     @Override
-    public Optional<ParametroEntity> findById(final UUID id) {
+    public Optional<FuncionalidadEntity> findById(final UUID id) {
         var query = "SELECT * FROM type::record('%s', '%s');".formatted(TABLE_NAME, id);
         var result = firstStatementResult(surrealDbClient.execute(query));
         if (!result.isArray() || result.size() == 0) {
@@ -62,25 +66,30 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     @Override
-    public List<ParametroEntity> findAll() {
+    public List<FuncionalidadEntity> findAll() {
         var result = firstStatementResult(surrealDbClient.execute("SELECT * FROM " + TABLE_NAME + ";"));
-        var parametros = new ArrayList<ParametroEntity>();
+        var funcionalidades = new ArrayList<FuncionalidadEntity>();
         if (result.isArray()) {
             for (var item : result) {
-                parametros.add(toEntity(item));
+                funcionalidades.add(toEntity(item));
             }
         }
-        return parametros;
+        return funcionalidades;
     }
 
     private JsonNode firstStatementResult(final JsonNode response) {
         return response.get(response.size() - 1).path("result");
     }
 
-    private ParametroEntity toEntity(final JsonNode node) {
-        return ParametroEntity.create(extractUuid(node.path("id")), node.path("nombre").asText(),
-                extractUuid(node.path("idFuncionalidad")), extractUuid(node.path("idTipoParametro")),
-                node.path("activo").asBoolean());
+    private FuncionalidadEntity toEntity(final JsonNode node) {
+        return FuncionalidadEntity.create(
+                extractUuid(node.path("id")),
+                node.path("nombre").asText(),
+                extractUuid(node.path("idModulo")),
+                node.path("activo").asBoolean(),
+                extractDateTime(node.path("fechaInicio")),
+                extractDateTime(node.path("fechaFinal"))
+        );
     }
 
     private UUID extractUuid(final JsonNode idNode) {
@@ -94,6 +103,20 @@ public class SurrealDbParametroRepository implements ParametroRepository {
             return UUIDHelper.getDefault();
         }
         return UUID.fromString(value);
+    }
+
+    private LocalDateTime extractDateTime(final JsonNode dateNode) {
+        if (dateNode.isNull() || TextHelper.isBlank(dateNode.asText())) {
+            return null;
+        }
+        return LocalDateTime.parse(dateNode.asText());
+    }
+
+    private String formatDateTime(final LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "null";
+        }
+        return "'" + dateTime.toString() + "'";
     }
 
     private String escape(final String value) {

@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.crearparametroimpl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.ParametroDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
@@ -21,7 +21,7 @@ public class CrearParametroImpl implements CrearParametro {
     }
 
     @Override
-    public void execute(final ParametroDomain data) {
+    public void execute(final CrearParametroDomain data) {
         crearParametroRuleValidator.validate(data);
         data.generateId();
 

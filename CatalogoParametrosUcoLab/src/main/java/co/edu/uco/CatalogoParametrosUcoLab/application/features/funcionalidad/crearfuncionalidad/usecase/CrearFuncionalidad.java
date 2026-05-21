@@ -1,7 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.UseCaseWithOutReturn;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.FuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 
-public interface CrearFuncionalidad extends UseCaseWithOutReturn<FuncionalidadDomain> {
+public interface CrearFuncionalidad extends UseCaseWithOutReturn<CrearFuncionalidadDomain> {
 }

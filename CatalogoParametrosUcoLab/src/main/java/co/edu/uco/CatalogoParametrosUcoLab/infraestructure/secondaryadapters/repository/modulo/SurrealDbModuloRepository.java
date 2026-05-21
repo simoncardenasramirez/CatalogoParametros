@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository;
+package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.modulo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,43 +8,43 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository {
+public class SurrealDbModuloRepository implements ModuloRepository {
 
-    private static final String TABLE_NAME = "funcionalidades";
+    private static final String TABLE_NAME = "modulos";
 
     private final SurrealDbClient surrealDbClient;
 
-    public SurrealDbFuncionalidadRepository(final SurrealDbClient surrealDbClient) {
+    public SurrealDbModuloRepository(final SurrealDbClient surrealDbClient) {
         this.surrealDbClient = surrealDbClient;
     }
 
     @Override
-    public FuncionalidadEntity save(final FuncionalidadEntity funcionalidad) {
+    public ModuloEntity save(final ModuloEntity modulo) {
         var query = """
                 BEGIN TRANSACTION;
                 CREATE type::record('%s', '%s') CONTENT {
                     nombre: '%s',
-                    idModulo: '%s',
+                    idAplicacion: '%s',
                     activo: %s,
                     fechaInicio: %s,
                     fechaFinal: %s
                 };
                 COMMIT TRANSACTION;
-                """.formatted(TABLE_NAME, funcionalidad.getId(), escape(funcionalidad.getNombre()),
-                funcionalidad.getIdModulo(), funcionalidad.isActivo(),
-                formatDateTime(funcionalidad.getFechaInicio()),
-                formatDateTime(funcionalidad.getFechaFinal()));
+                """.formatted(TABLE_NAME, modulo.getId(), escape(modulo.getNombre()),
+                modulo.getIdAplicacion(), modulo.isActivo(),
+                formatDateTime(modulo.getFechaInicio()),
+                formatDateTime(modulo.getFechaFinal()));
 
         surrealDbClient.execute(query);
-        return funcionalidad;
+        return modulo;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
     }
 
     @Override
-    public Optional<FuncionalidadEntity> findById(final UUID id) {
+    public Optional<ModuloEntity> findById(final UUID id) {
         var query = "SELECT * FROM type::record('%s', '%s');".formatted(TABLE_NAME, id);
         var result = firstStatementResult(surrealDbClient.execute(query));
         if (!result.isArray() || result.size() == 0) {
@@ -66,26 +66,26 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
     }
 
     @Override
-    public List<FuncionalidadEntity> findAll() {
+    public List<ModuloEntity> findAll() {
         var result = firstStatementResult(surrealDbClient.execute("SELECT * FROM " + TABLE_NAME + ";"));
-        var funcionalidades = new ArrayList<FuncionalidadEntity>();
+        var modulos = new ArrayList<ModuloEntity>();
         if (result.isArray()) {
             for (var item : result) {
-                funcionalidades.add(toEntity(item));
+                modulos.add(toEntity(item));
             }
         }
-        return funcionalidades;
+        return modulos;
     }
 
     private JsonNode firstStatementResult(final JsonNode response) {
         return response.get(response.size() - 1).path("result");
     }
 
-    private FuncionalidadEntity toEntity(final JsonNode node) {
-        return FuncionalidadEntity.create(
+    private ModuloEntity toEntity(final JsonNode node) {
+        return ModuloEntity.create(
                 extractUuid(node.path("id")),
                 node.path("nombre").asText(),
-                extractUuid(node.path("idModulo")),
+                extractUuid(node.path("idAplicacion")),
                 node.path("activo").asBoolean(),
                 extractDateTime(node.path("fechaInicio")),
                 extractDateTime(node.path("fechaFinal"))

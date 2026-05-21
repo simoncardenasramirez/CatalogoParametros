@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.response.ParametroResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametroResponse;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/modulos")
-public final class CrearModuloController {
+public final class ModuloController {
 
     private final CrearModuloInteractor crearModuloInteractor;
 
-    public CrearModuloController(final CrearModuloInteractor crearModuloInteractor) {
+    public ModuloController(final CrearModuloInteractor crearModuloInteractor) {
         this.crearModuloInteractor = crearModuloInteractor;
     }
 

@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.crearmoduloimpl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.ModuloDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotEmptyRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotNullRule;
@@ -24,7 +24,7 @@ public class CrearModuloRuleValidatorImpl implements CrearModuloRuleValidator {
     }
 
     @Override
-    public void validate(final ModuloDomain data) {
+    public void validate(final CrearModuloDomain data) {
         moduloNombreIsNotNullRule.execute(data);
         moduloNombreIsNotEmptyRule.execute(data);
         moduloNombreDoesNotExistRule.execute(data);

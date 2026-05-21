@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.response;
+package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response;
 
 import java.util.ArrayList;
 import java.util.List;

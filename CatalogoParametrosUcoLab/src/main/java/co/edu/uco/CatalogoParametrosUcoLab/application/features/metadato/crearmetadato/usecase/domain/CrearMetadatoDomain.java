@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.domain.metadato;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadato.usecase.domain;
 
 import java.util.UUID;
 
@@ -6,21 +6,21 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.Domain;
 
-public final class MetadatoDomain extends Domain {
+public final class CrearMetadatoDomain extends Domain {
 
     private UUID idParametro;
     private UUID idTipoMetadato;
     private String valor;
 
-    private MetadatoDomain(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final String valor) {
+    private CrearMetadatoDomain(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final String valor) {
         super(id);
         setIdParametro(idParametro);
         setIdTipoMetadato(idTipoMetadato);
         setValor(valor);
     }
 
-    public static MetadatoDomain create(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final String valor) {
-        return new MetadatoDomain(id, idParametro, idTipoMetadato, valor);
+    public static CrearMetadatoDomain create(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final String valor) {
+        return new CrearMetadatoDomain(id, idParametro, idTipoMetadato, valor);
     }
 
     public UUID getIdParametro() {

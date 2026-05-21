@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.crearmoduloimpl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.ModuloDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
@@ -21,7 +21,7 @@ public class CrearModuloImpl implements CrearModulo {
     }
 
     @Override
-    public void execute(final ModuloDomain data) {
+    public void execute(final CrearModuloDomain data) {
         crearModuloRuleValidator.validate(data);
         data.generateId();
 

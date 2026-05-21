@@ -4,7 +4,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.cr
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.CrearFuncionalidadRuleValidator;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.FuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreIsNotNullRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreIsNotEmptyRule;
@@ -27,7 +27,7 @@ public class CrearFuncionalidadRuleValidatorImpl implements CrearFuncionalidadRu
     }
 
     @Override
-    public void validate(final FuncionalidadDomain data) {
+    public void validate(final CrearFuncionalidadDomain data) {
         funcionalidadNombreIsNotNullRule.execute(data);
         funcionalidadNombreIsNotEmptyRule.execute(data);
         funcionalidadNombreDoesNotExistRule.execute(data);

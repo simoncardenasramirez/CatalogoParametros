@@ -3,7 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crear
 
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.ModuloDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,9 +16,9 @@ public final class CrearModuloDtoMapper {
         super();
     }
 
-    public ModuloDomain toDomain(final CrearModuloDto dto) {
+    public CrearModuloDomain toDomain(final CrearModuloDto dto) {
         var dtoToMap = dto == null ? new CrearModuloDto() : dto;
-        return ModuloDomain.create(
+        return CrearModuloDomain.create(
                 UUID.randomUUID(),
                 dtoToMap.getNombre(),
                 dtoToMap.getIdAplicacion(),
