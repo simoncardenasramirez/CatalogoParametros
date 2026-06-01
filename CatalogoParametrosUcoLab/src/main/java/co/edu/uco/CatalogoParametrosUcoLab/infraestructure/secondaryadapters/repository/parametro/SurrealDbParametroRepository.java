@@ -44,6 +44,35 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     @Override
+    public ParametroEntity update(final ParametroEntity parametro) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idFuncionalidad: '%s',
+                    idTipoParametro: '%s',
+                    activo: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, parametro.getId(), escape(parametro.getNombre()),
+                parametro.getIdFuncionalidad(), parametro.getIdTipoParametro(), parametro.isActivo());
+
+        surrealDbClient.execute(query);
+        return parametro;
+    }
+
+    @Override
+    public void deleteById(final UUID id) {
+        var query = """
+                BEGIN TRANSACTION;
+                DELETE type::record('%s', '%s');
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, id);
+
+        surrealDbClient.execute(query);
+    }
+
+    @Override
     public boolean existsByNombre(final String nombre) {
         var query = "SELECT id FROM %s WHERE nombre = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, escape(nombre));

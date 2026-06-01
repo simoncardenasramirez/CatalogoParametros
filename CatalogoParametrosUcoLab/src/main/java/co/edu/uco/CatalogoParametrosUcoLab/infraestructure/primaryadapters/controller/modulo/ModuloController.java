@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametroResponse;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/modulos")
@@ -23,19 +25,21 @@ public final class ModuloController {
     }
 
     @PostMapping
-    public ResponseEntity<ParametroResponse> crear(@RequestBody final CrearModuloDto modulo) {
-        var response = new ParametroResponse();
+    public Mono<ResponseEntity<ParametroResponse>> crear(@RequestBody final CrearModuloDto modulo) {
+        return Mono.fromCallable(() -> {
+            var response = new ParametroResponse();
 
-        try {
-            crearModuloInteractor.execute(modulo);
-            response.getMensajes().add("Modulo creado exitosamente.");
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (final ModuloException exception) {
-            response.getMensajes().add(exception.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        } catch (final Exception exception) {
-            response.getMensajes().add("Ocurrio un error creando el modulo: " + exception.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            try {
+                crearModuloInteractor.execute(modulo);
+                response.getMensajes().add("Modulo creado exitosamente.");
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            } catch (final ModuloException exception) {
+                response.getMensajes().add(exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final Exception exception) {
+                response.getMensajes().add("Ocurrio un error creando el modulo: " + exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

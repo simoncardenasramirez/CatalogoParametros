@@ -10,6 +10,10 @@ public interface ParametroRepository {
 
     ParametroEntity save(ParametroEntity parametro);
 
+    ParametroEntity update(ParametroEntity parametro);
+
+    void deleteById(UUID id);
+
     boolean existsByNombre(String nombre);
 
     Optional<ParametroEntity> findById(UUID id);
