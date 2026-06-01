@@ -1,11 +1,11 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb;
 
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-import co.edu.uco.CatalogoParametrosUcoLab.domain.parametro.exception.ParametroException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 

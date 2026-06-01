@@ -9,30 +9,30 @@ public final class ParametroEntity {
 
     private UUID id;
     private String nombre;
-    private String valor;
-    private String descripcion;
+    private UUID idFuncionalidad;
+    private UUID idTipoParametro;
     private boolean activo;
 
     private ParametroEntity() {
         setId(UUIDHelper.getDefault());
         setNombre(TextHelper.EMPTY);
-        setValor(TextHelper.EMPTY);
-        setDescripcion(TextHelper.EMPTY);
+        setIdFuncionalidad(UUIDHelper.getDefault());
+        setIdTipoParametro(UUIDHelper.getDefault());
         setActivo(true);
     }
 
-    private ParametroEntity(final UUID id, final String nombre, final String valor, final String descripcion,
+    private ParametroEntity(final UUID id, final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
             final boolean activo) {
         setId(id);
         setNombre(nombre);
-        setValor(valor);
-        setDescripcion(descripcion);
+        setIdFuncionalidad(idFuncionalidad);
+        setIdTipoParametro(idTipoParametro);
         setActivo(activo);
     }
 
-    public static ParametroEntity create(final UUID id, final String nombre, final String valor,
-            final String descripcion, final boolean activo) {
-        return new ParametroEntity(id, nombre, valor, descripcion, activo);
+    public static ParametroEntity create(final UUID id, final String nombre, final UUID idFuncionalidad,
+            final UUID idTipoParametro, final boolean activo) {
+        return new ParametroEntity(id, nombre, idFuncionalidad, idTipoParametro, activo);
     }
 
     public UUID getId() {
@@ -51,20 +51,20 @@ public final class ParametroEntity {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public String getValor() {
-        return valor;
+    public UUID getIdFuncionalidad() {
+        return idFuncionalidad;
     }
 
-    public void setValor(final String valor) {
-        this.valor = TextHelper.applyTrim(valor);
+    public void setIdFuncionalidad(final UUID idFuncionalidad) {
+        this.idFuncionalidad = UUIDHelper.getDefault(idFuncionalidad);
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public UUID getIdTipoParametro() {
+        return idTipoParametro;
     }
 
-    public void setDescripcion(final String descripcion) {
-        this.descripcion = TextHelper.applyTrim(descripcion);
+    public void setIdTipoParametro(final UUID idTipoParametro) {
+        this.idTipoParametro = UUIDHelper.getDefault(idTipoParametro);
     }
 
     public boolean isActivo() {

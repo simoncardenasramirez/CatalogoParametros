@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.InteractorWithOutReturn;
+
+public interface CrearFuncionalidadInteractor extends InteractorWithOutReturn<CrearFuncionalidadDto> {
+}
