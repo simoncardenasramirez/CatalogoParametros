@@ -5,6 +5,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crear
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.secondaryports.publisher.CrearAplicacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.secondaryports.event.AplicacionEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.aplicacion.AplicacionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +46,19 @@ public final class AplicacionController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<String>> crear(@RequestBody final CrearAplicacionDto aplicacion) {
+    public Mono<ResponseEntity<AplicacionResponse>> crear(@RequestBody final CrearAplicacionDto aplicacion) {
         return Mono.fromCallable(() -> {
+            var response = new AplicacionResponse();
             try {
                 crearAplicacionInteractor.execute(aplicacion);
-                return new ResponseEntity<>("Aplicacion creada exitosamente.", HttpStatus.CREATED);
+                response.getMensajes().add("Aplicacion creada exitosamente.");
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
             } catch (final AplicacionException exception) {
-                return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+                response.getMensajes().add(exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             } catch (final Exception exception) {
-                return new ResponseEntity<>("Ocurrio un error creando la aplicacion: " + exception.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                response.getMensajes().add("Ocurrio un error creando la aplicacion.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }).subscribeOn(Schedulers.boundedElastic());
     }

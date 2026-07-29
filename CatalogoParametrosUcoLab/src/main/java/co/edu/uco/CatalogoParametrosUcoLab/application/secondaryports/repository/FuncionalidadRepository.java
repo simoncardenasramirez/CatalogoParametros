@@ -10,6 +10,10 @@ public interface FuncionalidadRepository {
 
     FuncionalidadEntity save(FuncionalidadEntity funcionalidad);
 
+    FuncionalidadEntity update(FuncionalidadEntity funcionalidad);
+
+    void deleteById(UUID id);
+
     boolean existsByNombre(String nombre);
 
     Optional<FuncionalidadEntity> findById(UUID id);

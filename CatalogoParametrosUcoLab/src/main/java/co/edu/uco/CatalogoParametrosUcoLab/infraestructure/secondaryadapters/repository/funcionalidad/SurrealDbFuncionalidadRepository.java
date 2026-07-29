@@ -48,6 +48,38 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
     }
 
     @Override
+    public FuncionalidadEntity update(final FuncionalidadEntity funcionalidad) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idModulo: '%s',
+                    activo: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, funcionalidad.getId(), escape(funcionalidad.getNombre()),
+                funcionalidad.getIdModulo(), funcionalidad.isActivo(),
+                formatDateTime(funcionalidad.getFechaInicio()),
+                formatDateTime(funcionalidad.getFechaFinal()));
+
+        surrealDbClient.execute(query);
+        return funcionalidad;
+    }
+
+    @Override
+    public void deleteById(final UUID id) {
+        var query = """
+                BEGIN TRANSACTION;
+                DELETE type::record('%s', '%s');
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, id);
+
+        surrealDbClient.execute(query);
+    }
+
+    @Override
     public boolean existsByNombre(final String nombre) {
         var query = "SELECT id FROM %s WHERE nombre = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, escape(nombre));

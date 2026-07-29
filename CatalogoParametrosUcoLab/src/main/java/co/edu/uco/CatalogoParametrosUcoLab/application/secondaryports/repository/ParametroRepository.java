@@ -19,4 +19,6 @@ public interface ParametroRepository {
     Optional<ParametroEntity> findById(UUID id);
 
     List<ParametroEntity> findAll();
+
+    List<ParametroEntity> findByIdFuncionalidad(UUID idFuncionalidad);
 }

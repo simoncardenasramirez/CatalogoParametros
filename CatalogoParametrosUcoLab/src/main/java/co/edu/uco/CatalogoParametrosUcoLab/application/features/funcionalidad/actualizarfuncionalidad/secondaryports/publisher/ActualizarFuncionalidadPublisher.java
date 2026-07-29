@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.secondaryports.publisher;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.secondaryports.event.ActualizarFuncionalidadEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.publisher.Publisher;
+
+public interface ActualizarFuncionalidadPublisher extends Publisher<ActualizarFuncionalidadEvent> {
+}

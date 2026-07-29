@@ -5,6 +5,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cre
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.secondaryports.publisher.CrearOrganizacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.exception.OrganizacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.secondaryports.event.OrganizacionEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.organizacion.OrganizacionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +46,19 @@ public final class OrganizacionController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<String>> crear(@RequestBody final CrearOrganizacionDto organizacion) {
+    public Mono<ResponseEntity<OrganizacionResponse>> crear(@RequestBody final CrearOrganizacionDto organizacion) {
         return Mono.fromCallable(() -> {
+            var response = new OrganizacionResponse();
             try {
                 crearOrganizacionInteractor.execute(organizacion);
-                return new ResponseEntity<>("Organizacion creada exitosamente.", HttpStatus.CREATED);
+                response.getMensajes().add("Organizacion creada exitosamente.");
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
             } catch (final OrganizacionException exception) {
-                return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+                response.getMensajes().add(exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             } catch (final Exception exception) {
-                return new ResponseEntity<>("Ocurrio un error creando la organizacion: " + exception.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                response.getMensajes().add("Ocurrio un error creando la organizacion.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }).subscribeOn(Schedulers.boundedElastic());
     }

@@ -91,6 +91,24 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     @Override
+    public List<ParametroEntity> findByIdFuncionalidad(final UUID idFuncionalidad) {
+        var query = "SELECT * FROM %s WHERE idFuncionalidad = '%s';"
+                .formatted(TABLE_NAME, idFuncionalidad);
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var parametros = new ArrayList<ParametroEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    parametros.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return parametros;
+    }
+
+    @Override
     public List<ParametroEntity> findAll() {
         var result = firstStatementResult(surrealDbClient.execute("SELECT * FROM " + TABLE_NAME + ";"));
         var parametros = new ArrayList<ParametroEntity>();
