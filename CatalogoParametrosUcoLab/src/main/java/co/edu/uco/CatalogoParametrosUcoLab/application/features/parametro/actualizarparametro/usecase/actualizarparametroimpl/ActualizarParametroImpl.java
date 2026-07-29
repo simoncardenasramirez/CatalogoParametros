@@ -3,6 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actua
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.ActualizarParametro;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.ActualizarParametroRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.event.ActualizarParametroEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.publisher.ActualizarParametroPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.ActualizarParametroDomain;
@@ -16,11 +17,14 @@ public class ActualizarParametroImpl implements ActualizarParametro {
 
     private final ParametroRepository parametroRepository;
     private final ActualizarParametroPublisher actualizarParametroPublisher;
+    private final ActualizarParametroRuleValidator actualizarParametroRuleValidator;
 
     public ActualizarParametroImpl(final ParametroRepository parametroRepository,
-            final ActualizarParametroPublisher actualizarParametroPublisher) {
+            final ActualizarParametroPublisher actualizarParametroPublisher,
+            final ActualizarParametroRuleValidator actualizarParametroRuleValidator) {
         this.parametroRepository = parametroRepository;
         this.actualizarParametroPublisher = actualizarParametroPublisher;
+        this.actualizarParametroRuleValidator = actualizarParametroRuleValidator;
     }
 
     @Override
@@ -32,6 +36,8 @@ public class ActualizarParametroImpl implements ActualizarParametro {
         if (parametroRepository.findById(data.getId()).isEmpty()) {
             throw new ParametroException("No existe un parametro con el id especificado.");
         }
+
+        actualizarParametroRuleValidator.validate(data);
 
         var entity = ParametroEntity.create(data.getId(), data.getNombre(), data.getIdFuncionalidad(),
                 data.getIdTipoParametro(), data.isActivo());
