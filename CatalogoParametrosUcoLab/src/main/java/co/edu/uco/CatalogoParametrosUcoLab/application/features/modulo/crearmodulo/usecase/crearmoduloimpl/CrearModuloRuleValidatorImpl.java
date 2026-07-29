@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.crearmoduloimpl;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloAplicacionExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotEmptyRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotNullRule;
@@ -14,13 +15,16 @@ public class CrearModuloRuleValidatorImpl implements CrearModuloRuleValidator {
     private final ModuloNombreIsNotNullRule moduloNombreIsNotNullRule;
     private final ModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule;
     private final ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule;
+    private final ModuloAplicacionExistsRule moduloAplicacionExistsRule;
 
     public CrearModuloRuleValidatorImpl(final ModuloNombreIsNotNullRule moduloNombreIsNotNullRule,
             final ModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule,
-            final ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule) {
+            final ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule,
+            final ModuloAplicacionExistsRule moduloAplicacionExistsRule) {
         this.moduloNombreIsNotNullRule = moduloNombreIsNotNullRule;
         this.moduloNombreIsNotEmptyRule = moduloNombreIsNotEmptyRule;
         this.moduloNombreDoesNotExistRule = moduloNombreDoesNotExistRule;
+        this.moduloAplicacionExistsRule = moduloAplicacionExistsRule;
     }
 
     @Override
@@ -28,5 +32,6 @@ public class CrearModuloRuleValidatorImpl implements CrearModuloRuleValidator {
         moduloNombreIsNotNullRule.execute(data);
         moduloNombreIsNotEmptyRule.execute(data);
         moduloNombreDoesNotExistRule.execute(data);
+        moduloAplicacionExistsRule.execute(data);
     }
 }
