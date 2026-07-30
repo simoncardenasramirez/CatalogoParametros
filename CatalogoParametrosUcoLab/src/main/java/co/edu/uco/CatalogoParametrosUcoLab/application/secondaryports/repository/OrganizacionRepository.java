@@ -15,4 +15,8 @@ public interface OrganizacionRepository {
     Optional<OrganizacionEntity> findById(UUID id);
 
     List<OrganizacionEntity> findAll();
+
+    OrganizacionEntity update(OrganizacionEntity organizacion);
+
+    void deleteById(UUID id);
 }

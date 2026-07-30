@@ -81,6 +81,14 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
         return aplicaciones;
     }
 
+    @Override
+    public boolean existsByIdOrganizacion(final UUID idOrganizacion) {
+        var query = "SELECT id FROM %s WHERE idOrganizacion = '%s' LIMIT 1;"
+                .formatted(TABLE_NAME, idOrganizacion);
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        return result.isArray() && result.size() > 0;
+    }
+
     private JsonNode firstStatementResult(final JsonNode response) {
         if (!response.isArray() || response.size() == 0) {
             return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();

@@ -73,6 +73,26 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
         return organizaciones;
     }
 
+    @Override
+    public OrganizacionEntity update(final OrganizacionEntity organizacion) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s'
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()));
+
+        surrealDbClient.execute(query);
+        return organizacion;
+    }
+
+    @Override
+    public void deleteById(final UUID id) {
+        var query = "DELETE type::record('%s', '%s');".formatted(TABLE_NAME, id);
+        surrealDbClient.execute(query);
+    }
+
     private JsonNode firstStatementResult(final JsonNode response) {
         if (!response.isArray() || response.size() == 0) {
             return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();

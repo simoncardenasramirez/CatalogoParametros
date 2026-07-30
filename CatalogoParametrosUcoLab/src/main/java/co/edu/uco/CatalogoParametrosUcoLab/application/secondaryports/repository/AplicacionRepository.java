@@ -15,4 +15,6 @@ public interface AplicacionRepository {
     Optional<AplicacionEntity> findById(UUID id);
 
     List<AplicacionEntity> findAll();
+
+    boolean existsByIdOrganizacion(UUID idOrganizacion);
 }
