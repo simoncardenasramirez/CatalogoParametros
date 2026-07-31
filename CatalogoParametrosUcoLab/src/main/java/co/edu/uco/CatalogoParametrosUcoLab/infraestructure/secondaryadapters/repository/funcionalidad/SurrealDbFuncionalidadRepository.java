@@ -48,6 +48,38 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
     }
 
     @Override
+    public FuncionalidadEntity update(final FuncionalidadEntity funcionalidad) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idModulo: '%s',
+                    activo: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, funcionalidad.getId(), escape(funcionalidad.getNombre()),
+                funcionalidad.getIdModulo(), funcionalidad.isActivo(),
+                formatDateTime(funcionalidad.getFechaInicio()),
+                formatDateTime(funcionalidad.getFechaFinal()));
+
+        surrealDbClient.execute(query);
+        return funcionalidad;
+    }
+
+    @Override
+    public void deleteById(final UUID id) {
+        var query = """
+                BEGIN TRANSACTION;
+                DELETE type::record('%s', '%s');
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, id);
+
+        surrealDbClient.execute(query);
+    }
+
+    @Override
     public boolean existsByNombre(final String nombre) {
         var query = "SELECT id FROM %s WHERE nombre = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, escape(nombre));
@@ -57,7 +89,7 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
 
     @Override
     public Optional<FuncionalidadEntity> findById(final UUID id) {
-        var query = "SELECT * FROM type::record('%s', '%s');".formatted(TABLE_NAME, id);
+        var query = "SELECT * FROM %s:`%s`;".formatted(TABLE_NAME, id);
         var result = firstStatementResult(surrealDbClient.execute(query));
         if (!result.isArray() || result.size() == 0) {
             return Optional.empty();
@@ -71,13 +103,20 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
         var funcionalidades = new ArrayList<FuncionalidadEntity>();
         if (result.isArray()) {
             for (var item : result) {
-                funcionalidades.add(toEntity(item));
+                try {
+                    funcionalidades.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
             }
         }
         return funcionalidades;
     }
 
     private JsonNode firstStatementResult(final JsonNode response) {
+        if (!response.isArray() || response.size() == 0) {
+            return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
+        }
         return response.get(response.size() - 1).path("result");
     }
 
@@ -102,14 +141,31 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
         if (TextHelper.isBlank(value)) {
             return UUIDHelper.getDefault();
         }
-        return UUID.fromString(value);
+        try {
+            return UUID.fromString(value);
+        } catch (final IllegalArgumentException exception) {
+            return UUIDHelper.getDefault();
+        }
     }
 
     private LocalDateTime extractDateTime(final JsonNode dateNode) {
         if (dateNode.isNull() || TextHelper.isBlank(dateNode.asText())) {
             return null;
         }
-        return LocalDateTime.parse(dateNode.asText());
+        var text = dateNode.asText();
+        // Remove SurrealDB date wrapper d'...'
+        if (text.startsWith("d'") && text.endsWith("'")) {
+            text = text.substring(2, text.length() - 1);
+        }
+        // Remove Z timezone suffix if present
+        if (text.endsWith("Z")) {
+            text = text.substring(0, text.length() - 1);
+        }
+        // Ensure seconds are present for LocalDateTime.parse
+        if (text.length() == 16) { // yyyy-MM-ddTHH:mm
+            text = text + ":00";
+        }
+        return LocalDateTime.parse(text);
     }
 
     private String formatDateTime(final LocalDateTime dateTime) {

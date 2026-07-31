@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.ActualizarFuncionalidadDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+
+public interface ActualizarFuncionalidadRuleValidator extends RuleValidator<ActualizarFuncionalidadDomain> {
+}

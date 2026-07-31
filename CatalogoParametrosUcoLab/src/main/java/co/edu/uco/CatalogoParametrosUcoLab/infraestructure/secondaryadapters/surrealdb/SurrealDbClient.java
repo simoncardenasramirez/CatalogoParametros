@@ -70,7 +70,10 @@ public class SurrealDbClient {
                 DEFINE DATABASE IF NOT EXISTS %s;
                 USE DB %s;
                 DEFINE TABLE IF NOT EXISTS parametros SCHEMALESS;
-                DEFINE INDEX IF NOT EXISTS idx_parametros_nombre ON TABLE parametros FIELDS nombre UNIQUE;
+                DEFINE TABLE IF NOT EXISTS funcionalidades SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS modulos SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS organizaciones SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS aplicaciones SCHEMALESS;
                 %s
                 """.formatted(properties.getNamespace(), properties.getNamespace(), properties.getDatabase(),
                 properties.getDatabase(), query);

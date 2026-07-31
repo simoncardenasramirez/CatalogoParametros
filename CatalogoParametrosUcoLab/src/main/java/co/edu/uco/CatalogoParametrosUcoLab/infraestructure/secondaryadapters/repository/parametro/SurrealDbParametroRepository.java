@@ -82,7 +82,7 @@ public class SurrealDbParametroRepository implements ParametroRepository {
 
     @Override
     public Optional<ParametroEntity> findById(final UUID id) {
-        var query = "SELECT * FROM type::record('%s', '%s');".formatted(TABLE_NAME, id);
+        var query = "SELECT * FROM %s:`%s`;".formatted(TABLE_NAME, id);
         var result = firstStatementResult(surrealDbClient.execute(query));
         if (!result.isArray() || result.size() == 0) {
             return Optional.empty();
@@ -91,18 +91,43 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     @Override
+    public List<ParametroEntity> findByIdFuncionalidad(final UUID idFuncionalidad) {
+        var query = "SELECT * FROM %s WHERE idFuncionalidad = '%s';"
+                .formatted(TABLE_NAME, idFuncionalidad);
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var parametros = new ArrayList<ParametroEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    parametros.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return parametros;
+    }
+
+    @Override
     public List<ParametroEntity> findAll() {
         var result = firstStatementResult(surrealDbClient.execute("SELECT * FROM " + TABLE_NAME + ";"));
         var parametros = new ArrayList<ParametroEntity>();
         if (result.isArray()) {
             for (var item : result) {
-                parametros.add(toEntity(item));
+                try {
+                    parametros.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
             }
         }
         return parametros;
     }
 
     private JsonNode firstStatementResult(final JsonNode response) {
+        if (!response.isArray() || response.size() == 0) {
+            return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
+        }
         return response.get(response.size() - 1).path("result");
     }
 
@@ -122,7 +147,11 @@ public class SurrealDbParametroRepository implements ParametroRepository {
         if (TextHelper.isBlank(value)) {
             return UUIDHelper.getDefault();
         }
-        return UUID.fromString(value);
+        try {
+            return UUID.fromString(value);
+        } catch (final IllegalArgumentException exception) {
+            return UUIDHelper.getDefault();
+        }
     }
 
     private String escape(final String value) {
