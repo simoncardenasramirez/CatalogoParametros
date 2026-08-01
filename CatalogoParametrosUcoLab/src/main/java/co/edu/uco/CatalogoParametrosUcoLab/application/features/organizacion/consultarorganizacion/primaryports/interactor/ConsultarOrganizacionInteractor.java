@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.interactor;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.consultarorganizacion.primaryports.interactor;
 
 import java.util.List;
 import java.util.UUID;
