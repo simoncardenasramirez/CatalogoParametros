@@ -1,29 +1,21 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public final class CrearFuncionalidadDto {
 
     private String nombre;
-    private UUID idModulo;
-    private boolean activo;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private String idModulo;
+    private String activo;
+    private String fechaInicio;
+    private String fechaFinal;
 
     public CrearFuncionalidadDto() {
-        setNombre(TextHelper.EMPTY);
-        setIdModulo(UUIDHelper.getDefault());
-        setActivo(true);
-        setFechaInicio(null);
-        setFechaFinal(null);
+        this(TextHelper.EMPTY, TextHelper.EMPTY, "true", TextHelper.EMPTY, TextHelper.EMPTY);
     }
 
-    public CrearFuncionalidadDto(final String nombre, final UUID idModulo, final boolean activo,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public CrearFuncionalidadDto(final String nombre, final String idModulo, final String activo,
+                                 final String fechaInicio, final String fechaFinal) {
         setNombre(nombre);
         setIdModulo(idModulo);
         setActivo(activo);
@@ -31,8 +23,8 @@ public final class CrearFuncionalidadDto {
         setFechaFinal(fechaFinal);
     }
 
-    public static CrearFuncionalidadDto create(final String nombre, final UUID idModulo, final boolean activo,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public static CrearFuncionalidadDto create(final String nombre, final String idModulo, final String activo,
+                                               final String fechaInicio, final String fechaFinal) {
         return new CrearFuncionalidadDto(nombre, idModulo, activo, fechaInicio, fechaFinal);
     }
 
@@ -44,35 +36,35 @@ public final class CrearFuncionalidadDto {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public UUID getIdModulo() {
+    public String getIdModulo() {
         return idModulo;
     }
 
-    public void setIdModulo(final UUID idModulo) {
-        this.idModulo = UUIDHelper.getDefault(idModulo);
+    public void setIdModulo(final String idModulo) {
+        this.idModulo = TextHelper.applyTrim(idModulo);
     }
 
-    public boolean isActivo() {
+    public String getActivo() {
         return activo;
     }
 
-    public void setActivo(final boolean activo) {
-        this.activo = activo;
+    public void setActivo(final String activo) {
+        this.activo = activo == null ? "true" : TextHelper.applyTrim(activo).toLowerCase();
     }
 
-    public LocalDateTime getFechaInicio() {
+    public String getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(final LocalDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setFechaInicio(final String fechaInicio) {
+        this.fechaInicio = TextHelper.applyTrim(fechaInicio);
     }
 
-    public LocalDateTime getFechaFinal() {
+    public String getFechaFinal() {
         return fechaFinal;
     }
 
-    public void setFechaFinal(final LocalDateTime fechaFinal) {
-        this.fechaFinal = fechaFinal;
+    public void setFechaFinal(final String fechaFinal) {
+        this.fechaFinal = TextHelper.applyTrim(fechaFinal);
     }
 }

@@ -1,29 +1,21 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.dto;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public final class CrearAplicacionDto {
 
     private String nombre;
-    private UUID idOrganizacion;
-    private boolean activa;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private String idOrganizacion;
+    private String activa;
+    private String fechaInicio;
+    private String fechaFinal;
 
     public CrearAplicacionDto() {
-        setNombre(TextHelper.EMPTY);
-        setIdOrganizacion(UUIDHelper.getDefault());
-        setActiva(true);
-        setFechaInicio(null);
-        setFechaFinal(null);
+        this(TextHelper.EMPTY, TextHelper.EMPTY, "true", TextHelper.EMPTY, TextHelper.EMPTY);
     }
 
-    public CrearAplicacionDto(final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public CrearAplicacionDto(final String nombre, final String idOrganizacion, final String activa,
+                              final String fechaInicio, final String fechaFinal) {
         setNombre(nombre);
         setIdOrganizacion(idOrganizacion);
         setActiva(activa);
@@ -31,8 +23,8 @@ public final class CrearAplicacionDto {
         setFechaFinal(fechaFinal);
     }
 
-    public static CrearAplicacionDto create(final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public static CrearAplicacionDto create(final String nombre, final String idOrganizacion, final String activa,
+                                            final String fechaInicio, final String fechaFinal) {
         return new CrearAplicacionDto(nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
     }
 
@@ -44,35 +36,35 @@ public final class CrearAplicacionDto {
         this.nombre = TextHelper.applyTrim(nombre);
     }
 
-    public UUID getIdOrganizacion() {
+    public String getIdOrganizacion() {
         return idOrganizacion;
     }
 
-    public void setIdOrganizacion(final UUID idOrganizacion) {
-        this.idOrganizacion = UUIDHelper.getDefault(idOrganizacion);
+    public void setIdOrganizacion(final String idOrganizacion) {
+        this.idOrganizacion = TextHelper.applyTrim(idOrganizacion);
     }
 
-    public boolean isActiva() {
+    public String getActiva() {
         return activa;
     }
 
-    public void setActiva(final boolean activa) {
-        this.activa = activa;
+    public void setActiva(final String activa) {
+        this.activa = activa == null ? "true" : TextHelper.applyTrim(activa).toLowerCase();
     }
 
-    public LocalDateTime getFechaInicio() {
+    public String getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(final LocalDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setFechaInicio(final String fechaInicio) {
+        this.fechaInicio = TextHelper.applyTrim(fechaInicio);
     }
 
-    public LocalDateTime getFechaFinal() {
+    public String getFechaFinal() {
         return fechaFinal;
     }
 
-    public void setFechaFinal(final LocalDateTime fechaFinal) {
-        this.fechaFinal = fechaFinal;
+    public void setFechaFinal(final String fechaFinal) {
+        this.fechaFinal = TextHelper.applyTrim(fechaFinal);
     }
 }
