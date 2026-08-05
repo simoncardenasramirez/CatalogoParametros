@@ -104,7 +104,7 @@ public final class OrganizacionController {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
             try {
-                var dto = new ActualizarOrganizacionDto(id, organizacion.getNombre());
+                var dto = new ActualizarOrganizacionDto(id.toString(), organizacion.getNombre());
                 actualizarOrganizacionInteractor.execute(dto);
                 response.getMensajes().add("Organizacion actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
