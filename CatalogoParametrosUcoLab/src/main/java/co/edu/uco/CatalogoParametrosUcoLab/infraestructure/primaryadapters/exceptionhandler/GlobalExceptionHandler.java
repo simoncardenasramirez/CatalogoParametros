@@ -34,6 +34,11 @@ public class GlobalExceptionHandler {
             return ResponseEntity.badRequest().body(response);
         }
 
+        if (causa instanceof RuntimeException runtimeException) {
+            response.getMensajes().add(runtimeException.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+
         response.getMensajes().add("El cuerpo de la petición es inválido.");
         return ResponseEntity.badRequest().body(response);
     }

@@ -12,7 +12,7 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 public class SurrealDbClient {
 
-    private static final MediaType SURREALQL = MediaType.valueOf("application/surrealql");
+    private static final MediaType SURREALQL = MediaType.parseMediaType("application/surrealql; charset=utf-8");
 
     private final RestClient restClient;
     private final SurrealDbProperties properties;

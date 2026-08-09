@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -21,15 +22,18 @@ public final class CrearFuncionalidadDtoMapper {
         super();
     }
 
-    public CrearFuncionalidadDomain toDomain(final CrearFuncionalidadDto dto) {
-        var dtoToMap = dto == null ? new CrearFuncionalidadDto() : dto;
-        validateStringFields(dtoToMap);
+    public CrearFuncionalidadDomain toDomain(final CrearFuncionalidadDtoRequest dto) {
+        final var dtoInput = toDtoInput(dto);
+        return toDomain(dtoInput);
+    }
+
+    public CrearFuncionalidadDtoInput toDtoInput(final CrearFuncionalidadDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearFuncionalidadDtoRequest() : dto;
         final var idModulo = parseUUID(dtoToMap.getIdModulo(), "El identificador del modulo no es valido.");
         final var activo = parseBoolean(dtoToMap.getActivo(), "El estado activo debe ser 'true' o 'false'.");
         final var fechaInicio = parseDateTime(dtoToMap.getFechaInicio(), "La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
         final var fechaFinal = parseDateTime(dtoToMap.getFechaFinal(), "La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
-        return CrearFuncionalidadDomain.create(
-                UUID.randomUUID(),
+        return CrearFuncionalidadDtoInput.create(
                 dtoToMap.getNombre(),
                 idModulo,
                 activo,
@@ -38,13 +42,15 @@ public final class CrearFuncionalidadDtoMapper {
         );
     }
 
-    private void validateStringFields(final CrearFuncionalidadDto dto) {
-        if (TextHelper.isBlank(dto.getNombre())) {
-            throw new FuncionalidadException("El nombre de la funcionalidad es obligatorio.");
-        }
-        if (dto.getNombre().length() < 3 || dto.getNombre().length() > 50) {
-            throw new FuncionalidadException("El nombre debe tener entre 3 y 50 caracteres.");
-        }
+    public CrearFuncionalidadDomain toDomain(final CrearFuncionalidadDtoInput dtoInput) {
+        return CrearFuncionalidadDomain.create(
+                UUID.randomUUID(),
+                dtoInput.getNombre(),
+                dtoInput.getIdModulo(),
+                dtoInput.isActivo(),
+                dtoInput.getFechaInicio(),
+                dtoInput.getFechaFinal()
+        );
     }
 
     private UUID parseUUID(final String value, final String errorMessage) {

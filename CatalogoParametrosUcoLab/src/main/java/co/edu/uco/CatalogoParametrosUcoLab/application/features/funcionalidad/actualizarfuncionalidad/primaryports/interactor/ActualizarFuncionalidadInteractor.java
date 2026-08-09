@@ -2,9 +2,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.a
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
 
 public interface ActualizarFuncionalidadInteractor {
 
-    void execute(UUID id, ActualizarFuncionalidadDto data);
+    void execute(UUID id, ActualizarFuncionalidadDtoRequest data);
 }

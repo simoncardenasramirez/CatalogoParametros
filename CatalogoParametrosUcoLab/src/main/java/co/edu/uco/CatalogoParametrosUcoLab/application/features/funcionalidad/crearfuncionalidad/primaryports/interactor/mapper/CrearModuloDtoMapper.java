@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -21,8 +21,8 @@ public final class CrearModuloDtoMapper {
         super();
     }
 
-    public CrearModuloDomain toDomain(final CrearModuloDto dto) {
-        var dtoToMap = dto == null ? new CrearModuloDto() : dto;
+    public CrearModuloDomain toDomain(final CrearModuloDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearModuloDtoRequest() : dto;
         validateStringFields(dtoToMap);
         final var idAplicacion = parseUUID(dtoToMap.getIdAplicacion(), "El identificador de la aplicacion no es valido.");
         final var activo = parseBoolean(dtoToMap.getActivo(), "El estado activo debe ser 'true' o 'false'.");
@@ -38,7 +38,7 @@ public final class CrearModuloDtoMapper {
         );
     }
 
-    private void validateStringFields(final CrearModuloDto dto) {
+    private void validateStringFields(final CrearModuloDtoRequest dto) {
         if (TextHelper.isBlank(dto.getNombre())) {
             throw new ModuloException("El nombre del modulo es obligatorio.");
         }

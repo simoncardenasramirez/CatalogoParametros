@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -21,15 +22,18 @@ public final class CrearModuloDtoMapper {
         super();
     }
 
-    public CrearModuloDomain toDomain(final CrearModuloDto dto) {
-        var dtoToMap = dto == null ? new CrearModuloDto() : dto;
-        validateStringFields(dtoToMap);
+    public CrearModuloDomain toDomain(final CrearModuloDtoRequest dto) {
+        final var dtoInput = toDtoInput(dto);
+        return toDomain(dtoInput);
+    }
+
+    public CrearModuloDtoInput toDtoInput(final CrearModuloDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearModuloDtoRequest() : dto;
         final var idAplicacion = parseUUID(dtoToMap.getIdAplicacion(), "El identificador de la aplicacion no es valido.");
         final var activo = parseBoolean(dtoToMap.getActivo(), "El estado activo debe ser 'true' o 'false'.");
         final var fechaInicio = parseDateTime(dtoToMap.getFechaInicio(), "La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
         final var fechaFinal = parseDateTime(dtoToMap.getFechaFinal(), "La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
-        return CrearModuloDomain.create(
-                UUID.randomUUID(),
+        return CrearModuloDtoInput.create(
                 dtoToMap.getNombre(),
                 idAplicacion,
                 activo,
@@ -38,13 +42,15 @@ public final class CrearModuloDtoMapper {
         );
     }
 
-    private void validateStringFields(final CrearModuloDto dto) {
-        if (TextHelper.isBlank(dto.getNombre())) {
-            throw new ModuloException("El nombre del modulo es obligatorio.");
-        }
-        if (dto.getNombre().length() < 3 || dto.getNombre().length() > 50) {
-            throw new ModuloException("El nombre debe tener entre 3 y 50 caracteres.");
-        }
+    public CrearModuloDomain toDomain(final CrearModuloDtoInput dtoInput) {
+        return CrearModuloDomain.create(
+                UUID.randomUUID(),
+                dtoInput.getNombre(),
+                dtoInput.getIdAplicacion(),
+                dtoInput.isActivo(),
+                dtoInput.getFechaInicio(),
+                dtoInput.getFechaFinal()
+        );
     }
 
     private UUID parseUUID(final String value, final String errorMessage) {

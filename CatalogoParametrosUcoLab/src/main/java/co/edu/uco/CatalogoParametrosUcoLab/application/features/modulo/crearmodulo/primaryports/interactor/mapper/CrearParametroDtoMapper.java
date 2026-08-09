@@ -2,7 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmod
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -11,8 +11,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 public enum CrearParametroDtoMapper {
     INSTANCE;
 
-    public CrearParametroDomain toDomain(final CrearParametroDto dto) {
-        var dtoToMap = dto == null ? new CrearParametroDto() : dto;
+    public CrearParametroDomain toDomain(final CrearParametroDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearParametroDtoRequest() : dto;
         validateStringFields(dtoToMap);
         final var idFuncionalidad = parseUUID(dtoToMap.getIdFuncionalidad(), "El identificador de la funcionalidad no es valido.");
         final var idTipoParametro = parseUUID(dtoToMap.getIdTipoParametro(), "El identificador del tipo de parametro no es valido.");
@@ -21,7 +21,7 @@ public enum CrearParametroDtoMapper {
                 idTipoParametro, activo);
     }
 
-    private void validateStringFields(final CrearParametroDto dto) {
+    private void validateStringFields(final CrearParametroDtoRequest dto) {
         if (TextHelper.isBlank(dto.getNombre())) {
             throw new ParametroException("El nombre del parametro es obligatorio.");
         }

@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.ActualizarFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -19,23 +20,29 @@ public enum ActualizarFuncionalidadDtoMapper {
     ActualizarFuncionalidadDtoMapper() {
     }
 
-    public ActualizarFuncionalidadDomain toDomain(final UUID id, final ActualizarFuncionalidadDto dto) {
-        var dtoToMap = dto == null ? new ActualizarFuncionalidadDto() : dto;
-        validateStringFields(dtoToMap);
+    public ActualizarFuncionalidadDomain toDomain(final UUID id, final ActualizarFuncionalidadDtoRequest dto) {
+        final var dtoInput = toDtoInput(dto);
+        return toDomain(id, dtoInput);
+    }
+
+    public ActualizarFuncionalidadDtoInput toDtoInput(final ActualizarFuncionalidadDtoRequest dto) {
+        var dtoToMap = dto == null ? new ActualizarFuncionalidadDtoRequest() : dto;
         final var idModulo = parseUUID(dtoToMap.getIdModulo(), "El identificador del modulo no es valido.");
         final var activo = parseBoolean(dtoToMap.getActivo(), "El estado activo debe ser 'true' o 'false'.");
         final var fechaInicio = parseDateTime(dtoToMap.getFechaInicio(), "La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
         final var fechaFinal = parseDateTime(dtoToMap.getFechaFinal(), "La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss).");
-        return ActualizarFuncionalidadDomain.create(id, dtoToMap.getNombre(), idModulo, activo, fechaInicio, fechaFinal);
+        return ActualizarFuncionalidadDtoInput.create(
+                dtoToMap.getNombre(),
+                idModulo,
+                activo,
+                fechaInicio,
+                fechaFinal
+        );
     }
 
-    private void validateStringFields(final ActualizarFuncionalidadDto dto) {
-        if (TextHelper.isBlank(dto.getNombre())) {
-            throw new FuncionalidadException("El nombre de la funcionalidad es obligatorio.");
-        }
-        if (dto.getNombre().length() < 3 || dto.getNombre().length() > 50) {
-            throw new FuncionalidadException("El nombre debe tener entre 3 y 50 caracteres.");
-        }
+    public ActualizarFuncionalidadDomain toDomain(final UUID id, final ActualizarFuncionalidadDtoInput dtoInput) {
+        return ActualizarFuncionalidadDomain.create(id, dtoInput.getNombre(), dtoInput.getIdModulo(), dtoInput.isActivo(),
+                dtoInput.getFechaInicio(), dtoInput.getFechaFinal());
     }
 
     private UUID parseUUID(final String value, final String errorMessage) {

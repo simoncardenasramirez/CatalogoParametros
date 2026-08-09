@@ -2,7 +2,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.ac
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.exception.OrganizacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -11,20 +12,19 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 public enum ActualizarOrganizacionDtoMapper {
     INSTANCE;
 
-    public ActualizarOrganizacionDomain toDomain(final ActualizarOrganizacionDto dto) {
-        var dtoToMap = dto == null ? new ActualizarOrganizacionDto() : dto;
-        validateStringFields(dtoToMap);
-        final var id = parseUUID(dtoToMap.getId(), "El identificador de la organizacion no es valido.");
-        return ActualizarOrganizacionDomain.create(id, dtoToMap.getNombre());
+    public ActualizarOrganizacionDomain toDomain(final ActualizarOrganizacionDtoRequest dto) {
+        final var dtoInput = toDtoInput(dto);
+        return toDomain(dtoInput);
     }
 
-    private void validateStringFields(final ActualizarOrganizacionDto dto) {
-        if (TextHelper.isBlank(dto.getNombre())) {
-            throw new OrganizacionException("El nombre de la organizacion es obligatorio.");
-        }
-        if (dto.getNombre().length() < 3 || dto.getNombre().length() > 50) {
-            throw new OrganizacionException("El nombre debe tener entre 3 y 50 caracteres.");
-        }
+    public ActualizarOrganizacionDtoInput toDtoInput(final ActualizarOrganizacionDtoRequest dto) {
+        var dtoToMap = dto == null ? new ActualizarOrganizacionDtoRequest() : dto;
+        final var id = parseUUID(dtoToMap.getId(), "El identificador de la organizacion no es valido.");
+        return ActualizarOrganizacionDtoInput.create(id, dtoToMap.getNombre());
+    }
+
+    public ActualizarOrganizacionDomain toDomain(final ActualizarOrganizacionDtoInput dtoInput) {
+        return ActualizarOrganizacionDomain.create(dtoInput.getId(), dtoInput.getNombre());
     }
 
     private UUID parseUUID(final String value, final String errorMessage) {

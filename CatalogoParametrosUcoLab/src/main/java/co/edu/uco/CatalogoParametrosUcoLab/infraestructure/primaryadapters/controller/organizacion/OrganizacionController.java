@@ -2,11 +2,11 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.cont
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.interactor.ActualizarOrganizacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.consultarorganizacion.primaryports.interactor.ConsultarOrganizacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.secondaryports.publisher.ActualizarOrganizacionPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.interactor.CrearOrganizacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.secondaryports.publisher.CrearOrganizacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.primaryports.interactor.EliminarOrganizacionInteractor;
@@ -84,7 +84,7 @@ public final class OrganizacionController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<OrganizacionResponse>> crear(@RequestBody final CrearOrganizacionDto organizacion) {
+    public Mono<ResponseEntity<OrganizacionResponse>> crear(@RequestBody final CrearOrganizacionDtoRequest organizacion) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
             try {
@@ -100,11 +100,11 @@ public final class OrganizacionController {
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<OrganizacionResponse>> actualizar(@PathVariable final UUID id,
-            @RequestBody final ActualizarOrganizacionDto organizacion) {
+            @RequestBody final ActualizarOrganizacionNombreRequest request) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
             try {
-                var dto = new ActualizarOrganizacionDto(id.toString(), organizacion.getNombre());
+                var dto = new ActualizarOrganizacionDtoRequest(id.toString(), request.nombre());
                 actualizarOrganizacionInteractor.execute(dto);
                 response.getMensajes().add("Organizacion actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
