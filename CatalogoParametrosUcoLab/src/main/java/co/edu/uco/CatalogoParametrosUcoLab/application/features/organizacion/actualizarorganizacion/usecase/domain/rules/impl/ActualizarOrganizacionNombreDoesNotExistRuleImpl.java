@@ -6,6 +6,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.act
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public class ActualizarOrganizacionNombreDoesNotExistRuleImpl implements ActualizarOrganizacionNombreDoesNotExistRule {
@@ -23,7 +24,7 @@ public class ActualizarOrganizacionNombreDoesNotExistRuleImpl implements Actuali
                 .filter(o -> o.getNombre().equalsIgnoreCase(nombre))
                 .findFirst();
         if (existing.isPresent() && !existing.get().getId().equals(data.getId())) {
-            throw new IllegalArgumentException("Ya existe una organizacion con el nombre: " + nombre);
+            throw ConflictException.build("Ya existe una organizacion con el nombre: " + nombre);
         }
     }
 }

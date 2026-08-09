@@ -12,6 +12,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cre
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.primaryports.interactor.EliminarOrganizacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.secondaryports.publisher.EliminarOrganizacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.secondaryports.event.OrganizacionEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.organizacion.OrganizacionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -91,6 +92,8 @@ public final class OrganizacionController {
                 crearOrganizacionInteractor.execute(organizacion);
                 response.getMensajes().add("Organizacion creada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando la organizacion: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -108,6 +111,8 @@ public final class OrganizacionController {
                 actualizarOrganizacionInteractor.execute(dto);
                 response.getMensajes().add("Organizacion actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando la organizacion: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -123,6 +128,8 @@ public final class OrganizacionController {
                 eliminarOrganizacionInteractor.execute(id);
                 response.getMensajes().add("Organizacion eliminada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error eliminando la organizacion: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -138,6 +145,8 @@ public final class OrganizacionController {
                 var organizaciones = consultarOrganizacionInteractor.execute();
                 response.getOrganizaciones().addAll(organizaciones);
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error consultando las organizaciones: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -153,6 +162,8 @@ public final class OrganizacionController {
                 var organizaciones = consultarOrganizacionInteractor.execute(id);
                 response.getOrganizaciones().addAll(organizaciones);
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error consultando la organizacion: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

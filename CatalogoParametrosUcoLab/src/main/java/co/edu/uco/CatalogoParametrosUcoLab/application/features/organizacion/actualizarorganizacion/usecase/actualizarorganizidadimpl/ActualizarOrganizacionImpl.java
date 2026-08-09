@@ -9,6 +9,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.act
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
 @Service
 public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
@@ -25,6 +26,9 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
     @Override
     @Transactional
     public void execute(final ActualizarOrganizacionDomain domain) {
+        if (organizacionRepository.findById(domain.getId()).isEmpty()) {
+            throw NotFoundException.build("La organizacion con id " + domain.getId() + " no existe.");
+        }
         var entity = OrganizacionEntity.create(domain.getId(), domain.getNombre());
         var updatedEntity = organizacionRepository.update(entity);
         actualizarOrganizacionPublisher.sendEvent(ActualizarOrganizacionEvent.updated(updatedEntity));
