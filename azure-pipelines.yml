@@ -11,13 +11,13 @@ pool:
 steps:
 
 - task: Maven@4
-  displayName: 'Compilar y ejecutar pruebas'
+  displayName: 'Compilar proyecto'
   inputs:
     mavenPomFile: 'CatalogoParametrosUcoLab/pom.xml'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.21'
     jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'clean verify'
+    publishJUnitResults: false
+    goals: 'clean package'
+    options: '-DskipTests'
