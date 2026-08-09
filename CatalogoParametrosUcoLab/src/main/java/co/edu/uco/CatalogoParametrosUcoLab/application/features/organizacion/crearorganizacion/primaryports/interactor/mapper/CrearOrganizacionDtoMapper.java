@@ -2,7 +2,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cr
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
 
 public final class CrearOrganizacionDtoMapper {
@@ -13,10 +14,21 @@ public final class CrearOrganizacionDtoMapper {
         super();
     }
 
-    public CrearOrganizacionDomain toDomain(final CrearOrganizacionDto dto) {
+    public CrearOrganizacionDomain toDomain(final CrearOrganizacionDtoRequest dto) {
+        final var dtoInput = toDtoInput(dto);
+        return toDomain(dtoInput);
+    }
+
+    public CrearOrganizacionDtoInput toDtoInput(final CrearOrganizacionDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearOrganizacionDtoRequest() : dto;
+        final var nombre = dtoToMap.getNombre();
+        return CrearOrganizacionDtoInput.create(nombre);
+    }
+
+    public CrearOrganizacionDomain toDomain(final CrearOrganizacionDtoInput dtoInput) {
         return CrearOrganizacionDomain.create(
                 UUID.randomUUID(),
-                dto.getNombre()
+                dtoInput.getNombre()
         );
     }
 }

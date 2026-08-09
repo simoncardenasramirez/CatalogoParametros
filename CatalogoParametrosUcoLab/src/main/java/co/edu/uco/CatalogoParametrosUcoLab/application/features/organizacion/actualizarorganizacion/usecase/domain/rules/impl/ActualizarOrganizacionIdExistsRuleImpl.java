@@ -6,6 +6,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.act
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
 @Service
 public class ActualizarOrganizacionIdExistsRuleImpl implements ActualizarOrganizacionIdExistsRule {
@@ -20,7 +21,7 @@ public class ActualizarOrganizacionIdExistsRuleImpl implements ActualizarOrganiz
     public void execute(final ActualizarOrganizacionDomain data) {
         final var id = data.getId();
         if (organizacionRepository.findById(id).isEmpty()) {
-            throw new IllegalArgumentException("La organizacion con id " + id + " no existe.");
+            throw NotFoundException.build("La organizacion con id " + id + " no existe.");
         }
     }
 }

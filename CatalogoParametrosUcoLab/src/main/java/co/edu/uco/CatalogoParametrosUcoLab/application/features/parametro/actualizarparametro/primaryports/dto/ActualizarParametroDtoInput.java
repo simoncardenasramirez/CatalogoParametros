@@ -1,35 +1,31 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto;
-
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto;
 
 import java.util.UUID;
 
-public final class CrearParametroDto {
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
+
+public final class ActualizarParametroDtoInput {
 
     private String nombre;
     private UUID idFuncionalidad;
     private UUID idTipoParametro;
     private boolean activo;
 
-    public CrearParametroDto() {
-        setNombre(TextHelper.EMPTY);
-        setIdFuncionalidad(UUIDHelper.getDefault());
-        setIdTipoParametro(UUIDHelper.getDefault());
-        setActivo(true);
+    public ActualizarParametroDtoInput() {
+        this("", UUIDHelper.getDefault(), UUIDHelper.getDefault(), false);
     }
 
-    public CrearParametroDto(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
-            final boolean activo) {
+    public ActualizarParametroDtoInput(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
+                                       final boolean activo) {
         setNombre(nombre);
         setIdFuncionalidad(idFuncionalidad);
         setIdTipoParametro(idTipoParametro);
         setActivo(activo);
     }
 
-    public static CrearParametroDto create(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
-            final boolean activo) {
-        return new CrearParametroDto(nombre, idFuncionalidad, idTipoParametro, activo);
+    public static ActualizarParametroDtoInput create(final String nombre, final UUID idFuncionalidad, final UUID idTipoParametro,
+                                                     final boolean activo) {
+        return new ActualizarParametroDtoInput(nombre, idFuncionalidad, idTipoParametro, activo);
     }
 
     public String getNombre() {
@@ -37,7 +33,7 @@ public final class CrearParametroDto {
     }
 
     public void setNombre(final String nombre) {
-        this.nombre = TextHelper.applyTrim(nombre);
+        this.nombre = nombre;
     }
 
     public UUID getIdFuncionalidad() {

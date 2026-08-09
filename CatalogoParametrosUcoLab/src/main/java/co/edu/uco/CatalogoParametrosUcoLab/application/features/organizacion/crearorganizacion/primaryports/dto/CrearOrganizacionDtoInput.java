@@ -1,24 +1,21 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto;
 
-import java.util.UUID;
-
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
-public final class CrearOrganizacionDto {
+public final class CrearOrganizacionDtoInput {
 
     private String nombre;
 
-    public CrearOrganizacionDto() {
-        setNombre(TextHelper.EMPTY);
+    public CrearOrganizacionDtoInput() {
+        this(TextHelper.EMPTY);
     }
 
-    public CrearOrganizacionDto(final String nombre) {
+    public CrearOrganizacionDtoInput(final String nombre) {
         setNombre(nombre);
     }
 
-    public static CrearOrganizacionDto create(final String nombre) {
-        return new CrearOrganizacionDto(nombre);
+    public static CrearOrganizacionDtoInput create(final String nombre) {
+        return new CrearOrganizacionDtoInput(nombre);
     }
 
     public String getNombre() {

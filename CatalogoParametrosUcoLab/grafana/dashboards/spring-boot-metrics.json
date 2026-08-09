@@ -1,0 +1,125 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Spring Boot Metrics - CatalogoParametrosUcoLab",
+    "tags": ["spring-boot", "micrometer"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "JVM Memory Used",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Prometheus"
+        },
+        "targets": [
+          {
+            "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
+            "legendFormat": "Heap",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(jvm_memory_used_bytes{area=\"nonheap\"})",
+            "legendFormat": "Non-Heap",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "custom": {
+              "displayMode": "auto"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "HTTP Server Requests",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Prometheus"
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (method, status)",
+            "legendFormat": "{{method}} {{status}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "JVM Peak Threads",
+        "type": "stat",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Prometheus"
+        },
+        "targets": [
+          {
+            "expr": "jvm_threads_peak_threads",
+            "legendFormat": "Peak Threads",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Process Uptime",
+        "type": "stat",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Prometheus"
+        },
+        "targets": [
+          {
+            "expr": "process_uptime_seconds",
+            "legendFormat": "Uptime",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "decimals": 0
+          }
+        }
+      }
+    ]
+  }
+}

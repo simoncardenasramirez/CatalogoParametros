@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.modulo;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.CrearModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.secondaryports.event.CrearModuloEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.secondaryports.publisher.CrearModuloPublisher;
@@ -47,7 +47,7 @@ public final class ModuloController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<ParametroResponse>> crear(@RequestBody final CrearModuloDto modulo) {
+    public Mono<ResponseEntity<ParametroResponse>> crear(@RequestBody final CrearModuloDtoRequest modulo) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 

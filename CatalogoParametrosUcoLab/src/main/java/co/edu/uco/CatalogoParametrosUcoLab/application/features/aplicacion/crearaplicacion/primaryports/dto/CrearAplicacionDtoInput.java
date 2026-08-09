@@ -6,7 +6,7 @@ import java.util.UUID;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
-public final class CrearAplicacionDto {
+public final class CrearAplicacionDtoInput {
 
     private String nombre;
     private UUID idOrganizacion;
@@ -14,16 +14,12 @@ public final class CrearAplicacionDto {
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFinal;
 
-    public CrearAplicacionDto() {
-        setNombre(TextHelper.EMPTY);
-        setIdOrganizacion(UUIDHelper.getDefault());
-        setActiva(true);
-        setFechaInicio(null);
-        setFechaFinal(null);
+    public CrearAplicacionDtoInput() {
+        this(TextHelper.EMPTY, UUIDHelper.getDefault(), false, null, null);
     }
 
-    public CrearAplicacionDto(final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public CrearAplicacionDtoInput(final String nombre, final UUID idOrganizacion, final boolean activa,
+                                   final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
         setNombre(nombre);
         setIdOrganizacion(idOrganizacion);
         setActiva(activa);
@@ -31,9 +27,9 @@ public final class CrearAplicacionDto {
         setFechaFinal(fechaFinal);
     }
 
-    public static CrearAplicacionDto create(final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
-        return new CrearAplicacionDto(nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
+    public static CrearAplicacionDtoInput create(final String nombre, final UUID idOrganizacion, final boolean activa,
+                                                 final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+        return new CrearAplicacionDtoInput(nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
     }
 
     public String getNombre() {

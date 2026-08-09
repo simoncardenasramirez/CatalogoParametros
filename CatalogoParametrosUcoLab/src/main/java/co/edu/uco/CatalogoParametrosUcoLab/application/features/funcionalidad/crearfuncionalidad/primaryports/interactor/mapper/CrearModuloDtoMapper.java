@@ -1,14 +1,15 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor.mapper;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDto;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 
 public final class CrearModuloDtoMapper {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static final CrearModuloDtoMapper INSTANCE = new CrearModuloDtoMapper();
 
@@ -16,22 +17,19 @@ public final class CrearModuloDtoMapper {
         super();
     }
 
-    public CrearModuloDomain toDomain(final CrearModuloDto dto) {
-        var dtoToMap = dto == null ? new CrearModuloDto() : dto;
+    public CrearModuloDomain toDomain(final CrearModuloDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearModuloDtoRequest() : dto;
+        final var idAplicacion = UUID.fromString(dtoToMap.getIdAplicacion());
+        final var activo = Boolean.parseBoolean(dtoToMap.getActivo());
+        final var fechaInicio = LocalDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
+        final var fechaFinal = LocalDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
         return CrearModuloDomain.create(
                 UUID.randomUUID(),
                 dtoToMap.getNombre(),
-                dtoToMap.getIdAplicacion(),
-                dtoToMap.isActivo(),
-                mapFecha(dtoToMap.getFechaInicio()),
-                mapFecha(dtoToMap.getFechaFinal())
+                idAplicacion,
+                activo,
+                fechaInicio,
+                fechaFinal
         );
-    }
-
-    private LocalDateTime mapFecha(final String fecha) {
-        if (fecha == null || fecha.isBlank()) {
-            return null;
-        }
-        return LocalDateTime.parse(fecha);
     }
 }

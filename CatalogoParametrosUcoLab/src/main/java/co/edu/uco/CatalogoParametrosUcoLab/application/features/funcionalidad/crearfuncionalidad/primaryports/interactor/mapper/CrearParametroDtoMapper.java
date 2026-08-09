@@ -1,15 +1,20 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor.mapper;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDto;
+import java.util.UUID;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public enum CrearParametroDtoMapper {
     INSTANCE;
 
-    public CrearParametroDomain toDomain(final CrearParametroDto dto) {
-        var dtoToMap = dto == null ? new CrearParametroDto() : dto;
-        return CrearParametroDomain.create(UUIDHelper.getDefault(), dtoToMap.getNombre(), dtoToMap.getIdFuncionalidad(),
-                dtoToMap.getIdTipoParametro(), dtoToMap.isActivo());
+    public CrearParametroDomain toDomain(final CrearParametroDtoRequest dto) {
+        var dtoToMap = dto == null ? new CrearParametroDtoRequest() : dto;
+        final var idFuncionalidad = UUID.fromString(dtoToMap.getIdFuncionalidad());
+        final var idTipoParametro = UUID.fromString(dtoToMap.getIdTipoParametro());
+        final var activo = Boolean.parseBoolean(dtoToMap.getActivo());
+        return CrearParametroDomain.create(UUIDHelper.getDefault(), dtoToMap.getNombre(), idFuncionalidad,
+                idTipoParametro, activo);
     }
 }

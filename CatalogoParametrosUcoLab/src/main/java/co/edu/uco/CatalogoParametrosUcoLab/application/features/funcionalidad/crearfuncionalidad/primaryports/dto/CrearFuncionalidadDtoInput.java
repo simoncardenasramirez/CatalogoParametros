@@ -1,4 +1,4 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto;
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
-public final class ActualizarFuncionalidadDto {
+public final class CrearFuncionalidadDtoInput {
 
     private String nombre;
     private UUID idModulo;
@@ -14,16 +14,12 @@ public final class ActualizarFuncionalidadDto {
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFinal;
 
-    public ActualizarFuncionalidadDto() {
-        setNombre(TextHelper.EMPTY);
-        setIdModulo(UUIDHelper.getDefault());
-        setActivo(true);
-        setFechaInicio(null);
-        setFechaFinal(null);
+    public CrearFuncionalidadDtoInput() {
+        this(TextHelper.EMPTY, UUIDHelper.getDefault(), false, null, null);
     }
 
-    public ActualizarFuncionalidadDto(final String nombre, final UUID idModulo, final boolean activo,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public CrearFuncionalidadDtoInput(final String nombre, final UUID idModulo, final boolean activo,
+                                      final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
         setNombre(nombre);
         setIdModulo(idModulo);
         setActivo(activo);
@@ -31,9 +27,9 @@ public final class ActualizarFuncionalidadDto {
         setFechaFinal(fechaFinal);
     }
 
-    public static ActualizarFuncionalidadDto create(final String nombre, final UUID idModulo, final boolean activo,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
-        return new ActualizarFuncionalidadDto(nombre, idModulo, activo, fechaInicio, fechaFinal);
+    public static CrearFuncionalidadDtoInput create(final String nombre, final UUID idModulo, final boolean activo,
+                                                    final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+        return new CrearFuncionalidadDtoInput(nombre, idModulo, activo, fechaInicio, fechaFinal);
     }
 
     public String getNombre() {

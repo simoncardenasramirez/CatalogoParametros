@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto.ActualizarParametroDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto.ActualizarParametroDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.interactor.ActualizarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.publisher.ActualizarParametroPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.interactor.CrearParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.consultarparametro.primaryports.interactor.ConsultarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.secondaryports.publisher.CrearParametroPublisher;
@@ -74,7 +74,7 @@ public final class ParametroController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<ParametroResponse>> crearParametro(@RequestBody final CrearParametroDto parametro) {
+    public Mono<ResponseEntity<ParametroResponse>> crearParametro(@RequestBody final CrearParametroDtoRequest parametro) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 
@@ -94,7 +94,7 @@ public final class ParametroController {
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<ParametroResponse>> actualizarParametro(@PathVariable final UUID id,
-            @RequestBody final ActualizarParametroDto parametro) {
+            @RequestBody final ActualizarParametroDtoRequest parametro) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 
