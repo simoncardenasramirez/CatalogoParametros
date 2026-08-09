@@ -13,7 +13,7 @@ steps:
 - task: Maven@4
   displayName: 'Compilar y ejecutar pruebas'
   inputs:
-    mavenPomFile: 'pom.xml'
+    mavenPomFile: 'CatalogoParametrosUcoLab/pom.xml'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.21'
