@@ -5,9 +5,6 @@ import java.util.UUID;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.exception.OrganizacionException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public final class CrearOrganizacionDtoMapper {
 
@@ -24,7 +21,8 @@ public final class CrearOrganizacionDtoMapper {
 
     public CrearOrganizacionDtoInput toDtoInput(final CrearOrganizacionDtoRequest dto) {
         var dtoToMap = dto == null ? new CrearOrganizacionDtoRequest() : dto;
-        return CrearOrganizacionDtoInput.create(dtoToMap.getNombre());
+        final var nombre = dtoToMap.getNombre();
+        return CrearOrganizacionDtoInput.create(nombre);
     }
 
     public CrearOrganizacionDomain toDomain(final CrearOrganizacionDtoInput dtoInput) {
