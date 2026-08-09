@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.consultarorganizacion.primaryports.interactor.ConsultarOrganizacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
 @Service
 public class ConsultarOrganizacionInteractorImpl implements ConsultarOrganizacionInteractor {
@@ -27,6 +28,6 @@ public class ConsultarOrganizacionInteractorImpl implements ConsultarOrganizacio
     public List<OrganizacionEntity> execute(final UUID id) {
         return organizacionRepository.findById(id)
                 .map(List::of)
-                .orElse(List.of());
+                .orElseThrow(() -> NotFoundException.build("La organizacion con id " + id + " no existe."));
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.domain.rules.EliminarOrganizacionIsNotUsedByAplicacionRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public class EliminarOrganizacionIsNotUsedByAplicacionRuleImpl implements EliminarOrganizacionIsNotUsedByAplicacionRule {
@@ -20,7 +21,7 @@ public class EliminarOrganizacionIsNotUsedByAplicacionRuleImpl implements Elimin
     @Override
     public void execute(final UUID id) {
         if (aplicacionRepository.existsByIdOrganizacion(id)) {
-            throw new IllegalArgumentException(
+            throw ConflictException.build(
                     "No se puede eliminar la organizacion porque esta siendo usada por una o mas aplicaciones.");
         }
     }

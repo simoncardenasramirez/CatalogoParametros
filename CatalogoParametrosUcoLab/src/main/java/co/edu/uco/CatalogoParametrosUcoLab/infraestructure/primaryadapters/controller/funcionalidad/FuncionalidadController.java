@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.interactor.ActualizarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.secondaryports.publisher.ActualizarFuncionalidadPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.consultarfuncionalidad.primaryports.interactor.ConsultarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor.CrearFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.secondaryports.publisher.CrearFuncionalidadPublisher;
@@ -75,7 +75,7 @@ public final class FuncionalidadController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<ParametroResponse>> crearFuncionalidad(@RequestBody final CrearFuncionalidadDto funcionalidad) {
+    public Mono<ResponseEntity<ParametroResponse>> crearFuncionalidad(@RequestBody final CrearFuncionalidadDtoRequest funcionalidad) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 
@@ -95,7 +95,7 @@ public final class FuncionalidadController {
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<ParametroResponse>> actualizarFuncionalidad(@PathVariable final UUID id,
-            @RequestBody final ActualizarFuncionalidadDto funcionalidad) {
+            @RequestBody final ActualizarFuncionalidadDtoRequest funcionalidad) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 

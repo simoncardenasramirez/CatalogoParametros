@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.domain.rules.EliminarOrganizacionIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
 @Service
 public class EliminarOrganizacionIdExistsRuleImpl implements EliminarOrganizacionIdExistsRule {
@@ -20,7 +21,7 @@ public class EliminarOrganizacionIdExistsRuleImpl implements EliminarOrganizacio
     @Override
     public void execute(final UUID id) {
         if (organizacionRepository.findById(id).isEmpty()) {
-            throw new IllegalArgumentException("La organizacion con id " + id + " no existe.");
+            throw NotFoundException.build("La organizacion con id " + id + " no existe.");
         }
     }
 }

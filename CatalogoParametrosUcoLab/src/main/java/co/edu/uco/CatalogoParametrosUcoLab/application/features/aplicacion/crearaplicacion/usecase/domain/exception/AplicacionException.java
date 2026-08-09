@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception;
-
-public final class AplicacionException extends RuntimeException {
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+public final class AplicacionException extends ValidationException {
 
     public AplicacionException(final String message) {
         super(message);

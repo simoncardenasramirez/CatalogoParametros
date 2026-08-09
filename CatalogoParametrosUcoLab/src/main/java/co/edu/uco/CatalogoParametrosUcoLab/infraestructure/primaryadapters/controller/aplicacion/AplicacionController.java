@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.aplicacion;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.dto.CrearAplicacionDto;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.dto.CrearAplicacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.interactor.CrearAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.secondaryports.publisher.CrearAplicacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
@@ -46,7 +46,7 @@ public final class AplicacionController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<AplicacionResponse>> crear(@RequestBody final CrearAplicacionDto aplicacion) {
+    public Mono<ResponseEntity<AplicacionResponse>> crear(@RequestBody final CrearAplicacionDtoRequest aplicacion) {
         return Mono.fromCallable(() -> {
             var response = new AplicacionResponse();
             try {
