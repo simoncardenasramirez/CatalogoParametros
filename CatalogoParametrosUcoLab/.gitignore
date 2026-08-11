@@ -38,3 +38,23 @@ build/
 
 ### Archivos de la aplicación ###
 data/
+
+# Variables de entorno
+.env
+
+# SurrealDB
+surrealdb-data/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# Maven
+target/
+
+# Node
+node_modules/
+dist/
