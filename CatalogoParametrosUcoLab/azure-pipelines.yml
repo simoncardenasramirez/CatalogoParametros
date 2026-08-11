@@ -1,0 +1,193 @@
+trigger:
+  branches:
+    include:
+      - main
+      - master
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+      - develop
+
+variables:
+  # Java
+  JAVA_VERSION: '21'
+
+  # Docker
+  IMAGE_NAME: 'catalogoparametrosucolab'
+  DOCKER_REGISTRY_SERVICE_CONNECTION: 'azure-container-registry'
+  CONTAINER_REGISTRY_LOGIN_SERVER: 'parametersucolab.azurecr.io'
+
+  # Azure
+  AZURE_SUBSCRIPTION: 'your-azure-subscription-id'
+  RESOURCE_GROUP: 'catalogo-parametros-rg'
+  APP_NAME: 'catalogo-parametros-app'
+  KEY_VAULT_NAME: 'parametersucolab'
+
+  # Application
+  APPLICATION_NAME: 'CatalogoParametrosUcoLab'
+
+stages:
+  - stage: Build
+    displayName: 'Build and Test'
+    jobs:
+      - job: Build
+        displayName: 'Build with Maven'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: Maven@3
+            displayName: 'Build with Maven'
+            inputs:
+              mavenPomFile: 'pom.xml'
+              mavenOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              javaVersionOption: '$(JAVA_VERSION)'
+              jdkArchitectureOption: 'x64'
+              goals: 'clean package -DskipTests'
+
+          - task: Maven@3
+            displayName: 'Run Tests'
+            inputs:
+              mavenPomFile: 'pom.xml'
+              mavenOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              javaVersionOption: '$(JAVA_VERSION)'
+              jdkArchitectureOption: 'x64'
+              goals: 'test'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            inputs:
+              testResultsFormat: 'surefire'
+              testResultsFiles: '**/TEST-*.xml'
+              searchFolder: '$(System.DefaultWorkingDirectory)'
+            condition: succeededOrFailed()
+
+          - task: PublishCodeCoverageResults@1
+            displayName: 'Publish Code Coverage'
+            inputs:
+              codeCoverageTool: 'JaCoCo'
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
+              reportDirectoryLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco'
+            condition: succeededOrFailed()
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact - JAR'
+            inputs:
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/target/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: BuildDockerImage
+    displayName: 'Build and Push Docker Image'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: BuildDocker
+        displayName: 'Build Docker Image'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(System.ArtifactsDirectory)/drop'
+
+          - script: |
+              mkdir -p $(System.DefaultWorkingDirectory)/target
+              cp $(System.ArtifactsDirectory)/drop/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar $(System.DefaultWorkingDirectory)/target/
+            displayName: 'Place JAR in target directory'
+
+          - task: Docker@2
+            displayName: 'Build and Push Docker Image'
+            inputs:
+              command: 'buildAndPush'
+              repository: '$(CONTAINER_REGISTRY_LOGIN_SERVER)/$(IMAGE_NAME)'
+              dockerfile: 'Dockerfile'
+              tags: |
+                $(Build.BuildId)
+                latest
+              buildContext: '$(System.DefaultWorkingDirectory)'
+              containerRegistry: '$(DOCKER_REGISTRY_SERVICE_CONNECTION)'
+
+          - script: |
+              docker run -d --name smoke-test-app \
+                -e MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus \
+                -e MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true \
+                -p 8080:8080 \
+                $(CONTAINER_REGISTRY_LOGIN_SERVER)/$(IMAGE_NAME):$(Build.BuildId)
+              echo "Waiting for application to start..."
+              sleep 30
+              curl -f http://localhost:8080/actuator/health || exit 1
+              echo "Health check passed!"
+            displayName: 'Run Docker Image Smoke Test'
+            timeoutInMinutes: 2
+
+          - script: |
+              docker rm -f smoke-test-app
+            displayName: 'Stop and Remove Smoke Test Container'
+            condition: always()
+
+  - stage: Deploy
+    displayName: 'Deploy to Azure'
+    dependsOn: BuildDockerImage
+    condition: succeeded()
+    jobs:
+      - deployment: DeployToAzure
+        displayName: 'Deploy to Azure App Service'
+        environment: 'production'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureKeyVault@2
+                  displayName: 'Fetch Secrets from Azure Key Vault'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION)'
+                    KeyVaultName: '$(KEY_VAULT_NAME)'
+                    SecretsFilter: '*'
+                    RunAsPreJob: true
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy to Azure App Service (Linux)'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION)'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az webapp config container set \
+                        --resource-group $(RESOURCE_GROUP) \
+                        --name $(APP_NAME) \
+                        --docker-custom-image-name $(CONTAINER_REGISTRY_LOGIN_SERVER)/$(IMAGE_NAME):$(Build.BuildId)
+
+                - task: AzureCLI@2
+                  displayName: 'Configure App Settings'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION)'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az webapp config appsettings set \
+                        --resource-group $(RESOURCE_GROUP) \
+                        --name $(APP_NAME) \
+                        --settings \
+                        application-name=$(APPLICATION_NAME) \
+                        MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus \
+                        MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+
+                - task: AzureAppServiceManage@1
+                  displayName: 'Restart App Service'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION)'
+                    appName: '$(APP_NAME)'
+                    resourceGroupName: '$(RESOURCE_GROUP)'
+                    action: 'restart'
