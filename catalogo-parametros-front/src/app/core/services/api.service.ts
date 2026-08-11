@@ -65,6 +65,13 @@ export class ApiService {
     );
   }
 
+  getAplicacionById(id: string): Observable<Aplicacion[]> {
+    return this.http.get<AplicacionResponse>(`${this.baseUrl}/aplicaciones/${id}`).pipe(
+      map(response => response.aplicaciones),
+      catchError(this.handleError)
+    );
+  }
+
   createAplicacion(aplicacion: { nombre: string; idOrganizacion: string; activa?: boolean; fechaInicio?: string; fechaFinal?: string }): Observable<AplicacionResponse> {
     return this.http.post<AplicacionResponse>(`${this.baseUrl}/aplicaciones`, aplicacion).pipe(
       catchError(this.handleError)
@@ -74,6 +81,13 @@ export class ApiService {
   // Modulos
   getModulos(): Observable<Modulo[]> {
     return this.http.get<ModuloResponse>(`${this.baseUrl}/modulos`).pipe(
+      map(response => response.modulos),
+      catchError(this.handleError)
+    );
+  }
+
+  getModuloById(id: string): Observable<Modulo[]> {
+    return this.http.get<ModuloResponse>(`${this.baseUrl}/modulos/${id}`).pipe(
       map(response => response.modulos),
       catchError(this.handleError)
     );
