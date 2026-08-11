@@ -1,13 +1,17 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,prometheus
+      MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"
+
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+
+      JAVA_TOOL_OPTIONS: "-Djava.net.preferIPv4Stack=true"
     networks:
       - monitoring
 
@@ -19,8 +23,8 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus/data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
     networks:
       - monitoring
 
@@ -33,8 +37,24 @@ services:
       - ./grafana/dashboards:/etc/grafana/dashboards
       - grafana-data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    networks:
+      - monitoring
+
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    ports:
+      - "8000:8000"
+    command:
+      - start
+      - --user
+      - root
+      - --pass
+      - root
+      - rocksdb:/surrealdb-data/database.db
+    volumes:
+      - ./surrealdb-data:/surrealdb-data
     networks:
       - monitoring
 
