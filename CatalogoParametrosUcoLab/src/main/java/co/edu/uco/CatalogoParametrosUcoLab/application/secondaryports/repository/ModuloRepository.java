@@ -10,6 +10,8 @@ public interface ModuloRepository {
 
     ModuloEntity save(ModuloEntity modulo);
 
+    ModuloEntity update(ModuloEntity modulo);
+
     boolean existsByNombre(String nombre);
 
     Optional<ModuloEntity> findById(UUID id);

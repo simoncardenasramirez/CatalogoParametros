@@ -27,6 +27,27 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     }
 
     @Override
+    public ModuloEntity update(final ModuloEntity modulo) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idAplicacion: '%s',
+                    activo: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, modulo.getId(), escape(modulo.getNombre()),
+                modulo.getIdAplicacion(), modulo.isActivo(),
+                formatDateTime(modulo.getFechaInicio()),
+                formatDateTime(modulo.getFechaFinal()));
+
+        surrealDbClient.execute(query);
+        return modulo;
+    }
+
+    @Override
     public ModuloEntity save(final ModuloEntity modulo) {
         var query = """
                 BEGIN TRANSACTION;

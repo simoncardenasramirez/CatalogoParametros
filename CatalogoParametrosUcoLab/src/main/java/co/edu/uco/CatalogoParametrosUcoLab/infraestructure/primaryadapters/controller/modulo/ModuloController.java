@@ -2,6 +2,10 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.cont
 
 import java.util.UUID;
 
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.dto.ActualizarModuloDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.interactor.ActualizarModuloInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.secondaryports.event.ActualizarModuloEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.secondaryports.publisher.ActualizarModuloPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.consultarmodulo.primaryports.interactor.ConsultarModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto.CrearModuloDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.CrearModuloInteractor;
@@ -16,6 +20,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,25 +38,36 @@ public final class ModuloController {
     private final CrearModuloInteractor crearModuloInteractor;
     private final ConsultarModuloInteractor consultarModuloInteractor;
     private final CrearModuloPublisher crearModuloPublisher;
+    private final ActualizarModuloInteractor actualizarModuloInteractor;
+    private final ActualizarModuloPublisher actualizarModuloPublisher;
 
     public ModuloController(final CrearModuloInteractor crearModuloInteractor,
             final ConsultarModuloInteractor consultarModuloInteractor,
-            final CrearModuloPublisher crearModuloPublisher) {
+            final CrearModuloPublisher crearModuloPublisher,
+            final ActualizarModuloInteractor actualizarModuloInteractor,
+            final ActualizarModuloPublisher actualizarModuloPublisher) {
         this.crearModuloInteractor = crearModuloInteractor;
         this.consultarModuloInteractor = consultarModuloInteractor;
         this.crearModuloPublisher = crearModuloPublisher;
+        this.actualizarModuloInteractor = actualizarModuloInteractor;
+        this.actualizarModuloPublisher = actualizarModuloPublisher;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<ModuloEvent>> publicarEventos() {
-        var eventos = crearModuloPublisher.getStream().cast(ModuloEvent.class)
+        var eventosCrear = crearModuloPublisher.getStream().cast(ModuloEvent.class)
+                .map(event -> ServerSentEvent.builder(event)
+                        .event("modulo")
+                        .build());
+
+        var eventosActualizar = actualizarModuloPublisher.getStream().cast(ModuloEvent.class)
                 .map(event -> ServerSentEvent.builder(event)
                         .event("modulo")
                         .build());
 
         return Flux.concat(Mono.just(ServerSentEvent.<ModuloEvent>builder()
                 .comment("connected")
-                .build()), eventos);
+                .build()), Flux.merge(eventosCrear, eventosActualizar));
     }
 
     @PostMapping
@@ -68,6 +84,26 @@ public final class ModuloController {
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando el modulo: " + exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<ParametroResponse>> actualizar(@PathVariable final UUID id,
+            @RequestBody final ActualizarModuloDtoRequest modulo) {
+        return Mono.fromCallable(() -> {
+            var response = new ParametroResponse();
+
+            try {
+                actualizarModuloInteractor.execute(id, modulo);
+                response.getMensajes().add("Modulo actualizado exitosamente.");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final ModuloException exception) {
+                response.getMensajes().add(exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final Exception exception) {
+                response.getMensajes().add("Ocurrio un error actualizando el modulo: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }).subscribeOn(Schedulers.boundedElastic());

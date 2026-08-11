@@ -27,6 +27,27 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
     }
 
     @Override
+    public AplicacionEntity update(final AplicacionEntity aplicacion) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idOrganizacion: '%s',
+                    activa: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, aplicacion.getId(), escape(aplicacion.getNombre()),
+                aplicacion.getIdOrganizacion(), aplicacion.isActiva(),
+                formatDateTime(aplicacion.getFechaInicio()),
+                formatDateTime(aplicacion.getFechaFinal()));
+
+        surrealDbClient.execute(query);
+        return aplicacion;
+    }
+
+    @Override
     public AplicacionEntity save(final AplicacionEntity aplicacion) {
         var query = """
                 BEGIN TRANSACTION;

@@ -1,0 +1,31 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.impl;
+
+import org.springframework.stereotype.Service;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.ActualizarAplicacionDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNombreDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
+
+@Service
+public final class ActualizarAplicacionNombreDoesNotExistRuleImpl implements ActualizarAplicacionNombreDoesNotExistRule {
+
+    private final AplicacionRepository aplicacionRepository;
+
+    public ActualizarAplicacionNombreDoesNotExistRuleImpl(final AplicacionRepository aplicacionRepository) {
+        this.aplicacionRepository = aplicacionRepository;
+    }
+
+    @Override
+    public void execute(final ActualizarAplicacionDomain data) {
+        final var existingAplicacion = aplicacionRepository.findById(data.getId());
+        if (existingAplicacion.isPresent()) {
+            final var aplicacion = existingAplicacion.get();
+            if (!aplicacion.getNombre().equals(data.getNombre())
+                    && aplicacionRepository.existsByNombre(data.getNombre())) {
+                throw new AplicacionException(
+                        "Ya existe una aplicacion con el nombre " + data.getNombre() + ".");
+            }
+        }
+    }
+}
