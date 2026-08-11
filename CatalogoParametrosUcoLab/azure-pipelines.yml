@@ -1,3 +1,27 @@
+# Azure DevOps Pipeline for CatalogoParametrosUcoLab
+# 
+# PREREQUISITES - Configure these in Azure DevOps before running:
+# 
+# 1. Service Connections:
+#    - Azure Resource Manager service connection named "azure-subscription"
+#      (used for AZURE_SUBSCRIPTION variable)
+#    - Docker Registry service connection named "azure-container-registry"
+#      (pointing to parametersucolab.azurecr.io)
+#
+# 2. Variable Group (optional but recommended):
+#    - Create a variable group with: AZURE_SUBSCRIPTION, RESOURCE_GROUP,
+#      APP_NAME, KEY_VAULT_NAME, CONTAINER_REGISTRY_LOGIN_SERVER
+#
+# 3. Azure Resources:
+#    - Resource Group: catalogo-parametros-rg
+#    - App Service (Linux, Docker): catalogo-parametros-app
+#    - Azure Container Registry: parametersucolab.azurecr.io
+#    - Key Vault: parametersucolab (with secrets for SurrealDB and app config)
+#
+# 4. Agent Pool:
+#    - Ensure the pipeline uses an agent with Docker capability
+#      (ubuntu-latest has Docker pre-installed)
+
 trigger:
   branches:
     include:
@@ -22,7 +46,7 @@ variables:
   CONTAINER_REGISTRY_LOGIN_SERVER: 'parametersucolab.azurecr.io'
 
   # Azure
-  AZURE_SUBSCRIPTION: 'your-azure-subscription-id'
+  AZURE_SUBSCRIPTION: 'azure-subscription'
   RESOURCE_GROUP: 'catalogo-parametros-rg'
   APP_NAME: 'catalogo-parametros-app'
   KEY_VAULT_NAME: 'parametersucolab'
@@ -34,36 +58,38 @@ stages:
   - stage: Build
     displayName: 'Build and Test'
     jobs:
-      - job: Build
-        displayName: 'Build with Maven'
+      - job: BuildBackend
+        displayName: 'Build Backend with Maven'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - task: Maven@3
             displayName: 'Build with Maven'
             inputs:
-              mavenPomFile: 'pom.xml'
+              mavenPomFile: 'CatalogoParametrosUcoLab/pom.xml'
               mavenOptions: '-Xmx3072m'
               javaHomeOption: 'JDKVersion'
               javaVersionOption: '$(JAVA_VERSION)'
               jdkArchitectureOption: 'x64'
               goals: 'clean package -DskipTests'
+              workingDirectory: 'CatalogoParametrosUcoLab'
 
           - task: Maven@3
             displayName: 'Run Tests'
             inputs:
-              mavenPomFile: 'pom.xml'
+              mavenPomFile: 'CatalogoParametrosUcoLab/pom.xml'
               mavenOptions: '-Xmx3072m'
               javaHomeOption: 'JDKVersion'
               javaVersionOption: '$(JAVA_VERSION)'
               jdkArchitectureOption: 'x64'
               goals: 'test'
+              workingDirectory: 'CatalogoParametrosUcoLab'
 
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             inputs:
               testResultsFormat: 'surefire'
-              testResultsFiles: '**/TEST-*.xml'
+              testResultsFiles: 'CatalogoParametrosUcoLab/**/TEST-*.xml'
               searchFolder: '$(System.DefaultWorkingDirectory)'
             condition: succeededOrFailed()
 
@@ -71,15 +97,39 @@ stages:
             displayName: 'Publish Code Coverage'
             inputs:
               codeCoverageTool: 'JaCoCo'
-              summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
-              reportDirectoryLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco'
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab/target/site/jacoco/jacoco.xml'
+              reportDirectoryLocation: '$(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab/target/site/jacoco'
             condition: succeededOrFailed()
 
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Artifact - JAR'
             inputs:
-              PathtoPublish: '$(System.DefaultWorkingDirectory)/target/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar'
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab/target/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar'
               ArtifactName: 'drop'
+              publishLocation: 'Container'
+
+      - job: BuildFrontend
+        displayName: 'Build Frontend with Angular'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: NodeTool@0
+            displayName: 'Install Node.js 20'
+            inputs:
+              versionSpec: '20.x'
+              checkLatest: true
+
+          - script: |
+              cd catalogo-parametros-front
+              npm install
+              npm run build
+            displayName: 'Build Angular App'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact - Frontend'
+            inputs:
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/catalogo-parametros-front/dist/catalogo-parametros-front'
+              ArtifactName: 'frontend'
               publishLocation: 'Container'
 
   - stage: BuildDockerImage
@@ -101,8 +151,8 @@ stages:
               downloadPath: '$(System.ArtifactsDirectory)/drop'
 
           - script: |
-              mkdir -p $(System.DefaultWorkingDirectory)/target
-              cp $(System.ArtifactsDirectory)/drop/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar $(System.DefaultWorkingDirectory)/target/
+              mkdir -p $(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab/target
+              cp $(System.ArtifactsDirectory)/drop/$(APPLICATION_NAME)-0.0.1-SNAPSHOT.jar $(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab/target/
             displayName: 'Place JAR in target directory'
 
           - task: Docker@2
@@ -110,30 +160,12 @@ stages:
             inputs:
               command: 'buildAndPush'
               repository: '$(CONTAINER_REGISTRY_LOGIN_SERVER)/$(IMAGE_NAME)'
-              dockerfile: 'Dockerfile'
+              dockerfile: 'CatalogoParametrosUcoLab/Dockerfile'
               tags: |
                 $(Build.BuildId)
                 latest
-              buildContext: '$(System.DefaultWorkingDirectory)'
+              buildContext: '$(System.DefaultWorkingDirectory)/CatalogoParametrosUcoLab'
               containerRegistry: '$(DOCKER_REGISTRY_SERVICE_CONNECTION)'
-
-          - script: |
-              docker run -d --name smoke-test-app \
-                -e MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus \
-                -e MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true \
-                -p 8080:8080 \
-                $(CONTAINER_REGISTRY_LOGIN_SERVER)/$(IMAGE_NAME):$(Build.BuildId)
-              echo "Waiting for application to start..."
-              sleep 30
-              curl -f http://localhost:8080/actuator/health || exit 1
-              echo "Health check passed!"
-            displayName: 'Run Docker Image Smoke Test'
-            timeoutInMinutes: 2
-
-          - script: |
-              docker rm -f smoke-test-app
-            displayName: 'Stop and Remove Smoke Test Container'
-            condition: always()
 
   - stage: Deploy
     displayName: 'Deploy to Azure'

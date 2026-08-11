@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.controller.aplicacion;
 
+import java.util.UUID;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.consultaraplicacion.primaryports.interactor.ConsultarAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.dto.CrearAplicacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.interactor.CrearAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.secondaryports.publisher.CrearAplicacionPublisher;
@@ -11,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +29,14 @@ import reactor.core.scheduler.Schedulers;
 public final class AplicacionController {
 
     private final CrearAplicacionInteractor crearAplicacionInteractor;
+    private final ConsultarAplicacionInteractor consultarAplicacionInteractor;
     private final CrearAplicacionPublisher crearAplicacionPublisher;
 
     public AplicacionController(final CrearAplicacionInteractor crearAplicacionInteractor,
+            final ConsultarAplicacionInteractor consultarAplicacionInteractor,
             final CrearAplicacionPublisher crearAplicacionPublisher) {
         this.crearAplicacionInteractor = crearAplicacionInteractor;
+        this.consultarAplicacionInteractor = consultarAplicacionInteractor;
         this.crearAplicacionPublisher = crearAplicacionPublisher;
     }
 
@@ -43,6 +50,44 @@ public final class AplicacionController {
         return Flux.concat(Mono.just(ServerSentEvent.<AplicacionEvent>builder()
                 .comment("connected")
                 .build()), eventos);
+    }
+
+    @GetMapping
+    public Mono<ResponseEntity<AplicacionResponse>> consultarTodasLasAplicaciones() {
+        return Mono.fromCallable(() -> {
+            var response = new AplicacionResponse();
+
+            try {
+                var aplicaciones = consultarAplicacionInteractor.execute();
+                response.getAplicaciones().addAll(aplicaciones);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final Exception exception) {
+                response.getMensajes().add("Ocurrio un error consultando las aplicaciones.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<AplicacionResponse>> consultarAplicacionesPorId(@PathVariable final UUID id) {
+        return Mono.fromCallable(() -> {
+            var response = new AplicacionResponse();
+
+            try {
+                var aplicaciones = consultarAplicacionInteractor.execute(id);
+                response.getAplicaciones().addAll(aplicaciones);
+
+                if (aplicaciones.isEmpty()) {
+                    response.getMensajes().add("No se encontro la aplicacion con el id especificado.");
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                }
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final Exception exception) {
+                response.getMensajes().add("Ocurrio un error consultando la aplicacion.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @PostMapping
