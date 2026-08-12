@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 public final class ActualizarModuloDtoRequest {
@@ -83,27 +83,27 @@ public final class ActualizarModuloDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw new ModuloException("El nombre del modulo es obligatorio.");
+            throw ValidationException.build("El nombre del modulo es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw new ModuloException("El nombre debe tener entre 3 y 50 caracteres.");
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 
     private void validateIdAplicacion() {
         if (TextHelper.isBlank(idAplicacion)) {
-            throw new ModuloException("El identificador de la aplicacion es obligatorio.");
+            throw ValidationException.build("El identificador de la aplicacion es obligatorio.");
         }
         try {
             UUID.fromString(idAplicacion);
         } catch (IllegalArgumentException e) {
-            throw new ModuloException("El identificador de la aplicacion no es valido. Valor recibido: " + idAplicacion);
+            throw ValidationException.build("El identificador de la aplicacion no es valido. Valor recibido: " + idAplicacion);
         }
     }
 
     private void validateActivo() {
         if (!"true".equals(activo) && !"false".equals(activo)) {
-            throw new ModuloException("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activo);
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activo);
         }
     }
 
@@ -112,7 +112,7 @@ public final class ActualizarModuloDtoRequest {
             try {
                 LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw new ModuloException("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
+                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
             }
         }
     }
@@ -122,7 +122,7 @@ public final class ActualizarModuloDtoRequest {
             try {
                 LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw new ModuloException("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
+                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
             }
         }
     }

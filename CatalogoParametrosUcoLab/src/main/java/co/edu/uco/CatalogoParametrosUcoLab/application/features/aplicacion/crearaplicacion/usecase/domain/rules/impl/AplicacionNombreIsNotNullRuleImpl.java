@@ -3,8 +3,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crea
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.CrearAplicacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 
 @Service
 public final class AplicacionNombreIsNotNullRuleImpl implements AplicacionNombreIsNotNullRule {
@@ -12,7 +12,7 @@ public final class AplicacionNombreIsNotNullRuleImpl implements AplicacionNombre
     @Override
     public void execute(final CrearAplicacionDomain data) {
         if (data == null || data.getNombre() == null) {
-            throw new AplicacionException("El nombre de la aplicacion es obligatorio.");
+            throw ValidationException.build("El nombre de la aplicacion es obligatorio.");
         }
     }
 }

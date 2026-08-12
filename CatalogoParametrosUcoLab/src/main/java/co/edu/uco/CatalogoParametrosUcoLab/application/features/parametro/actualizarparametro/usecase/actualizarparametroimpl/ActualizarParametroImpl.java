@@ -7,7 +7,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actual
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.event.ActualizarParametroEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.publisher.ActualizarParametroPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.ActualizarParametroDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -30,11 +31,11 @@ public class ActualizarParametroImpl implements ActualizarParametro {
     @Override
     public void execute(final ActualizarParametroDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-            throw new ParametroException("El id del parametro es obligatorio para actualizar.");
+            throw ValidationException.build("El id del parametro es obligatorio para actualizar.");
         }
 
         if (parametroRepository.findById(data.getId()).isEmpty()) {
-            throw new ParametroException("No existe un parametro con el id especificado.");
+            throw NotFoundException.build("No existe un parametro con el id especificado.");
         }
 
         actualizarParametroRuleValidator.validate(data);

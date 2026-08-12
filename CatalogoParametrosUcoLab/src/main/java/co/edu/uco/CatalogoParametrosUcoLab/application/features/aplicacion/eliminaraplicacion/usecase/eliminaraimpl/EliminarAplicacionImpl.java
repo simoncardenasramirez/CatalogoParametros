@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.EliminarAplicacion;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.secondaryports.event.EliminarAplicacionEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.secondaryports.publisher.EliminarAplicacionPublisher;
@@ -48,7 +48,7 @@ public class EliminarAplicacionImpl implements EliminarAplicacion {
             messages.add(e.getMessage());
         }
         if (!messages.isEmpty()) {
-            throw new AplicacionException(String.join(", ", messages));
+            throw ValidationException.build(String.join(", ", messages));
         }
 
         final AplicacionEntity aplicacion = aplicacionRepository.findById(id).orElseThrow();

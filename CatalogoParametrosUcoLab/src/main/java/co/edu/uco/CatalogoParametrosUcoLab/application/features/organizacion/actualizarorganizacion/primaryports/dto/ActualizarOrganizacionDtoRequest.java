@@ -2,7 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.ac
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.exception.OrganizacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 public final class ActualizarOrganizacionDtoRequest {
@@ -43,21 +43,21 @@ public final class ActualizarOrganizacionDtoRequest {
 
     private void validateId() {
         if (TextHelper.isBlank(id)) {
-            throw new OrganizacionException("El identificador de la organizacion es obligatorio.");
+            throw ValidationException.build("El identificador de la organizacion es obligatorio.");
         }
         try {
             UUID.fromString(id);
         } catch (IllegalArgumentException e) {
-            throw new OrganizacionException("El identificador de la organizacion no es valido. Valor recibido: " + id);
+            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + id);
         }
     }
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw new OrganizacionException("El nombre de la organizacion es obligatorio.");
+            throw ValidationException.build("El nombre de la organizacion es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw new OrganizacionException("El nombre debe tener entre 3 y 50 caracteres.");
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 }

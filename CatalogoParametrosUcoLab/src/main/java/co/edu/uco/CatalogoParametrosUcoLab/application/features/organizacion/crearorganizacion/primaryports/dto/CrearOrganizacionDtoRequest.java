@@ -2,7 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cr
 
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.exception.OrganizacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 public final class CrearOrganizacionDtoRequest {
@@ -32,10 +32,10 @@ public final class CrearOrganizacionDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw new OrganizacionException("El nombre de la organizacion es obligatorio.");
+            throw ValidationException.build("El nombre de la organizacion es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw new OrganizacionException("El nombre debe tener entre 3 y 50 caracteres.");
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 }

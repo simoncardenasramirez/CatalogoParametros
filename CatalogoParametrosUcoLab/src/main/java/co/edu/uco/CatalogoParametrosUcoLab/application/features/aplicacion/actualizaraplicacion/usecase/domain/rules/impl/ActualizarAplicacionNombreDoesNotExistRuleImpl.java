@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.ActualizarAplicacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public final class ActualizarAplicacionNombreDoesNotExistRuleImpl implements ActualizarAplicacionNombreDoesNotExistRule {
@@ -23,7 +23,7 @@ public final class ActualizarAplicacionNombreDoesNotExistRuleImpl implements Act
             final var aplicacion = existingAplicacion.get();
             if (!aplicacion.getNombre().equals(data.getNombre())
                     && aplicacionRepository.existsByNombre(data.getNombre())) {
-                throw new AplicacionException(
+                throw ConflictException.build(
                         "Ya existe una aplicacion con el nombre " + data.getNombre() + ".");
             }
         }

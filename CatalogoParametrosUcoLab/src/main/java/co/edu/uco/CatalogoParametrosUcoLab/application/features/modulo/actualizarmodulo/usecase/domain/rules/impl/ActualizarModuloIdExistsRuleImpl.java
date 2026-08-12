@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.ActualizarModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
@@ -22,12 +24,12 @@ public final class ActualizarModuloIdExistsRuleImpl implements ActualizarModuloI
     public void execute(final ActualizarModuloDomain data) {
         final var id = data.getId();
         if (UUIDHelper.getDefault().equals(id)) {
-            throw new co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException(
+            throw ValidationException.build(
                     "El id del modulo es obligatorio para actualizar.");
         }
 
         if (moduloRepository.findById(id).isEmpty()) {
-            throw new co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException(
+            throw NotFoundException.build(
                     "No existe un modulo con el id especificado.");
         }
     }

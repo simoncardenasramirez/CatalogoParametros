@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.ActualizarModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloAplicacionExistsRule;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
@@ -22,12 +23,10 @@ public final class ActualizarModuloAplicacionExistsRuleImpl implements Actualiza
     public void execute(final ActualizarModuloDomain data) {
         final var idAplicacion = data.getIdAplicacion();
         if (UUIDHelper.getDefault().equals(idAplicacion)) {
-            throw new co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException(
-                    "La aplicacion asociada al modulo es obligatoria.");
+            throw NotFoundException.build("La aplicacion asociada al modulo es obligatoria.");
         }
         if (aplicacionRepository.findById(idAplicacion).isEmpty()) {
-            throw new co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException(
-                    "La aplicacion asociada al modulo no existe.");
+            throw NotFoundException.build("La aplicacion asociada al modulo no existe.");
         }
     }
 }

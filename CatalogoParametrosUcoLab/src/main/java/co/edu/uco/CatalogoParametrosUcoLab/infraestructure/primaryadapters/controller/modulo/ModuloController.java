@@ -11,7 +11,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodu
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.CrearModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.secondaryports.event.CrearModuloEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.secondaryports.publisher.CrearModuloPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.secondaryports.event.ModuloEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -79,9 +79,8 @@ public final class ModuloController {
                 crearModuloInteractor.execute(modulo);
                 response.getMensajes().add("Modulo creado exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } catch (final ModuloException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando el modulo: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,9 +98,8 @@ public final class ModuloController {
                 actualizarModuloInteractor.execute(id, modulo);
                 response.getMensajes().add("Modulo actualizado exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final ModuloException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando el modulo: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public final class FuncionalidadNombreDoesNotExistRuleImpl implements FuncionalidadNombreDoesNotExistRule {
@@ -19,7 +19,7 @@ public final class FuncionalidadNombreDoesNotExistRuleImpl implements Funcionali
     @Override
     public void execute(final CrearFuncionalidadDomain data) {
         if (funcionalidadRepository.existsByNombre(data.getNombre())) {
-            throw new FuncionalidadException("Ya existe una funcionalidad con el nombre " + data.getNombre() + ".");
+            throw ConflictException.build("Ya existe una funcionalidad con el nombre " + data.getNombre() + ".");
         }
     }
 }

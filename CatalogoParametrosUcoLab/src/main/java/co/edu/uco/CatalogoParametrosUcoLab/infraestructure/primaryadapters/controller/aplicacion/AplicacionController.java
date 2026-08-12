@@ -6,7 +6,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.consu
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.dto.CrearAplicacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.interactor.CrearAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.secondaryports.publisher.CrearAplicacionPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.dto.ActualizarAplicacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.interactor.ActualizarAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.secondaryports.publisher.ActualizarAplicacionPublisher;
@@ -130,9 +130,8 @@ public final class AplicacionController {
                 crearAplicacionInteractor.execute(aplicacion);
                 response.getMensajes().add("Aplicacion creada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } catch (final AplicacionException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando la aplicacion.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -149,9 +148,8 @@ public final class AplicacionController {
                 actualizarAplicacionInteractor.execute(id, aplicacion);
                 response.getMensajes().add("Aplicacion actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final AplicacionException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando la aplicacion.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -167,9 +165,8 @@ public final class AplicacionController {
                 eliminarAplicacionInteractor.execute(id);
                 response.getMensajes().add("Aplicacion eliminada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final AplicacionException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error eliminando la aplicacion.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

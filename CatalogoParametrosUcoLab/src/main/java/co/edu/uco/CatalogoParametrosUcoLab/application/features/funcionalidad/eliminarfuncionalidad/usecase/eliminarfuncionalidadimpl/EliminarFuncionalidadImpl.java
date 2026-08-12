@@ -9,8 +9,10 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.el
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.secondaryports.publisher.EliminarFuncionalidadPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.domain.rules.EliminarFuncionalidadIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.domain.rules.EliminarFuncionalidadIsNotUsedByParametroRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
@@ -38,14 +40,14 @@ public class EliminarFuncionalidadImpl implements EliminarFuncionalidad {
     @Override
     public void execute(final UUID data) {
         if (data == null || UUIDHelper.getDefault().equals(data)) {
-            throw new FuncionalidadException("El id de la funcionalidad es obligatorio para eliminar.");
+            throw ValidationException.build("El id de la funcionalidad es obligatorio para eliminar.");
         }
 
         eliminarFuncionalidadIdExistsRule.execute(data);
         eliminarFuncionalidadIsNotUsedByParametroRule.execute(data);
 
         var funcionalidad = funcionalidadRepository.findById(data)
-                .orElseThrow(() -> new FuncionalidadException("No existe una funcionalidad con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build("No existe una funcionalidad con el id especificado."));
 
         funcionalidadRepository.deleteById(data);
         eliminarFuncionalidadPublisher.sendEvent(EliminarFuncionalidadEvent.deleted(funcionalidad));

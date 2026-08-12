@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.actualizaraplicacionimpl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.ActualizarAplicacion;
@@ -30,12 +31,12 @@ public class ActualizarAplicacionImpl implements ActualizarAplicacion {
     @Override
     public void execute(final ActualizarAplicacionDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-            throw new AplicacionException(
+            throw ValidationException.build(
                     "El id de la aplicacion es obligatorio para actualizar.");
         }
 
         if (aplicacionRepository.findById(data.getId()).isEmpty()) {
-            throw new AplicacionException(
+            throw NotFoundException.build(
                     "No existe una aplicacion con el id especificado.");
         }
 

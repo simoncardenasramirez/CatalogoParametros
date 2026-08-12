@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.actualizarmoduloimpl;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.ActualizarModulo;
@@ -30,12 +31,12 @@ public class ActualizarModuloImpl implements ActualizarModulo {
     @Override
     public void execute(final ActualizarModuloDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-            throw new ModuloException(
+            throw ValidationException.build(
                     "El id del modulo es obligatorio para actualizar.");
         }
 
         if (moduloRepository.findById(data.getId()).isEmpty()) {
-            throw new ModuloException(
+            throw NotFoundException.build(
                     "No existe un modulo con el id especificado.");
         }
 

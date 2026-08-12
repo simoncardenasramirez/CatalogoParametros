@@ -4,8 +4,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Mod
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadModuloExistsRule;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +27,7 @@ public final class FuncionalidadModuloExistsRuleImpl
         if (data == null
                 || UUIDHelper.getDefault().equals(data.getIdModulo())) {
 
-            throw new FuncionalidadException(
+            throw ValidationException.build(
                     "El modulo asociado a la funcionalidad es obligatorio.");
         }
 
@@ -37,7 +38,7 @@ public final class FuncionalidadModuloExistsRuleImpl
         if (modulo == null
                 || UUIDHelper.getDefault().equals(modulo.getId())) {
 
-            throw new FuncionalidadException(
+            throw NotFoundException.build(
                     "El modulo con el id "
                             + data.getIdModulo()
                             + " no existe en el sistema.");

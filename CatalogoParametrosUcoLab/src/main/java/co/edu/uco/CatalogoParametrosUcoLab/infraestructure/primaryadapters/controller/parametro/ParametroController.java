@@ -22,7 +22,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearp
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.interactor.CrearParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.consultarparametro.primaryports.interactor.ConsultarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.secondaryports.publisher.CrearParametroPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.primaryports.interactor.EliminarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.secondaryports.publisher.EliminarParametroPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.secondaryports.event.ParametroEvent;
@@ -82,9 +82,8 @@ public final class ParametroController {
                 crearParametroInteractor.execute(parametro);
                 response.getMensajes().add("Parametro creado exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } catch (final ParametroException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando el parametro.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -102,9 +101,8 @@ public final class ParametroController {
                 actualizarParametroInteractor.execute(id, parametro);
                 response.getMensajes().add("Parametro actualizado exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final ParametroException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando el parametro.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -121,9 +119,8 @@ public final class ParametroController {
                 eliminarParametroInteractor.execute(id);
                 response.getMensajes().add("Parametro eliminado exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final ParametroException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error eliminando el parametro.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

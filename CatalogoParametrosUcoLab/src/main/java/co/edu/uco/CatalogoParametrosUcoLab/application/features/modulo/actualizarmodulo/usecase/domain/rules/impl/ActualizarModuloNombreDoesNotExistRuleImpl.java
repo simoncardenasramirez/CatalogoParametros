@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.ActualizarModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNombreDoesNotExistRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
@@ -24,7 +25,7 @@ public final class ActualizarModuloNombreDoesNotExistRuleImpl implements Actuali
         final var nombre = TextHelper.applyTrim(data.getNombre());
         final var id = data.getId();
         if (moduloRepository.existsByNombre(nombre) && !UUIDHelper.getDefault().equals(id)) {
-            throw new co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException(
+            throw ConflictException.build(
                     "El nombre del modulo ya existe en el sistema.");
         }
     }
