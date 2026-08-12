@@ -51,6 +51,10 @@ public class EliminarOrganizacionImpl implements EliminarOrganizacion {
             throw new OrganizacionException(String.join(", ", messages));
         }
 
+        var organizacion = organizacionRepository.findById(id)
+                .orElseThrow(() -> new OrganizacionException("No existe una organizacion con el id especificado."));
+
         organizacionRepository.deleteById(id);
+        eliminarOrganizacionPublisher.sendEvent(EliminarOrganizacionEvent.deleted(organizacion));
     }
 }

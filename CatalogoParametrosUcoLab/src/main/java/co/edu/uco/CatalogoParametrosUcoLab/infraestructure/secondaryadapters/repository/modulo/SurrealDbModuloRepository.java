@@ -77,6 +77,14 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     }
 
     @Override
+    public boolean existsByIdAplicacion(final UUID idAplicacion) {
+        var query = "SELECT id FROM %s WHERE idAplicacion = '%s' LIMIT 1;"
+                .formatted(TABLE_NAME, idAplicacion);
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        return result.isArray() && result.size() > 0;
+    }
+
+    @Override
     public Optional<ModuloEntity> findById(final UUID id) {
         var query = "SELECT * FROM %s:`%s`;".formatted(TABLE_NAME, id);
         var result = firstStatementResult(surrealDbClient.execute(query));

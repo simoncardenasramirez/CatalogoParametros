@@ -19,4 +19,6 @@ public interface AplicacionRepository {
     List<AplicacionEntity> findAll();
 
     boolean existsByIdOrganizacion(UUID idOrganizacion);
+
+    void deleteById(UUID id);
 }

@@ -17,4 +17,6 @@ public interface ModuloRepository {
     Optional<ModuloEntity> findById(UUID id);
 
     List<ModuloEntity> findAll();
+
+    boolean existsByIdAplicacion(UUID idAplicacion);
 }

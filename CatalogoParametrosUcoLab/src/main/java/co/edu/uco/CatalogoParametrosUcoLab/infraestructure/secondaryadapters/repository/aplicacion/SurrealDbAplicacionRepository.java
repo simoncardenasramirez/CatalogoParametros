@@ -110,6 +110,12 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
         return result.isArray() && result.size() > 0;
     }
 
+    @Override
+    public void deleteById(final UUID id) {
+        var query = "DELETE type::record('%s', '%s');".formatted(TABLE_NAME, id);
+        surrealDbClient.execute(query);
+    }
+
     private JsonNode firstStatementResult(final JsonNode response) {
         if (!response.isArray() || response.size() == 0) {
             return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();

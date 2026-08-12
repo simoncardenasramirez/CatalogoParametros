@@ -10,12 +10,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crear
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.dto.ActualizarAplicacionDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.interactor.ActualizarAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.secondaryports.publisher.ActualizarAplicacionPublisher;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.primaryports.interactor.EliminarAplicacionInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.secondaryports.publisher.EliminarAplicacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.secondaryports.event.AplicacionEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.aplicacion.AplicacionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,17 +40,23 @@ public final class AplicacionController {
     private final CrearAplicacionPublisher crearAplicacionPublisher;
     private final ActualizarAplicacionInteractor actualizarAplicacionInteractor;
     private final ActualizarAplicacionPublisher actualizarAplicacionPublisher;
+    private final EliminarAplicacionInteractor eliminarAplicacionInteractor;
+    private final EliminarAplicacionPublisher eliminarAplicacionPublisher;
 
     public AplicacionController(final CrearAplicacionInteractor crearAplicacionInteractor,
                                 final ConsultarAplicacionInteractor consultarAplicacionInteractor,
                                 final CrearAplicacionPublisher crearAplicacionPublisher,
                                 final ActualizarAplicacionInteractor actualizarAplicacionInteractor,
-                                final ActualizarAplicacionPublisher actualizarAplicacionPublisher) {
+                                final ActualizarAplicacionPublisher actualizarAplicacionPublisher,
+                                final EliminarAplicacionInteractor eliminarAplicacionInteractor,
+                                final EliminarAplicacionPublisher eliminarAplicacionPublisher) {
         this.crearAplicacionInteractor = crearAplicacionInteractor;
         this.consultarAplicacionInteractor = consultarAplicacionInteractor;
         this.crearAplicacionPublisher = crearAplicacionPublisher;
         this.actualizarAplicacionInteractor = actualizarAplicacionInteractor;
         this.actualizarAplicacionPublisher = actualizarAplicacionPublisher;
+        this.eliminarAplicacionInteractor = eliminarAplicacionInteractor;
+        this.eliminarAplicacionPublisher = eliminarAplicacionPublisher;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -60,13 +69,18 @@ public final class AplicacionController {
                 .map(event -> ServerSentEvent.builder(event)
                         .event("aplicacion")
                         .build());
+        var eliminarEventos = eliminarAplicacionPublisher.getStream().cast(AplicacionEvent.class)
+                .map(event -> ServerSentEvent.builder(event)
+                        .event("aplicacion")
+                        .build());
 
         return Flux.concat(
                 Mono.just(ServerSentEvent.<AplicacionEvent>builder()
                         .comment("connected")
                         .build()),
                 crearEventos,
-                actualizarEventos
+                actualizarEventos,
+                eliminarEventos
         );
     }
 
@@ -140,6 +154,24 @@ public final class AplicacionController {
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando la aplicacion.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<AplicacionResponse>> eliminar(@PathVariable final UUID id) {
+        return Mono.fromCallable(() -> {
+            var response = new AplicacionResponse();
+            try {
+                eliminarAplicacionInteractor.execute(id);
+                response.getMensajes().add("Aplicacion eliminada exitosamente.");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (final AplicacionException exception) {
+                response.getMensajes().add(exception.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final Exception exception) {
+                response.getMensajes().add("Ocurrio un error eliminando la aplicacion.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }).subscribeOn(Schedulers.boundedElastic());
