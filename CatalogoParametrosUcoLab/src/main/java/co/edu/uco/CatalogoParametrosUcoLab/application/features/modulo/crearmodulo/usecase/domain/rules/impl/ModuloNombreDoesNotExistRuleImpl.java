@@ -1,11 +1,11 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.impl;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.exception.ModuloException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreDoesNotExistRule;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public final class ModuloNombreDoesNotExistRuleImpl implements ModuloNombreDoesNotExistRule {
@@ -19,7 +19,7 @@ public final class ModuloNombreDoesNotExistRuleImpl implements ModuloNombreDoesN
     @Override
     public void execute(final CrearModuloDomain data) {
         if (moduloRepository.existsByNombre(data.getNombre())) {
-            throw new ModuloException("Ya existe un modulo con el nombre " + data.getNombre() + ".");
+            throw ConflictException.build("Ya existe un modulo con el nombre " + data.getNombre() + ".");
         }
     }
 }

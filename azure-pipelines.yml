@@ -1,0 +1,23 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+      - feature/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+
+- task: Maven@4
+  displayName: 'Compilar proyecto'
+  inputs:
+    mavenPomFile: 'CatalogoParametrosUcoLab/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.21'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: false
+    goals: 'clean package'
+    options: '-DskipTests'

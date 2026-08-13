@@ -5,8 +5,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.domain.rules.EliminarFuncionalidadIdExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
@@ -21,11 +22,11 @@ public final class EliminarFuncionalidadIdExistsRuleImpl implements EliminarFunc
     @Override
     public void execute(final UUID data) {
         if (data == null || UUIDHelper.getDefault().equals(data)) {
-            throw new FuncionalidadException("El id de la funcionalidad es obligatorio para eliminar.");
+            throw ValidationException.build("El id de la funcionalidad es obligatorio para eliminar.");
         }
 
         if (funcionalidadRepository.findById(data).isEmpty()) {
-            throw new FuncionalidadException("No existe una funcionalidad con el id especificado.");
+            throw NotFoundException.build("No existe una funcionalidad con el id especificado.");
         }
     }
 }

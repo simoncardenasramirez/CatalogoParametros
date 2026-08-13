@@ -4,7 +4,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.EliminarParametro;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.secondaryports.event.EliminarParametroEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.secondaryports.publisher.EliminarParametroPublisher;
@@ -26,11 +27,11 @@ public class EliminarParametroImpl implements EliminarParametro {
     @Override
     public void execute(final UUID data) {
         if (data == null || UUIDHelper.getDefault().equals(data)) {
-            throw new ParametroException("El id del parametro es obligatorio para eliminar.");
+            throw ValidationException.build("El id del parametro es obligatorio para eliminar.");
         }
 
         var parametro = parametroRepository.findById(data)
-                .orElseThrow(() -> new ParametroException("No existe un parametro con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build("No existe un parametro con el id especificado."));
 
         parametroRepository.deleteById(data);
         eliminarParametroPublisher.sendEvent(EliminarParametroEvent.deleted(parametro));

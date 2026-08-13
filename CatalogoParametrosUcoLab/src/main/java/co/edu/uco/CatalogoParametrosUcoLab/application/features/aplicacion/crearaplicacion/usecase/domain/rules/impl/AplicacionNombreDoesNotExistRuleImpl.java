@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.CrearAplicacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 
 @Service
 public final class AplicacionNombreDoesNotExistRuleImpl implements AplicacionNombreDoesNotExistRule {
@@ -19,7 +19,7 @@ public final class AplicacionNombreDoesNotExistRuleImpl implements AplicacionNom
     @Override
     public void execute(final CrearAplicacionDomain data) {
         if (aplicacionRepository.existsByNombre(data.getNombre())) {
-            throw new AplicacionException("Ya existe una aplicacion con el nombre " + data.getNombre() + ".");
+            throw ConflictException.build("Ya existe una aplicacion con el nombre " + data.getNombre() + ".");
         }
     }
 }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreIsNotEmptyRule;
 
 @Service
@@ -13,7 +13,7 @@ public final class FuncionalidadNombreIsNotEmptyRuleImpl implements Funcionalida
     @Override
     public void execute(final CrearFuncionalidadDomain data) {
         if (data == null || TextHelper.isBlank(data.getNombre())) {
-            throw new FuncionalidadException("El nombre de la funcionalidad no puede estar vacio.");
+            throw ValidationException.build("El nombre de la funcionalidad no puede estar vacio.");
         }
     }
 }

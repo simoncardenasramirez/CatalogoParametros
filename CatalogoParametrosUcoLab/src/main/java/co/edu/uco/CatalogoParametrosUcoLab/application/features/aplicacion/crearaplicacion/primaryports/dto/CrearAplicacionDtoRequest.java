@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.exception.AplicacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 public final class CrearAplicacionDtoRequest {
@@ -83,27 +83,27 @@ public final class CrearAplicacionDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw new AplicacionException("El nombre de la aplicacion es obligatorio.");
+            throw ValidationException.build("El nombre de la aplicacion es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw new AplicacionException("El nombre debe tener entre 3 y 50 caracteres.");
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 
     private void validateIdOrganizacion() {
         if (TextHelper.isBlank(idOrganizacion)) {
-            throw new AplicacionException("El identificador de la organizacion es obligatorio.");
+            throw ValidationException.build("El identificador de la organizacion es obligatorio.");
         }
         try {
             UUID.fromString(idOrganizacion);
         } catch (IllegalArgumentException e) {
-            throw new AplicacionException("El identificador de la organizacion no es valido. Valor recibido: " + idOrganizacion);
+            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + idOrganizacion);
         }
     }
 
     private void validateActiva() {
         if (!"true".equals(activa) && !"false".equals(activa)) {
-            throw new AplicacionException("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activa);
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activa);
         }
     }
 
@@ -112,7 +112,7 @@ public final class CrearAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw new AplicacionException("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
+                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
             }
         }
     }
@@ -122,7 +122,7 @@ public final class CrearAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw new AplicacionException("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
+                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
             }
         }
     }

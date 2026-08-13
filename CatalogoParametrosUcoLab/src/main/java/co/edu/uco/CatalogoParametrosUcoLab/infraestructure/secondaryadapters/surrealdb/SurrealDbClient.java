@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb;
 
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.exception.ParametroException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -40,25 +40,25 @@ public class SurrealDbClient {
             var response = objectMapper.readTree(body);
             validateSuccessfulResponse(response);
             return response;
-        } catch (final ParametroException exception) {
+        } catch (final TechnicalException exception) {
             throw exception;
         } catch (final RestClientResponseException exception) {
-            throw new ParametroException("SurrealDB rechazo la operacion: " + exception.getResponseBodyAsString());
+            throw TechnicalException.build("SurrealDB rechazo la operacion: " + exception.getResponseBodyAsString());
         } catch (final Exception exception) {
-            throw new ParametroException("No fue posible ejecutar la operacion en SurrealDB: " + exception.getMessage());
+            throw TechnicalException.build("No fue posible ejecutar la operacion en SurrealDB: " + exception.getMessage());
         }
     }
 
     private void validateSuccessfulResponse(final JsonNode response) {
         if (!response.isArray()) {
-            throw new ParametroException("SurrealDB retorno una respuesta inesperada.");
+            throw TechnicalException.build("SurrealDB retorno una respuesta inesperada.");
         }
 
         for (var statement : response) {
             var status = statement.path("status").asText();
             if (!"OK".equalsIgnoreCase(status)) {
                 var detail = statement.path("detail").asText(statement.path("result").toString());
-                throw new ParametroException("SurrealDB rechazo la operacion: " + detail);
+                throw TechnicalException.build("SurrealDB rechazo la operacion: " + detail);
             }
         }
     }

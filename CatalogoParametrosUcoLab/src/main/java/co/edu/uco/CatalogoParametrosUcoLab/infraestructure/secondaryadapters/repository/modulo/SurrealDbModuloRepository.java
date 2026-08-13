@@ -27,6 +27,27 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     }
 
     @Override
+    public ModuloEntity update(final ModuloEntity modulo) {
+        var query = """
+                BEGIN TRANSACTION;
+                UPDATE type::record('%s', '%s') CONTENT {
+                    nombre: '%s',
+                    idAplicacion: '%s',
+                    activo: %s,
+                    fechaInicio: %s,
+                    fechaFinal: %s
+                };
+                COMMIT TRANSACTION;
+                """.formatted(TABLE_NAME, modulo.getId(), escape(modulo.getNombre()),
+                modulo.getIdAplicacion(), modulo.isActivo(),
+                formatDateTime(modulo.getFechaInicio()),
+                formatDateTime(modulo.getFechaFinal()));
+
+        surrealDbClient.execute(query);
+        return modulo;
+    }
+
+    @Override
     public ModuloEntity save(final ModuloEntity modulo) {
         var query = """
                 BEGIN TRANSACTION;
@@ -51,6 +72,14 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     public boolean existsByNombre(final String nombre) {
         var query = "SELECT id FROM %s WHERE nombre = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, escape(nombre));
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        return result.isArray() && result.size() > 0;
+    }
+
+    @Override
+    public boolean existsByIdAplicacion(final UUID idAplicacion) {
+        var query = "SELECT id FROM %s WHERE idAplicacion = '%s' LIMIT 1;"
+                .formatted(TABLE_NAME, idAplicacion);
         var result = firstStatementResult(surrealDbClient.execute(query));
         return result.isArray() && result.size() > 0;
     }

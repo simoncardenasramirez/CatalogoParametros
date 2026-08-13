@@ -10,6 +10,8 @@ public interface AplicacionRepository {
 
     AplicacionEntity save(AplicacionEntity aplicacion);
 
+    AplicacionEntity update(AplicacionEntity aplicacion);
+
     boolean existsByNombre(String nombre);
 
     Optional<AplicacionEntity> findById(UUID id);
@@ -17,4 +19,6 @@ public interface AplicacionRepository {
     List<AplicacionEntity> findAll();
 
     boolean existsByIdOrganizacion(UUID idOrganizacion);
+
+    void deleteById(UUID id);
 }

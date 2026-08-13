@@ -24,7 +24,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.cr
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.secondaryports.publisher.CrearFuncionalidadPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.primaryports.interactor.EliminarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.secondaryports.publisher.EliminarFuncionalidadPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.exception.FuncionalidadException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.secondaryports.event.FuncionalidadEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.funcionalidad.FuncionalidadResponse;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametroResponse;
@@ -83,9 +83,8 @@ public final class FuncionalidadController {
                 crearFuncionalidadInteractor.execute(funcionalidad);
                 response.getMensajes().add("Funcionalidad creada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } catch (final FuncionalidadException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error creando la funcionalidad: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,9 +102,8 @@ public final class FuncionalidadController {
                 actualizarFuncionalidadInteractor.execute(id, funcionalidad);
                 response.getMensajes().add("Funcionalidad actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final FuncionalidadException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error actualizando la funcionalidad.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -122,9 +120,8 @@ public final class FuncionalidadController {
                 eliminarFuncionalidadInteractor.execute(id);
                 response.getMensajes().add("Funcionalidad eliminada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } catch (final FuncionalidadException exception) {
-                response.getMensajes().add(exception.getMessage());
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } catch (final BusinessException exception) {
+                throw exception;
             } catch (final Exception exception) {
                 response.getMensajes().add("Ocurrio un error eliminando la funcionalidad.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

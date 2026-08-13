@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.EliminarOrganizacion;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.secondaryports.event.EliminarOrganizacionEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.secondaryports.publisher.EliminarOrganizacionPublisher;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.domain.exception.OrganizacionException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.domain.rules.EliminarOrganizacionIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.domain.rules.EliminarOrganizacionIsNotUsedByAplicacionRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
@@ -48,9 +49,13 @@ public class EliminarOrganizacionImpl implements EliminarOrganizacion {
             messages.add(e.getMessage());
         }
         if (!messages.isEmpty()) {
-            throw new OrganizacionException(String.join(", ", messages));
+            throw ValidationException.build(String.join(", ", messages));
         }
 
+        var organizacion = organizacionRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.build("No existe una organizacion con el id especificado."));
+
         organizacionRepository.deleteById(id);
+        eliminarOrganizacionPublisher.sendEvent(EliminarOrganizacionEvent.deleted(organizacion));
     }
 }
