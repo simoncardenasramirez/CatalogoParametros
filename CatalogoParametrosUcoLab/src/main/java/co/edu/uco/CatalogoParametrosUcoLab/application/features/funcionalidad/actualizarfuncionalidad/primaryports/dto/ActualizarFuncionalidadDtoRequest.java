@@ -98,13 +98,13 @@ public final class ActualizarFuncionalidadDtoRequest {
         try {
             UUID.fromString(idModulo);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador del modulo no es valido. Valor recibido:");
+            throw ValidationException.build("El identificador del modulo no es valido. Valor recibido: " + idModulo);
         }
     }
 
     private void validateActivo() {
         if (!"true".equals(activo) && !"false".equals(activo)) {
-            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido:");
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activo);
         }
     }
 
@@ -113,7 +113,7 @@ public final class ActualizarFuncionalidadDtoRequest {
             try {
                 LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
+                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
             }
         }
     }
@@ -123,7 +123,7 @@ public final class ActualizarFuncionalidadDtoRequest {
             try {
                 LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
+                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
             }
         }
     }

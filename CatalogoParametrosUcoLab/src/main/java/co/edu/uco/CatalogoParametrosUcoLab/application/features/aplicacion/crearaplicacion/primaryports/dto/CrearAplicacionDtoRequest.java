@@ -98,13 +98,13 @@ public final class CrearAplicacionDtoRequest {
         try {
             UUID.fromString(idOrganizacion);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido:");
+            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + idOrganizacion);
         }
     }
 
     private void validateActiva() {
         if (!"true".equals(activa) && !"false".equals(activa)) {
-            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido:");
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activa);
         }
     }
 
@@ -113,7 +113,7 @@ public final class CrearAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
+                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
             }
         }
     }
@@ -123,7 +123,7 @@ public final class CrearAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
+                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
             }
         }
     }

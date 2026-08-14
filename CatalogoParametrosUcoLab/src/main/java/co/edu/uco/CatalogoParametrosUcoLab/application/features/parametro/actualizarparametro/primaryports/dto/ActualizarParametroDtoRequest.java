@@ -82,7 +82,7 @@ public final class ActualizarParametroDtoRequest {
         try {
             UUID.fromString(idFuncionalidad);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador de la funcionalidad no es valido. Valor recibido:");
+            throw ValidationException.build("El identificador de la funcionalidad no es valido. Valor recibido: " + idFuncionalidad);
         }
     }
 
@@ -93,13 +93,13 @@ public final class ActualizarParametroDtoRequest {
         try {
             UUID.fromString(idTipoParametro);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador del tipo de parametro no es valido. Valor recibido:");
+            throw ValidationException.build("El identificador del tipo de parametro no es valido. Valor recibido: " + idTipoParametro);
         }
     }
 
     private void validateActivo() {
         if (!"true".equals(activo) && !"false".equals(activo)) {
-            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido:");
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activo);
         }
     }
 }

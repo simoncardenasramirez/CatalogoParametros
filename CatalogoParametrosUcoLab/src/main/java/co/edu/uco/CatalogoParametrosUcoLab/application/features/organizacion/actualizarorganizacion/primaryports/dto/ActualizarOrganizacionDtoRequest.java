@@ -49,7 +49,7 @@ public final class ActualizarOrganizacionDtoRequest {
         try {
             UUID.fromString(id);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido:");
+            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + id);
         }
     }
 
