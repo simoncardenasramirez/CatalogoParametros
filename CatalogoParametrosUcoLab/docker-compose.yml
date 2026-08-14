@@ -16,7 +16,7 @@ services:
 
       # OTLP Metrics (Micrometer registry) - use env vars for higher precedence
       MANAGEMENT_METRICS_EXPORT_OTLP_ENABLED: "true"
-      MANAGEMENT_METRICS_EXPORT_OTLP_URL: "http://otel-collector:4318/v1/metrics"
+      MANAGEMENT_OTLP_METRICS_EXPORT_URL: "http://otel-collector:4318/v1/metrics"
       MANAGEMENT_METRICS_EXPORT_OTLP_STEP: "1m"
 
       # OpenTelemetry (traces only - NOT metrics)
