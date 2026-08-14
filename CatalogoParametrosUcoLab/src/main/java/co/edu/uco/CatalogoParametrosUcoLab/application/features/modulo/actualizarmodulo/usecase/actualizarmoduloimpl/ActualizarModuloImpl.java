@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.actualizarmoduloimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public class ActualizarModuloImpl implements ActualizarModulo {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final ModuloRepository moduloRepository;
     private final ActualizarModuloPublisher actualizarModuloPublisher;
     private final ActualizarModuloRuleValidator actualizarModuloRuleValidator;
@@ -31,13 +37,11 @@ public class ActualizarModuloImpl implements ActualizarModulo {
     @Override
     public void execute(final ActualizarModuloDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-            throw ValidationException.build(
-                    "El id del modulo es obligatorio para actualizar.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-70"));
         }
 
         if (moduloRepository.findById(data.getId()).isEmpty()) {
-            throw NotFoundException.build(
-                    "No existe un modulo con el id especificado.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-69"));
         }
 
         actualizarModuloRuleValidator.validate(data);

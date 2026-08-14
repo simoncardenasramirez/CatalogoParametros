@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.FuncionalidadRepository;
@@ -10,6 +13,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictExcep
 @Service
 public final class FuncionalidadNombreDoesNotExistRuleImpl implements FuncionalidadNombreDoesNotExistRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final FuncionalidadRepository funcionalidadRepository;
 
     public FuncionalidadNombreDoesNotExistRuleImpl(final FuncionalidadRepository funcionalidadRepository) {
@@ -19,7 +25,7 @@ public final class FuncionalidadNombreDoesNotExistRuleImpl implements Funcionali
     @Override
     public void execute(final CrearFuncionalidadDomain data) {
         if (funcionalidadRepository.existsByNombre(data.getNombre())) {
-            throw ConflictException.build("Ya existe una funcionalidad con el nombre " + data.getNombre() + ".");
+            throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-54"));
         }
     }
 }

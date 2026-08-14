@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +16,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public final class ActualizarModuloAplicacionExistsRuleImpl implements ActualizarModuloAplicacionExistsRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final AplicacionRepository aplicacionRepository;
 
     public ActualizarModuloAplicacionExistsRuleImpl(final AplicacionRepository aplicacionRepository) {
@@ -23,10 +29,10 @@ public final class ActualizarModuloAplicacionExistsRuleImpl implements Actualiza
     public void execute(final ActualizarModuloDomain data) {
         final var idAplicacion = data.getIdAplicacion();
         if (UUIDHelper.getDefault().equals(idAplicacion)) {
-            throw NotFoundException.build("La aplicacion asociada al modulo es obligatoria.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-72"));
         }
         if (aplicacionRepository.findById(idAplicacion).isEmpty()) {
-            throw NotFoundException.build("La aplicacion asociada al modulo no existe.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-71"));
         }
     }
 }

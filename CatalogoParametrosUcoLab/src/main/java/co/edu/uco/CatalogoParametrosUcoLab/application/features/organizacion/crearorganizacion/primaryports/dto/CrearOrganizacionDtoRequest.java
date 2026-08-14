@@ -32,10 +32,10 @@ public final class CrearOrganizacionDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build("El nombre de la organizacion es obligatorio.");
+            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-100"));
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
+            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-99"));
         }
     }
 }

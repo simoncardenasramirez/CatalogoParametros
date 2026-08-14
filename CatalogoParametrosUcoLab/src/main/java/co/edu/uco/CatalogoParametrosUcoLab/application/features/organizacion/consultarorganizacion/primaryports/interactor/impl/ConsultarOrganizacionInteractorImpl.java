@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.consultarorganizacion.primaryports.interactor.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +15,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundExcep
 
 @Service
 public class ConsultarOrganizacionInteractorImpl implements ConsultarOrganizacionInteractor {
+
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final OrganizacionRepository organizacionRepository;
 
@@ -28,6 +34,6 @@ public class ConsultarOrganizacionInteractorImpl implements ConsultarOrganizacio
     public List<OrganizacionEntity> execute(final UUID id) {
         return organizacionRepository.findById(id)
                 .map(List::of)
-                .orElseThrow(() -> NotFoundException.build("La organizacion con id " + id + " no existe."));
+                .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-98")));
     }
 }

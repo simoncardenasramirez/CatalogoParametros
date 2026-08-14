@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -12,6 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public final class FuncionalidadModuloExistsRuleImpl
         implements FuncionalidadModuloExistsRule {
+
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final ModuloRepository moduloRepository;
 
@@ -27,8 +33,7 @@ public final class FuncionalidadModuloExistsRuleImpl
         if (data == null
                 || UUIDHelper.getDefault().equals(data.getIdModulo())) {
 
-            throw ValidationException.build(
-                    "El modulo asociado a la funcionalidad es obligatorio.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-53"));
         }
 
         final ModuloEntity modulo = moduloRepository
@@ -38,10 +43,7 @@ public final class FuncionalidadModuloExistsRuleImpl
         if (modulo == null
                 || UUIDHelper.getDefault().equals(modulo.getId())) {
 
-            throw NotFoundException.build(
-                    "El modulo con el id "
-                            + data.getIdModulo()
-                            + " no existe en el sistema.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-52"));
         }
     }
 }

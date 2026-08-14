@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.actualizaraplicacionimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public class ActualizarAplicacionImpl implements ActualizarAplicacion {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final AplicacionRepository aplicacionRepository;
     private final ActualizarAplicacionPublisher actualizarAplicacionPublisher;
     private final ActualizarAplicacionRuleValidator actualizarAplicacionRuleValidator;
@@ -31,13 +37,11 @@ public class ActualizarAplicacionImpl implements ActualizarAplicacion {
     @Override
     public void execute(final ActualizarAplicacionDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-            throw ValidationException.build(
-                    "El id de la aplicacion es obligatorio para actualizar.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-9"));
         }
 
         if (aplicacionRepository.findById(data.getId()).isEmpty()) {
-            throw NotFoundException.build(
-                    "No existe una aplicacion con el id especificado.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-8"));
         }
 
         actualizarAplicacionRuleValidator.validate(data);
