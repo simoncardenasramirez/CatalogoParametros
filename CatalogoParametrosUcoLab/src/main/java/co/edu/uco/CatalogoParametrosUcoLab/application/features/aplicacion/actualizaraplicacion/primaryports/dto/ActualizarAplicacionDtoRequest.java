@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.dto;
 
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -83,27 +84,27 @@ public final class ActualizarAplicacionDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-7"));
+            throw ValidationException.build("El nombre de la aplicacion es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-6"));
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 
     private void validateIdOrganizacion() {
         if (TextHelper.isBlank(idOrganizacion)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-5"));
+            throw ValidationException.build("El identificador de la organizacion es obligatorio.");
         }
         try {
             UUID.fromString(idOrganizacion);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-4"));
+            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido:");
         }
     }
 
     private void validateActiva() {
         if (!"true".equals(activa) && !"false".equals(activa)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-3"));
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido:");
         }
     }
 
@@ -112,7 +113,7 @@ public final class ActualizarAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-2"));
+                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
             }
         }
     }
@@ -122,7 +123,7 @@ public final class ActualizarAplicacionDtoRequest {
             try {
                 LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-1"));
+                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido:");
             }
         }
     }

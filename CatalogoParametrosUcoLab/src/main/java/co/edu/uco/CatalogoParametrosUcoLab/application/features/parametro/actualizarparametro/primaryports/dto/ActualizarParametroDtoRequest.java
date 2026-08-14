@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto;
 
+
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
@@ -67,38 +68,38 @@ public final class ActualizarParametroDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-113"));
+            throw ValidationException.build("El nombre del parametro es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-112"));
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 
     private void validateIdFuncionalidad() {
         if (TextHelper.isBlank(idFuncionalidad)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-111"));
+            throw ValidationException.build("El identificador de la funcionalidad es obligatorio.");
         }
         try {
             UUID.fromString(idFuncionalidad);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-110"));
+            throw ValidationException.build("El identificador de la funcionalidad no es valido. Valor recibido:");
         }
     }
 
     private void validateIdTipoParametro() {
         if (TextHelper.isBlank(idTipoParametro)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-109"));
+            throw ValidationException.build("El identificador del tipo de parametro es obligatorio.");
         }
         try {
             UUID.fromString(idTipoParametro);
         } catch (IllegalArgumentException e) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-108"));
+            throw ValidationException.build("El identificador del tipo de parametro no es valido. Valor recibido:");
         }
     }
 
     private void validateActivo() {
         if (!"true".equals(activo) && !"false".equals(activo)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-107"));
+            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido:");
         }
     }
 }

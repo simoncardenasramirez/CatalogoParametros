@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto;
 
+
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
@@ -32,10 +33,10 @@ public final class CrearOrganizacionDtoRequest {
 
     private void validateNombre() {
         if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-100"));
+            throw ValidationException.build("El nombre de la organizacion es obligatorio.");
         }
         if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper.getValue(co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants.MESSAGE_PROPERTIES_FILE, "MSG-99"));
+            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
         }
     }
 }
