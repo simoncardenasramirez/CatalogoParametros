@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -10,10 +13,13 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cre
 @Service
 public final class OrganizacionNombreIsNotEmptyRuleImpl implements OrganizacionNombreIsNotEmptyRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     @Override
     public void execute(final CrearOrganizacionDomain data) {
         if (data == null || TextHelper.isBlank(data.getNombre())) {
-            throw ValidationException.build("El nombre de la organizacion no puede estar vacio.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-102"));
         }
     }
 }

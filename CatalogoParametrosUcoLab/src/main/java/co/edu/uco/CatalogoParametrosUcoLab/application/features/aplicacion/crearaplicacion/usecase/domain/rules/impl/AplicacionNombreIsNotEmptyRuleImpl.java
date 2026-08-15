@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -10,10 +13,13 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 @Service
 public final class AplicacionNombreIsNotEmptyRuleImpl implements AplicacionNombreIsNotEmptyRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     @Override
     public void execute(final CrearAplicacionDomain data) {
         if (data == null || TextHelper.isBlank(data.getNombre())) {
-            throw ValidationException.build("El nombre de la aplicacion no puede estar vacio.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-24"));
         }
     }
 }

@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.ActualizarParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroFuncionalidadExistsRule;
@@ -13,6 +16,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public final class ActualizarParametroFuncionalidadExistsRuleImpl implements ActualizarParametroFuncionalidadExistsRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final FuncionalidadRepository funcionalidadRepository;
 
     public ActualizarParametroFuncionalidadExistsRuleImpl(final FuncionalidadRepository funcionalidadRepository) {
@@ -22,15 +28,14 @@ public final class ActualizarParametroFuncionalidadExistsRuleImpl implements Act
     @Override
     public void execute(final ActualizarParametroDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getIdFuncionalidad())) {
-            throw ValidationException.build("La funcionalidad asociada al parametro es obligatoria.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-117"));
         }
 
         final FuncionalidadEntity funcionalidad = funcionalidadRepository.findById(data.getIdFuncionalidad())
                 .orElse(null);
 
         if (funcionalidad == null || UUIDHelper.getDefault().equals(funcionalidad.getId())) {
-            throw NotFoundException.build(
-                    "La funcionalidad con el id " + data.getIdFuncionalidad() + " no existe en el sistema.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-116"));
         }
     }
 }

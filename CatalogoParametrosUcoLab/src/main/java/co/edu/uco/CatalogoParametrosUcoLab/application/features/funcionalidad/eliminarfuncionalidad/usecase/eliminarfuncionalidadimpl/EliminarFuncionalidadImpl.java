@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.eliminarfuncionalidadimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
 public class EliminarFuncionalidadImpl implements EliminarFuncionalidad {
+
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final FuncionalidadRepository funcionalidadRepository;
     private final ParametroRepository parametroRepository;
@@ -40,14 +46,14 @@ public class EliminarFuncionalidadImpl implements EliminarFuncionalidad {
     @Override
     public void execute(final UUID data) {
         if (data == null || UUIDHelper.getDefault().equals(data)) {
-            throw ValidationException.build("El id de la funcionalidad es obligatorio para eliminar.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-61"));
         }
 
         eliminarFuncionalidadIdExistsRule.execute(data);
         eliminarFuncionalidadIsNotUsedByParametroRule.execute(data);
 
         var funcionalidad = funcionalidadRepository.findById(data)
-                .orElseThrow(() -> NotFoundException.build("No existe una funcionalidad con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-60")));
 
         funcionalidadRepository.deleteById(data);
         eliminarFuncionalidadPublisher.sendEvent(EliminarFuncionalidadEvent.deleted(funcionalidad));

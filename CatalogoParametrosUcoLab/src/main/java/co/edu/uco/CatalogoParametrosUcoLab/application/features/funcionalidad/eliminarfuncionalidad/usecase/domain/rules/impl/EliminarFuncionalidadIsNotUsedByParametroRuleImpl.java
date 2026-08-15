@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +14,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictExcep
 @Service
 public final class EliminarFuncionalidadIsNotUsedByParametroRuleImpl implements EliminarFuncionalidadIsNotUsedByParametroRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final ParametroRepository parametroRepository;
 
     public EliminarFuncionalidadIsNotUsedByParametroRuleImpl(final ParametroRepository parametroRepository) {
@@ -21,9 +27,7 @@ public final class EliminarFuncionalidadIsNotUsedByParametroRuleImpl implements 
     public void execute(final UUID data) {
         final var parametros = parametroRepository.findByIdFuncionalidad(data);
         if (parametros != null && !parametros.isEmpty()) {
-            throw ConflictException.build(
-                    "No se puede eliminar la funcionalidad con el id " + data
-                            + " porque esta siendo utilizada por uno o mas parametros.");
+            throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-59"));
         }
     }
 }

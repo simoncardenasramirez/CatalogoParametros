@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.ParametroFuncionalidadExistsRule;
@@ -14,6 +17,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public final class ParametroFuncionalidadExistsRuleImpl implements ParametroFuncionalidadExistsRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final FuncionalidadRepository funcionalidadRepository;
 
     public ParametroFuncionalidadExistsRuleImpl(final FuncionalidadRepository funcionalidadRepository) {
@@ -23,15 +29,14 @@ public final class ParametroFuncionalidadExistsRuleImpl implements ParametroFunc
     @Override
     public void execute(final CrearParametroDomain data) {
         if (data == null || UUIDHelper.getDefault().equals(data.getIdFuncionalidad())) {
-            throw ValidationException.build("La funcionalidad asociada al parametro es obligatoria.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-130"));
         }
 
         final FuncionalidadEntity funcionalidad = funcionalidadRepository.findById(data.getIdFuncionalidad())
                 .orElse(null);
 
         if (funcionalidad == null || UUIDHelper.getDefault().equals(funcionalidad.getId())) {
-            throw NotFoundException.build(
-                    "La funcionalidad con el id " + data.getIdFuncionalidad() + " no existe en el sistema.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-129"));
         }
     }
 }

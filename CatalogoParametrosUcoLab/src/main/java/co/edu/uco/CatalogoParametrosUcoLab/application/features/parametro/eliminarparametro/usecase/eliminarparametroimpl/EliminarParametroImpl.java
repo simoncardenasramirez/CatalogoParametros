@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.eliminarparametro.usecase.eliminarparametroimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +18,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public class EliminarParametroImpl implements EliminarParametro {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final ParametroRepository parametroRepository;
     private final EliminarParametroPublisher eliminarParametroPublisher;
 
@@ -27,11 +33,11 @@ public class EliminarParametroImpl implements EliminarParametro {
     @Override
     public void execute(final UUID data) {
         if (data == null || UUIDHelper.getDefault().equals(data)) {
-            throw ValidationException.build("El id del parametro es obligatorio para eliminar.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-139"));
         }
 
         var parametro = parametroRepository.findById(data)
-                .orElseThrow(() -> NotFoundException.build("No existe un parametro con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-138")));
 
         parametroRepository.deleteById(data);
         eliminarParametroPublisher.sendEvent(EliminarParametroEvent.deleted(parametro));
