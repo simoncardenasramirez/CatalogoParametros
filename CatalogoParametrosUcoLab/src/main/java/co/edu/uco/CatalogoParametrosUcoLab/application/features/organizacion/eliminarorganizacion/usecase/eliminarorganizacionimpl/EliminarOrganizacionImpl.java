@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.usecase.eliminarorganizacionimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,8 @@ public class EliminarOrganizacionImpl implements EliminarOrganizacion {
 
     private static final Logger logger = LoggerFactory.getLogger(EliminarOrganizacionImpl.class);
     private static final String OPERATION_NAME = "eliminar-organizacion";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final OrganizacionRepository organizacionRepository;
     private final EliminarOrganizacionPublisher eliminarOrganizacionPublisher;
@@ -62,9 +67,9 @@ public class EliminarOrganizacionImpl implements EliminarOrganizacion {
             if (!messages.isEmpty()) {
                 throw ValidationException.build(String.join(", ", messages));
             }
-
+            
             var organizacion = organizacionRepository.findById(id)
-                    .orElseThrow(() -> NotFoundException.build("No existe una organizacion con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-106")));
 
             organizacionRepository.deleteById(id);
             eliminarOrganizacionPublisher.sendEvent(EliminarOrganizacionEvent.deleted(organizacion));

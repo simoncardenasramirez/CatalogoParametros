@@ -2,6 +2,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actua
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
@@ -21,6 +24,8 @@ public class ActualizarParametroImpl implements ActualizarParametro {
 
     private static final Logger logger = LoggerFactory.getLogger(ActualizarParametroImpl.class);
     private static final String OPERATION_NAME = "actualizar-parametro";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final ParametroRepository parametroRepository;
     private final ActualizarParametroPublisher actualizarParametroPublisher;
@@ -42,11 +47,11 @@ public class ActualizarParametroImpl implements ActualizarParametro {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
             logger.info("[ACTUALIZAR-PARAMETRO] Iniciando actualizacion de parametro con id: {}", data.getId());
             if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-                throw ValidationException.build("El id del parametro es obligatorio para actualizar.");
+                throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-115"));
             }
 
             if (parametroRepository.findById(data.getId()).isEmpty()) {
-                throw NotFoundException.build("No existe un parametro con el id especificado.");
+                throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-114"));
             }
 
             actualizarParametroRuleValidator.validate(data);

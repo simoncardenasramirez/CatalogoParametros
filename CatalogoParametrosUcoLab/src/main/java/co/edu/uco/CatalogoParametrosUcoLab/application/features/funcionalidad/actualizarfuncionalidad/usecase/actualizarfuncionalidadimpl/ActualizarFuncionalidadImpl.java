@@ -2,6 +2,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.a
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
@@ -21,6 +24,8 @@ public class ActualizarFuncionalidadImpl implements ActualizarFuncionalidad {
 
     private static final Logger logger = LoggerFactory.getLogger(ActualizarFuncionalidadImpl.class);
     private static final String OPERATION_NAME = "actualizar-funcionalidad";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final FuncionalidadRepository funcionalidadRepository;
     private final ActualizarFuncionalidadPublisher actualizarFuncionalidadPublisher;
@@ -41,14 +46,13 @@ public class ActualizarFuncionalidadImpl implements ActualizarFuncionalidad {
     public void execute(final ActualizarFuncionalidadDomain data) {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
             logger.info("[ACTUALIZAR-FUNCIONALIDAD] Iniciando actualizacion de funcionalidad con id: {}", data.getId());
+            
             if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-                throw ValidationException.build(
-                        "El id de la funcionalidad es obligatorio para actualizar.");
+                throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-37"));
             }
 
             if (funcionalidadRepository.findById(data.getId()).isEmpty()) {
-                throw NotFoundException.build(
-                        "No existe una funcionalidad con el id especificado.");
+                throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-36"));
             }
 
             actualizarFuncionalidadRuleValidator.validate(data);

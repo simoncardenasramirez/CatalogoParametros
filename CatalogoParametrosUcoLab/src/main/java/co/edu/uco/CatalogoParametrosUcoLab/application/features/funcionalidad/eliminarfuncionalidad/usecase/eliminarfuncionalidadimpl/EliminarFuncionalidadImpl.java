@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.eliminarfuncionalidad.usecase.eliminarfuncionalidadimpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -23,6 +26,8 @@ public class EliminarFuncionalidadImpl implements EliminarFuncionalidad {
 
     private static final Logger logger = LoggerFactory.getLogger(EliminarFuncionalidadImpl.class);
     private static final String OPERATION_NAME = "eliminar-funcionalidad";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final FuncionalidadRepository funcionalidadRepository;
     private final ParametroRepository parametroRepository;
@@ -50,14 +55,15 @@ public class EliminarFuncionalidadImpl implements EliminarFuncionalidad {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
             logger.info("[ELIMINAR-FUNCIONALIDAD] Iniciando eliminacion de funcionalidad con id: {}", data);
             if (data == null || UUIDHelper.getDefault().equals(data)) {
-                throw ValidationException.build("El id de la funcionalidad es obligatorio para eliminar.");
+                throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-61"));
             }
 
             eliminarFuncionalidadIdExistsRule.execute(data);
             eliminarFuncionalidadIsNotUsedByParametroRule.execute(data);
-
+            
+            
             var funcionalidad = funcionalidadRepository.findById(data)
-                    .orElseThrow(() -> NotFoundException.build("No existe una funcionalidad con el id especificado."));
+                .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-60")));
 
             funcionalidadRepository.deleteById(data);
             eliminarFuncionalidadPublisher.sendEvent(EliminarFuncionalidadEvent.deleted(funcionalidad));

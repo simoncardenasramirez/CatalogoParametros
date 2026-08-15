@@ -2,6 +2,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.ac
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,8 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
 
     private static final Logger logger = LoggerFactory.getLogger(ActualizarOrganizacionImpl.class);
     private static final String OPERATION_NAME = "actualizar-organizacion";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final OrganizacionRepository organizacionRepository;
     private final ActualizarOrganizacionPublisher actualizarOrganizacionPublisher;
@@ -38,7 +43,7 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
             logger.info("[ACTUALIZAR-ORGANIZACION] Iniciando actualizacion de organizacion con id: {}", domain.getId());
             if (organizacionRepository.findById(domain.getId()).isEmpty()) {
-                throw NotFoundException.build("La organizacion con id " + domain.getId() + " no existe.");
+                throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-93"));
             }
             var entity = OrganizacionEntity.create(domain.getId(), domain.getNombre());
             var updatedEntity = organizacionRepository.update(entity);

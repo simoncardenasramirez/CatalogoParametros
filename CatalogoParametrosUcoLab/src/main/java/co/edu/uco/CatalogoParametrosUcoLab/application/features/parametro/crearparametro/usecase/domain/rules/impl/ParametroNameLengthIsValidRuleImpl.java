@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.CrearParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.usecase.domain.rules.ParametroNameLengthIsValidRule;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 @Service
 public final class ParametroNameLengthIsValidRuleImpl implements ParametroNameLengthIsValidRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 120;
 
@@ -16,7 +22,7 @@ public final class ParametroNameLengthIsValidRuleImpl implements ParametroNameLe
     public void execute(final CrearParametroDomain data) {
         var length = data.getNombre().length();
         if (length < MIN_LENGTH || length > MAX_LENGTH) {
-            throw ValidationException.build("El nombre del parametro debe tener entre 3 y 120 caracteres.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-136"));
         }
     }
 }

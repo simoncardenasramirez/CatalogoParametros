@@ -1,6 +1,9 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.actualizaraplicacionimpl;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import org.slf4j.Logger;
@@ -21,6 +24,8 @@ public class ActualizarAplicacionImpl implements ActualizarAplicacion {
 
     private static final Logger logger = LoggerFactory.getLogger(ActualizarAplicacionImpl.class);
     private static final String OPERATION_NAME = "actualizar-aplicacion";
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
 
     private final AplicacionRepository aplicacionRepository;
     private final ActualizarAplicacionPublisher actualizarAplicacionPublisher;
@@ -41,19 +46,14 @@ public class ActualizarAplicacionImpl implements ActualizarAplicacion {
     public void execute(final ActualizarAplicacionDomain data) {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
             logger.info("[ACTUALIZAR-APLICACION] Iniciando actualizacion de aplicacion con id: {}", data.getId());
-
             if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
-                throw ValidationException.build(
-                        "El id de la aplicacion es obligatorio para actualizar.");
+                throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-9"));
             }
-
             if (aplicacionRepository.findById(data.getId()).isEmpty()) {
-                throw NotFoundException.build(
-                        "No existe una aplicacion con el id especificado.");
+                throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-8"));
             }
-
             actualizarAplicacionRuleValidator.validate(data);
-
+            
             var entity = AplicacionEntity.create(data.getId(), data.getNombre(), data.getIdOrganizacion(),
                     data.isActiva(), data.getFechaInicio(), data.getFechaFinal());
             var updatedEntity = aplicacionRepository.update(entity);

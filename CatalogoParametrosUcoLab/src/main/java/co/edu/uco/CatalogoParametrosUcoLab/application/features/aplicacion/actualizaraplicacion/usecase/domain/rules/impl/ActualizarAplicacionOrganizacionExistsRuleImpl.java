@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +15,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundExcep
 @Service
 public final class ActualizarAplicacionOrganizacionExistsRuleImpl implements ActualizarAplicacionOrganizacionExistsRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final OrganizacionRepository organizacionRepository;
 
     public ActualizarAplicacionOrganizacionExistsRuleImpl(final OrganizacionRepository organizacionRepository) {
@@ -22,7 +28,7 @@ public final class ActualizarAplicacionOrganizacionExistsRuleImpl implements Act
     public void execute(final ActualizarAplicacionDomain data) {
         final UUID idOrganizacion = data.getIdOrganizacion();
         if (idOrganizacion == null || organizacionRepository.findById(idOrganizacion).isEmpty()) {
-            throw NotFoundException.build("La organizacion con id " + idOrganizacion + " no existe.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-15"));
         }
     }
 }

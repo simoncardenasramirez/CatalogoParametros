@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +15,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictExcep
 @Service
 public final class EliminarAplicacionIsNotUsedByModuloRuleImpl implements EliminarAplicacionIsNotUsedByModuloRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final ModuloRepository moduloRepository;
 
     public EliminarAplicacionIsNotUsedByModuloRuleImpl(final ModuloRepository moduloRepository) {
@@ -21,8 +27,7 @@ public final class EliminarAplicacionIsNotUsedByModuloRuleImpl implements Elimin
     @Override
     public void execute(final UUID id) {
         if (moduloRepository.existsByIdAplicacion(id)) {
-            throw ConflictException.build(
-                    "No se puede eliminar la aplicacion porque esta siendo usada por uno o mas modulos.");
+            throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-28"));
         }
     }
 }

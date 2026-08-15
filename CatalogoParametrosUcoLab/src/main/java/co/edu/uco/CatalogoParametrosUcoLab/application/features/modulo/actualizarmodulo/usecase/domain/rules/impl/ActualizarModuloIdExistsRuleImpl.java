@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +17,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 @Service
 public final class ActualizarModuloIdExistsRuleImpl implements ActualizarModuloIdExistsRule {
 
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
     private final ModuloRepository moduloRepository;
 
     public ActualizarModuloIdExistsRuleImpl(final ModuloRepository moduloRepository) {
@@ -24,13 +30,11 @@ public final class ActualizarModuloIdExistsRuleImpl implements ActualizarModuloI
     public void execute(final ActualizarModuloDomain data) {
         final var id = data.getId();
         if (UUIDHelper.getDefault().equals(id)) {
-            throw ValidationException.build(
-                    "El id del modulo es obligatorio para actualizar.");
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-74"));
         }
 
         if (moduloRepository.findById(id).isEmpty()) {
-            throw NotFoundException.build(
-                    "No existe un modulo con el id especificado.");
+            throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-73"));
         }
     }
 }
