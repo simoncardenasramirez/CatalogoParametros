@@ -38,9 +38,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DecodingException.class)
     public ResponseEntity<Response> manejarErrorDeFormato(
             final DecodingException exception) {
+
         logger.error("[EXCEPTION-HANDLER] Error de formato en la peticion", exception);
-        telemetryService.recordError("decoding-exception", "Error de formato en la peticion");
+        telemetryService.recordError(
+                "decoding-exception",
+                "Error de formato en la peticion");
+
         Throwable causa = obtenerCausaRaiz(exception);
+
+        if (causa instanceof ValidationException validationException) {
+            return manejarValidacion(validationException);
+        }
 
         if (causa instanceof InvalidFormatException invalidFormatException) {
             return manejarFormatoInvalido(invalidFormatException);
