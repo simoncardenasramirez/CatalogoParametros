@@ -25,7 +25,7 @@ public final class OrganizacionNombreDoesNotExistRuleImpl implements Organizacio
     @Override
     public void execute(final CrearOrganizacionDomain data) {
         if (organizacionRepository.existsByNombre(data.getNombre())) {
-            throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-101"));
+            throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-101") + data.getNombre());
         }
     }
 }
