@@ -74,13 +74,13 @@ public final class AplicacionController {
                         .event("aplicacion")
                         .build());
 
+        var eventos = Flux.merge(crearEventos, actualizarEventos, eliminarEventos);
+
         return Flux.concat(
                 Mono.just(ServerSentEvent.<AplicacionEvent>builder()
                         .comment("connected")
                         .build()),
-                crearEventos,
-                actualizarEventos,
-                eliminarEventos
+                eventos
         );
     }
 

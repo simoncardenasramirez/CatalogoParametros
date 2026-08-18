@@ -10,11 +10,11 @@ import reactor.core.publisher.Sinks;
 @Component
 public final class EliminarFuncionalidadPublisherImpl implements EliminarFuncionalidadPublisher {
 
-    private final Sinks.Many<EliminarFuncionalidadEvent> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<EliminarFuncionalidadEvent> sink = Sinks.many().replay().limit(100);
 
     @Override
     public void sendEvent(final EliminarFuncionalidadEvent event) {
-        sink.tryEmitNext(event);
+        sink.emitNext(event, Sinks.EmitFailureHandler.FAIL_FAST);
     }
 
     @Override

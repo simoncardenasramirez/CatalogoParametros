@@ -10,11 +10,11 @@ import reactor.core.publisher.Sinks;
 @Component
 public final class EliminarParametroPublisherImpl implements EliminarParametroPublisher {
 
-    private final Sinks.Many<EliminarParametroEvent> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<EliminarParametroEvent> sink = Sinks.many().replay().limit(100);
 
     @Override
     public void sendEvent(final EliminarParametroEvent event) {
-        sink.tryEmitNext(event);
+        sink.emitNext(event, Sinks.EmitFailureHandler.FAIL_FAST);
     }
 
     @Override

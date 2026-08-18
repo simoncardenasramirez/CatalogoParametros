@@ -74,13 +74,13 @@ public final class OrganizacionController {
                         .event("organizacion")
                         .build());
 
+        var eventos = Flux.merge(crearEventos, actualizarEventos, eliminarEventos);
+
         return Flux.concat(
                 Mono.just(ServerSentEvent.<OrganizacionEvent>builder()
                         .comment("connected")
                         .build()),
-                crearEventos,
-                actualizarEventos,
-                eliminarEventos
+                eventos
         );
     }
 
