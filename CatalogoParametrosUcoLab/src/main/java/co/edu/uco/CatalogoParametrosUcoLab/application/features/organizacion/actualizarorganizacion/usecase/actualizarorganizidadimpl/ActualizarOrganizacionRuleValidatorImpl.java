@@ -24,9 +24,9 @@ public class ActualizarOrganizacionRuleValidatorImpl implements ActualizarOrgani
     private final ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule;
 
     public ActualizarOrganizacionRuleValidatorImpl(final ActualizarOrganizacionIdExistsRule idExistsRule,
-            final ActualizarOrganizacionNombreIsNotNullRule nombreIsNotNullRule,
-            final ActualizarOrganizacionNombreIsNotEmptyRule nombreIsNotEmptyRule,
-            final ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule) {
+                                                   final ActualizarOrganizacionNombreIsNotNullRule nombreIsNotNullRule,
+                                                   final ActualizarOrganizacionNombreIsNotEmptyRule nombreIsNotEmptyRule,
+                                                   final ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule) {
         this.idExistsRule = idExistsRule;
         this.nombreIsNotNullRule = nombreIsNotNullRule;
         this.nombreIsNotEmptyRule = nombreIsNotEmptyRule;
@@ -35,29 +35,9 @@ public class ActualizarOrganizacionRuleValidatorImpl implements ActualizarOrgani
 
     @Override
     public void validate(final ActualizarOrganizacionDomain data) {
-        messages.clear();
-        try {
-            idExistsRule.execute(data);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        try {
-            nombreIsNotNullRule.execute(data);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        try {
-            nombreIsNotEmptyRule.execute(data);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        try {
-            nombreDoesNotExistRule.execute(data);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        if (!messages.isEmpty()) {
-            throw ValidationException.build(String.join(", ", messages));
-        }
+        idExistsRule.execute(data);
+        nombreIsNotNullRule.execute(data);
+        nombreIsNotEmptyRule.execute(data);
+        nombreDoesNotExistRule.execute(data);
     }
 }
