@@ -10,11 +10,11 @@ import reactor.core.publisher.Sinks;
 @Component
 public final class ActualizarFuncionalidadPublisherImpl implements ActualizarFuncionalidadPublisher {
 
-    private final Sinks.Many<ActualizarFuncionalidadEvent> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<ActualizarFuncionalidadEvent> sink = Sinks.many().replay().limit(100);
 
     @Override
     public void sendEvent(final ActualizarFuncionalidadEvent event) {
-        sink.tryEmitNext(event);
+        sink.emitNext(event, Sinks.EmitFailureHandler.FAIL_FAST);
     }
 
     @Override
