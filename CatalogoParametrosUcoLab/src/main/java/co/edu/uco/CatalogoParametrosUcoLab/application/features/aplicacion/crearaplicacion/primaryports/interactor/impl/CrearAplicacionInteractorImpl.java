@@ -37,7 +37,7 @@ public final class CrearAplicacionInteractorImpl implements CrearAplicacionInter
             final CrearAplicacionDomain aplicacionDomain = CrearAplicacionDtoMapper.INSTANCE.toDomain(dtoInput);
             logger.info("DTOInput mapeado a domain: {}", aplicacionDomain.getNombre());
             crearAplicacion.execute(aplicacionDomain);
-            telemetryService.recordBusinessOperation(operationName);
+            telemetryService.recordBusinessOperation(operationName, () -> {});
             telemetryService.stopOperationTimer(timerSample, operationName);
             logger.info("Aplicacion creada exitosamente: {}", aplicacionDomain.getNombre());
         } catch (final Exception e) {

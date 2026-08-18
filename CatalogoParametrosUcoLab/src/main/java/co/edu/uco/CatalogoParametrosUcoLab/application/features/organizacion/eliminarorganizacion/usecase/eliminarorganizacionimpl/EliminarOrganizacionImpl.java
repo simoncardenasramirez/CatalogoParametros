@@ -6,9 +6,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.Co
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.EliminarOrganizacion;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.secondaryports.event.EliminarOrganizacionEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.eliminarorganizacion.secondaryports.publisher.EliminarOrganizacionPublisher;
@@ -22,6 +25,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public class EliminarOrganizacionImpl implements EliminarOrganizacion {
 
+    private static final Logger logger = LoggerFactory.getLogger(EliminarOrganizacionImpl.class);
+    private static final String OPERATION_NAME = "eliminar-organizacion";
     @Autowired
     private ConsultarMensajePort consultarMensajePort;
 
@@ -29,39 +34,46 @@ public class EliminarOrganizacionImpl implements EliminarOrganizacion {
     private final EliminarOrganizacionPublisher eliminarOrganizacionPublisher;
     private final EliminarOrganizacionIdExistsRule idExistsRule;
     private final EliminarOrganizacionIsNotUsedByAplicacionRule isNotUsedByAplicacionRule;
+    private final TelemetryService telemetryService;
 
     public EliminarOrganizacionImpl(final OrganizacionRepository organizacionRepository,
             final EliminarOrganizacionPublisher eliminarOrganizacionPublisher,
             final EliminarOrganizacionIdExistsRule idExistsRule,
-            final EliminarOrganizacionIsNotUsedByAplicacionRule isNotUsedByAplicacionRule) {
+            final EliminarOrganizacionIsNotUsedByAplicacionRule isNotUsedByAplicacionRule,
+            final TelemetryService telemetryService) {
         this.organizacionRepository = organizacionRepository;
         this.eliminarOrganizacionPublisher = eliminarOrganizacionPublisher;
         this.idExistsRule = idExistsRule;
         this.isNotUsedByAplicacionRule = isNotUsedByAplicacionRule;
+        this.telemetryService = telemetryService;
     }
 
     @Override
     @Transactional
     public void execute(final java.util.UUID id) {
-        final List<String> messages = new ArrayList<>();
-        try {
-            idExistsRule.execute(id);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        try {
-            isNotUsedByAplicacionRule.execute(id);
-        } catch (final Exception e) {
-            messages.add(e.getMessage());
-        }
-        if (!messages.isEmpty()) {
-            throw ValidationException.build(String.join(", ", messages));
-        }
-
-        var organizacion = organizacionRepository.findById(id)
+        telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
+            logger.info("[ELIMINAR-ORGANIZACION] Iniciando eliminacion de organizacion con id: {}", id);
+            final List<String> messages = new ArrayList<>();
+            try {
+                idExistsRule.execute(id);
+            } catch (final Exception e) {
+                messages.add(e.getMessage());
+            }
+            try {
+                isNotUsedByAplicacionRule.execute(id);
+            } catch (final Exception e) {
+                messages.add(e.getMessage());
+            }
+            if (!messages.isEmpty()) {
+                throw ValidationException.build(String.join(", ", messages));
+            }
+            
+            var organizacion = organizacionRepository.findById(id)
                 .orElseThrow(() -> NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-106")));
 
-        organizacionRepository.deleteById(id);
-        eliminarOrganizacionPublisher.sendEvent(EliminarOrganizacionEvent.deleted(organizacion));
+            organizacionRepository.deleteById(id);
+            eliminarOrganizacionPublisher.sendEvent(EliminarOrganizacionEvent.deleted(organizacion));
+            logger.info("[ELIMINAR-ORGANIZACION] Organizacion eliminada exitosamente con id: {}", id);
+        });
     }
 }

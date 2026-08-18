@@ -1,0 +1,140 @@
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+
+receivers:
+
+  # ==========================================
+  # OTLP
+  # ==========================================
+  otlp:
+    protocols:
+
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+      http:
+        endpoint: 0.0.0.0:4318
+
+
+processors:
+
+  # ==========================================
+  # MEMORY LIMIT
+  # ==========================================
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+
+  # ==========================================
+  # BATCH
+  # ==========================================
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+
+  # ==========================================
+  # RESOURCE
+  # ==========================================
+  resource:
+    attributes:
+      - key: service.name
+        value: catalogo-parametros
+        action: upsert
+
+
+exporters:
+
+  # ==========================================
+  # JAEGER
+  # ==========================================
+  otlp/jaeger:
+    endpoint: jaeger:4317
+
+    tls:
+      insecure: true
+
+
+  # ==========================================
+  # PROMETHEUS
+  # ==========================================
+  prometheus:
+    endpoint: 0.0.0.0:8889
+
+    const_labels:
+      source: otel-collector
+
+
+  # ==========================================
+  # LOKI
+  # ==========================================
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
+
+service:
+
+  extensions:
+    - health_check
+    - pprof
+    - zpages
+
+
+  # ==========================================
+  # TRACES
+  # ==========================================
+  pipelines:
+
+    traces:
+      receivers:
+        - otlp
+
+      processors:
+        - memory_limiter
+        - resource
+        - batch
+
+      exporters:
+        - otlp/jaeger
+
+
+    # ========================================
+    # METRICS
+    # ========================================
+    metrics:
+      receivers:
+        - otlp
+
+      processors:
+        - memory_limiter
+        - resource
+        - batch
+
+      exporters:
+        - prometheus
+
+
+    # ========================================
+    # LOGS
+    # ========================================
+    logs:
+      receivers:
+        - otlp
+
+      processors:
+        - memory_limiter
+        - resource
+        - batch
+
+      exporters:
+        - loki
