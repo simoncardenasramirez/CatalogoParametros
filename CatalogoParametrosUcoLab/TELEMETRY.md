@@ -39,16 +39,35 @@ management.metrics.export.prometheus.enabled=true
 ### 2. Tracing (OpenTelemetry)
 
 **Dependencias en `pom.xml`:**
-- `opentelemetry-api` y `opentelemetry-sdk` — API de tracing
-- `opentelemetry-exporter-otlp` — Exportación a collector
-- `micrometer-tracing-bridge-otel` — Integración con Micrometer
+- `spring-boot-starter-opentelemetry` — Bridge Micrometer/OpenTelemetry y exportador OTLP
+- `aspectjweaver` — Instrumentación transversal de las capas internas
 
 **Configuración en `application.properties`:**
 ```properties
-otel.service.name=CatalogoParametrosUcoLab
-otel.traces.exporter=otlp
-otel.exporter.otlp.endpoint=http://localhost:4317
+management.tracing.sampling.probability=1.0
+management.opentelemetry.tracing.export.otlp.endpoint=http://otel-collector:4317
+management.opentelemetry.tracing.export.otlp.transport=grpc
+management.opentelemetry.resource-attributes.service.name=catalogo-parametros
+spring.reactor.context-propagation=auto
 ```
+
+### Spans y `traceId` en WebFlux
+
+Cada petición HTTP crea el span raíz automático de WebFlux. `LayerTracingAspect`
+crea spans hijos para `interactor`, `usecase` y `repository`, por lo que Jaeger
+muestra la duración propia de cada llamada y su relación padre-hijo. El span HTTP
+incluye el tiempo total de controlador/petición.
+
+La aplicación usa `Schedulers.boundedElastic()` en los controladores. Por eso
+`spring.reactor.context-propagation=auto` es necesario: conserva el contexto de
+OpenTelemetry y los valores MDC `traceId`/`spanId` al cambiar de hilo. Los logs de
+arranque no pertenecen a una petición y es normal que allí ambos campos estén vacíos.
+
+En Jaeger abre el servicio `catalogo-parametros`, ejecuta una petición a la API y
+selecciona la traza: verás un span HTTP raíz y sus hijos con nombres como
+`interactor.ActualizarAplicacionInteractorImpl.execute`,
+`usecase.ActualizarAplicacionImpl.execute` y
+`repository.SurrealDbAplicacionRepository.findById`.
 
 ### 3. Grafana
 
