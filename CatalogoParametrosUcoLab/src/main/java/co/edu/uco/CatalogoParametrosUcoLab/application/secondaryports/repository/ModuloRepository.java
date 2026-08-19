@@ -18,5 +18,7 @@ public interface ModuloRepository {
 
     List<ModuloEntity> findAll();
 
+    List<ModuloEntity> findAllPaginado(int pagina, int tamanoPagina);
+
     boolean existsByIdAplicacion(UUID idAplicacion);
 }

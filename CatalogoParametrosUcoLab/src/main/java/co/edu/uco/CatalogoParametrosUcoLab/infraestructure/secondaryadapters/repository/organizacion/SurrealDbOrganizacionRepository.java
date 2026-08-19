@@ -74,6 +74,24 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
     }
 
     @Override
+    public List<OrganizacionEntity> findAllPaginado(final int pagina, final int tamanoPagina) {
+        var offset = (pagina - 1) * tamanoPagina;
+        var query = "SELECT * FROM " + TABLE_NAME + " LIMIT " + tamanoPagina + " START " + offset + ";";
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var organizaciones = new ArrayList<OrganizacionEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    organizaciones.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return organizaciones;
+    }
+
+    @Override
     public OrganizacionEntity update(final OrganizacionEntity organizacion) {
         var query = """
                 BEGIN TRANSACTION;

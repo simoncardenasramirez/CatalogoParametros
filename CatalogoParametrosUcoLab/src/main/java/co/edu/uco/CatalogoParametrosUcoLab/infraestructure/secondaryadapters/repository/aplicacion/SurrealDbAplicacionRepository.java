@@ -103,6 +103,24 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
     }
 
     @Override
+    public List<AplicacionEntity> findAllPaginado(final int pagina, final int tamanoPagina) {
+        var offset = (pagina - 1) * tamanoPagina;
+        var query = "SELECT * FROM " + TABLE_NAME + " LIMIT " + tamanoPagina + " START " + offset + ";";
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var aplicaciones = new ArrayList<AplicacionEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    aplicaciones.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return aplicaciones;
+    }
+
+    @Override
     public boolean existsByIdOrganizacion(final UUID idOrganizacion) {
         var query = "SELECT id FROM %s WHERE idOrganizacion = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, idOrganizacion);

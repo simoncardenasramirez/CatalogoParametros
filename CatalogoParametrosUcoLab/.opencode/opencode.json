@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "instructions": ["AGENTS.md"],
+  "permission": {
+    "edit": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": {
+      "git status": "allow",
+      "git log *": "allow",
+      "git diff *": "allow",
+      "git *": "allow",
+      "mvn *": "allow",
+      "mvnw.cmd *": "allow",
+      "./mvnw *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "docker *": "allow",
+      "docker-compose *": "allow",
+      "docker compose *": "allow",
+      "rg *": "allow",
+      "curl *": "allow",
+      "Test-Path *": "allow",
+      "Get-ChildItem *": "allow",
+      "Get-Content *": "allow",
+      "Write-Output *": "allow",
+      "echo *": "allow",
+      "*": "ask"
+    }
+  }
+}

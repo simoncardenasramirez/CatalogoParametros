@@ -113,6 +113,24 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
         return funcionalidades;
     }
 
+    @Override
+    public List<FuncionalidadEntity> findAllPaginado(final int pagina, final int tamanoPagina) {
+        var offset = (pagina - 1) * tamanoPagina;
+        var query = "SELECT * FROM " + TABLE_NAME + " LIMIT " + tamanoPagina + " START " + offset + ";";
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var funcionalidades = new ArrayList<FuncionalidadEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    funcionalidades.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return funcionalidades;
+    }
+
     private JsonNode firstStatementResult(final JsonNode response) {
         if (!response.isArray() || response.size() == 0) {
             return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Flux;
@@ -138,11 +139,12 @@ public final class OrganizacionController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<OrganizacionResponse>> consultarTodasLasOrganizaciones() {
+    public Mono<ResponseEntity<OrganizacionResponse>> consultarTodasLasOrganizaciones(
+            @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
             try {
-                var organizaciones = consultarOrganizacionInteractor.execute();
+                var organizaciones = consultarOrganizacionInteractor.execute(page, pageSize);
                 response.getOrganizaciones().addAll(organizaciones);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final BusinessException exception) {

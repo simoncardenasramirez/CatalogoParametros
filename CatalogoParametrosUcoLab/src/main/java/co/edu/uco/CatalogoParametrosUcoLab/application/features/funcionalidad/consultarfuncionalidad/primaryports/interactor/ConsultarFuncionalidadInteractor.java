@@ -9,4 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.InteractorWi
 public interface ConsultarFuncionalidadInteractor extends InteractorWithReturn<UUID, List<FuncionalidadEntity>> {
     
     List<FuncionalidadEntity> execute();
+
+    List<FuncionalidadEntity> execute(int pagina, int tamanoPagina);
 }

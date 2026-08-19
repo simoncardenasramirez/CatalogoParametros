@@ -24,6 +24,13 @@ public class ConsultarFuncionalidadInteractorImpl implements ConsultarFuncionali
     }
 
     @Override
+    public List<FuncionalidadEntity> execute(final int pagina, final int tamanoPagina) {
+        final var paginaSegura = Math.max(pagina, 1);
+        final var tamanoSeguro = Math.max(tamanoPagina, 1);
+        return funcionalidadRepository.findAllPaginado(paginaSegura, tamanoSeguro);
+    }
+
+    @Override
     public List<FuncionalidadEntity> execute(final UUID id) {
         return funcionalidadRepository.findById(id)
                 .map(List::of)

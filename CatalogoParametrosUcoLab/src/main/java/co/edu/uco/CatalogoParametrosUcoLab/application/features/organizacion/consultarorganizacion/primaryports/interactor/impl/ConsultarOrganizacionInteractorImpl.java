@@ -31,6 +31,13 @@ public class ConsultarOrganizacionInteractorImpl implements ConsultarOrganizacio
     }
 
     @Override
+    public List<OrganizacionEntity> execute(final int pagina, final int tamanoPagina) {
+        final var paginaSegura = Math.max(pagina, 1);
+        final var tamanoSeguro = Math.max(tamanoPagina, 1);
+        return organizacionRepository.findAllPaginado(paginaSegura, tamanoSeguro);
+    }
+
+    @Override
     public List<OrganizacionEntity> execute(final UUID id) {
         return organizacionRepository.findById(id)
                 .map(List::of)
