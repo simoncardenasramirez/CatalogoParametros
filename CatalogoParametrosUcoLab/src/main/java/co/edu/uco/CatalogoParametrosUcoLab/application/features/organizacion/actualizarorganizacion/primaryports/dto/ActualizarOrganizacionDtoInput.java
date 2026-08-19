@@ -1,33 +1,19 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto;
 
-import java.util.UUID;
-
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
-
 public final class ActualizarOrganizacionDtoInput {
 
-    private UUID id;
     private String nombre;
 
     public ActualizarOrganizacionDtoInput() {
-        this(UUIDHelper.getDefault(), "");
+        this("");
     }
 
-    public ActualizarOrganizacionDtoInput(final UUID id, final String nombre) {
-        setId(id);
+    public ActualizarOrganizacionDtoInput(final String nombre) {
         setNombre(nombre);
     }
 
-    public static ActualizarOrganizacionDtoInput create(final UUID id, final String nombre) {
-        return new ActualizarOrganizacionDtoInput(id, nombre);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(final UUID id) {
-        this.id = UUIDHelper.getDefault(id);
+    public static ActualizarOrganizacionDtoInput create(final String nombre) {
+        return new ActualizarOrganizacionDtoInput(nombre);
     }
 
     public String getNombre() {

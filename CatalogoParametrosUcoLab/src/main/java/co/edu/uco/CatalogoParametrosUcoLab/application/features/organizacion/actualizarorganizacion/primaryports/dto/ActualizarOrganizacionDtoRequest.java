@@ -1,36 +1,23 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto;
 
 
-import java.util.UUID;
-
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 public final class ActualizarOrganizacionDtoRequest {
 
-    private String id;
     private String nombre;
 
     public ActualizarOrganizacionDtoRequest() {
-        this(TextHelper.EMPTY, TextHelper.EMPTY);
+        this(TextHelper.EMPTY);
     }
 
-    public ActualizarOrganizacionDtoRequest(final String id, final String nombre) {
-        setId(id);
+    public ActualizarOrganizacionDtoRequest(final String nombre) {
         setNombre(nombre);
     }
 
-    public static ActualizarOrganizacionDtoRequest create(final String id, final String nombre) {
-        return new ActualizarOrganizacionDtoRequest(id, nombre);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = TextHelper.applyTrim(id);
-        validateId();
+    public static ActualizarOrganizacionDtoRequest create(final String nombre) {
+        return new ActualizarOrganizacionDtoRequest(nombre);
     }
 
     public String getNombre() {
@@ -40,17 +27,6 @@ public final class ActualizarOrganizacionDtoRequest {
     public void setNombre(final String nombre) {
         this.nombre = TextHelper.applyTrim(nombre);
         validateNombre();
-    }
-
-    private void validateId() {
-        if (TextHelper.isBlank(id)) {
-            throw ValidationException.build("El identificador de la organizacion es obligatorio.");
-        }
-        try {
-            UUID.fromString(id);
-        } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + id);
-        }
     }
 
     private void validateNombre() {

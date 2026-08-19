@@ -9,18 +9,17 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.act
 public enum ActualizarOrganizacionDtoMapper {
     INSTANCE;
 
-    public ActualizarOrganizacionDomain toDomain(final ActualizarOrganizacionDtoRequest dto) {
+    public ActualizarOrganizacionDomain toDomain(final UUID id, final ActualizarOrganizacionDtoRequest dto) {
         final var dtoInput = toDtoInput(dto);
-        return toDomain(dtoInput);
+        return toDomain(id, dtoInput);
     }
 
     public ActualizarOrganizacionDtoInput toDtoInput(final ActualizarOrganizacionDtoRequest dto) {
         var dtoToMap = dto == null ? new ActualizarOrganizacionDtoRequest() : dto;
-        final var id = UUID.fromString(dtoToMap.getId());
-        return ActualizarOrganizacionDtoInput.create(id, dtoToMap.getNombre());
+        return ActualizarOrganizacionDtoInput.create(dtoToMap.getNombre());
     }
 
-    public ActualizarOrganizacionDomain toDomain(final ActualizarOrganizacionDtoInput dtoInput) {
-        return ActualizarOrganizacionDomain.create(dtoInput.getId(), dtoInput.getNombre());
+    public ActualizarOrganizacionDomain toDomain(final UUID id, final ActualizarOrganizacionDtoInput dtoInput) {
+        return ActualizarOrganizacionDomain.create(id, dtoInput.getNombre());
     }
 }
