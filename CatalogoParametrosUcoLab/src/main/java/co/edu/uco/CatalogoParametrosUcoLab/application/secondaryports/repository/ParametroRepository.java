@@ -20,5 +20,7 @@ public interface ParametroRepository {
 
     List<ParametroEntity> findAll();
 
+    List<ParametroEntity> findAllPaginado(int pagina, int tamanoPagina);
+
     List<ParametroEntity> findByIdFuncionalidad(UUID idFuncionalidad);
 }

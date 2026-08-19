@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface ConsultarParametroInteractor extends InteractorWithReturn<UUID, List<ParametroEntity>> {
     
     List<ParametroEntity> execute();
+
+    List<ParametroEntity> execute(int pagina, int tamanoPagina);
 }
