@@ -104,12 +104,11 @@ public final class OrganizacionController {
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<OrganizacionResponse>> actualizar(@PathVariable final UUID id,
-            @RequestBody final ActualizarOrganizacionNombreRequest request) {
+            @RequestBody final ActualizarOrganizacionDtoRequest organizacion) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
             try {
-                var dto = new ActualizarOrganizacionDtoRequest(id.toString(), request.nombre());
-                actualizarOrganizacionInteractor.execute(dto);
+                actualizarOrganizacionInteractor.execute(id, organizacion);
                 response.getMensajes().add("Organizacion actualizada exitosamente.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final BusinessException exception) {
