@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.ActualizarOrganizacionRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.secondaryports.event.ActualizarOrganizacionEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.secondaryports.publisher.ActualizarOrganizacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.ActualizarOrganizacion;
@@ -28,13 +29,16 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
     private final OrganizacionRepository organizacionRepository;
     private final ActualizarOrganizacionPublisher actualizarOrganizacionPublisher;
     private final TelemetryService telemetryService;
+    private final ActualizarOrganizacionRuleValidator actualizarOrganizacionRuleValidator;
 
     public ActualizarOrganizacionImpl(final OrganizacionRepository organizacionRepository,
             final ActualizarOrganizacionPublisher actualizarOrganizacionPublisher,
-            final TelemetryService telemetryService) {
+            final TelemetryService telemetryService,
+            final ActualizarOrganizacionRuleValidator actualizarOrganizacionRuleValidator) {
         this.organizacionRepository = organizacionRepository;
         this.actualizarOrganizacionPublisher = actualizarOrganizacionPublisher;
         this.telemetryService = telemetryService;
+        this.actualizarOrganizacionRuleValidator = actualizarOrganizacionRuleValidator;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
             if (organizacionRepository.findById(domain.getId()).isEmpty()) {
                 throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-93"));
             }
+            actualizarOrganizacionRuleValidator.validate(domain);
             var entity = OrganizacionEntity.create(domain.getId(), domain.getNombre());
             var updatedEntity = organizacionRepository.update(entity);
             actualizarOrganizacionPublisher.sendEvent(ActualizarOrganizacionEvent.updated(updatedEntity));
