@@ -1,5 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.interactor.impl;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,12 @@ public final class ActualizarOrganizacionInteractorImpl implements ActualizarOrg
     }
 
     @Override
-    public void execute(final ActualizarOrganizacionDtoRequest data) {
-        logger.info("Iniciando actualizacion de organizacion: {}", data.getId());
+    public void execute(final UUID id, final ActualizarOrganizacionDtoRequest data) {
+        logger.info("Iniciando actualizacion de organizacion: {}", id);
         try {
             final ActualizarOrganizacionDtoInput dtoInput = ActualizarOrganizacionDtoMapper.INSTANCE.toDtoInput(data);
             logger.info("DTORequest mapeado a DTOInput: {}", dtoInput.getNombre());
-            final ActualizarOrganizacionDomain organizacionDomain = ActualizarOrganizacionDtoMapper.INSTANCE.toDomain(dtoInput);
+            final ActualizarOrganizacionDomain organizacionDomain = ActualizarOrganizacionDtoMapper.INSTANCE.toDomain(id, dtoInput);
             logger.info("DTOInput mapeado a domain: {}", organizacionDomain.getNombre());
             actualizarOrganizacion.execute(organizacionDomain);
             logger.info("Organizacion actualizada exitosamente: {}", organizacionDomain.getNombre());
