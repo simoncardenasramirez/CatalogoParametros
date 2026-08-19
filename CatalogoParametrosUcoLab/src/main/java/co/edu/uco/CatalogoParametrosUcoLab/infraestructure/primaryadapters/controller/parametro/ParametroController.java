@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto.ActualizarParametroDtoRequest;
@@ -129,12 +130,13 @@ public final class ParametroController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<ParametroResponse>> consultarTodosLosParametros() {
+    public Mono<ResponseEntity<ParametroResponse>> consultarTodosLosParametros(
+            @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
 
             try {
-                var parametros = consultarParametroInteractor.execute();
+                var parametros = consultarParametroInteractor.execute(page, pageSize);
                 response.getParametros().addAll(parametros);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final Exception exception) {

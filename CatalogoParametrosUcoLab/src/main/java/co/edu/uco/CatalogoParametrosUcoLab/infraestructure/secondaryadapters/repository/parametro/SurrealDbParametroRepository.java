@@ -124,6 +124,24 @@ public class SurrealDbParametroRepository implements ParametroRepository {
         return parametros;
     }
 
+    @Override
+    public List<ParametroEntity> findAllPaginado(final int pagina, final int tamanoPagina) {
+        var offset = (pagina - 1) * tamanoPagina;
+        var query = "SELECT * FROM " + TABLE_NAME + " LIMIT " + tamanoPagina + " START " + offset + ";";
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var parametros = new ArrayList<ParametroEntity>();
+        if (result.isArray()) {
+            for (var item : result) {
+                try {
+                    parametros.add(toEntity(item));
+                } catch (final IllegalArgumentException exception) {
+                    // Skip records with non-UUID IDs
+                }
+            }
+        }
+        return parametros;
+    }
+
     private JsonNode firstStatementResult(final JsonNode response) {
         if (!response.isArray() || response.size() == 0) {
             return tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
