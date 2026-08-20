@@ -9,4 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Org
 public interface ConsultarOrganizacionInteractor extends InteractorWithReturn<UUID, List<OrganizacionEntity>> {
 
     List<OrganizacionEntity> execute();
+
+    List<OrganizacionEntity> execute(int pagina, int tamanoPagina);
 }

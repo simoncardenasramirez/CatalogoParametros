@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
@@ -130,12 +131,13 @@ public final class FuncionalidadController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<FuncionalidadResponse>> consultarTodasLasFuncionalidades() {
+    public Mono<ResponseEntity<FuncionalidadResponse>> consultarTodasLasFuncionalidades(
+            @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
             var response = new FuncionalidadResponse();
 
             try {
-                var funcionalidades = consultarFuncionalidadInteractor.execute();
+                var funcionalidades = consultarFuncionalidadInteractor.execute(page, pageSize);
                 response.getFuncionalidades().addAll(funcionalidades);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final Exception exception) {

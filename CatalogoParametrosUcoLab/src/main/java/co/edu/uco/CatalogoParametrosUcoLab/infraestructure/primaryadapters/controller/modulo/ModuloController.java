@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.modulo.ModuloResponse;
@@ -108,12 +109,13 @@ public final class ModuloController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<ModuloResponse>> consultarTodosLosModulos() {
+    public Mono<ResponseEntity<ModuloResponse>> consultarTodosLosModulos(
+            @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
             var response = new ModuloResponse();
 
             try {
-                var modulos = consultarModuloInteractor.execute();
+                var modulos = consultarModuloInteractor.execute(page, pageSize);
                 response.getModulos().addAll(modulos);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final Exception exception) {

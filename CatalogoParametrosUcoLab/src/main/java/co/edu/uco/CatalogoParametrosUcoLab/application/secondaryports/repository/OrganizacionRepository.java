@@ -16,6 +16,8 @@ public interface OrganizacionRepository {
 
     List<OrganizacionEntity> findAll();
 
+    List<OrganizacionEntity> findAllPaginado(int pagina, int tamanoPagina);
+
     OrganizacionEntity update(OrganizacionEntity organizacion);
 
     void deleteById(UUID id);

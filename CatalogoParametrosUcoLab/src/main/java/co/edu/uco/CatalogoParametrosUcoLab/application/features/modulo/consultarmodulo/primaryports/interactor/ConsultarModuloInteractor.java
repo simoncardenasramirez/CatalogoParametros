@@ -9,4 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.InteractorWi
 public interface ConsultarModuloInteractor extends InteractorWithReturn<UUID, List<ModuloEntity>> {
     
     List<ModuloEntity> execute();
+
+    List<ModuloEntity> execute(int pagina, int tamanoPagina);
 }

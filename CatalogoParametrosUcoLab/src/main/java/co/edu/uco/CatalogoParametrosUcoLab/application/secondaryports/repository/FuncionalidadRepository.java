@@ -19,4 +19,6 @@ public interface FuncionalidadRepository {
     Optional<FuncionalidadEntity> findById(UUID id);
 
     List<FuncionalidadEntity> findAll();
+
+    List<FuncionalidadEntity> findAllPaginado(int pagina, int tamanoPagina);
 }

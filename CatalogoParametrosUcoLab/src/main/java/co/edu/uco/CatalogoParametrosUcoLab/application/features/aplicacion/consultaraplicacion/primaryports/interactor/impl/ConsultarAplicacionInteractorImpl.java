@@ -24,6 +24,13 @@ public class ConsultarAplicacionInteractorImpl implements ConsultarAplicacionInt
     }
 
     @Override
+    public List<AplicacionEntity> execute(final int pagina, final int tamanoPagina) {
+        final var paginaSegura = Math.max(pagina, 1);
+        final var tamanoSeguro = Math.max(tamanoPagina, 1);
+        return aplicacionRepository.findAllPaginado(paginaSegura, tamanoSeguro);
+    }
+
+    @Override
     public List<AplicacionEntity> execute(final UUID id) {
         return aplicacionRepository.findById(id)
                 .map(List::of)

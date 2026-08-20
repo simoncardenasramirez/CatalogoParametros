@@ -18,6 +18,8 @@ public interface AplicacionRepository {
 
     List<AplicacionEntity> findAll();
 
+    List<AplicacionEntity> findAllPaginado(int pagina, int tamanoPagina);
+
     boolean existsByIdOrganizacion(UUID idOrganizacion);
 
     void deleteById(UUID id);
