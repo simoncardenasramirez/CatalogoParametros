@@ -1,8 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto;
 
 
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper;
 
 public final class ActualizarOrganizacionDtoRequest {
 
@@ -26,15 +26,6 @@ public final class ActualizarOrganizacionDtoRequest {
 
     public void setNombre(final String nombre) {
         this.nombre = TextHelper.applyTrim(nombre);
-        validateNombre();
-    }
-
-    private void validateNombre() {
-        if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build("El nombre de la organizacion es obligatorio.");
-        }
-        if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
-        }
+        ValidateHelper.validateNombre(this.nombre, "de la organizacion");
     }
 }
