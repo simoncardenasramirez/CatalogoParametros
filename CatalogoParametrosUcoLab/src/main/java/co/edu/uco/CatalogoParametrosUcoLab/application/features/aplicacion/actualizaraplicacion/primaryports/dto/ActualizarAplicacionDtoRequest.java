@@ -1,17 +1,10 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.dto;
 
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.UUID;
-
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper;
 
 public final class ActualizarAplicacionDtoRequest {
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private String nombre;
     private String idOrganizacion;
@@ -43,7 +36,7 @@ public final class ActualizarAplicacionDtoRequest {
 
     public void setNombre(final String nombre) {
         this.nombre = TextHelper.applyTrim(nombre);
-        validateNombre();
+        ValidateHelper.validateNombre(this.nombre, "de la aplicacion");
     }
 
     public String getIdOrganizacion() {
@@ -52,7 +45,7 @@ public final class ActualizarAplicacionDtoRequest {
 
     public void setIdOrganizacion(final String idOrganizacion) {
         this.idOrganizacion = TextHelper.applyTrim(idOrganizacion);
-        validateIdOrganizacion();
+        ValidateHelper.validateId(this.idOrganizacion, "identificador de la organizacion");
     }
 
     public String getActiva() {
@@ -61,7 +54,7 @@ public final class ActualizarAplicacionDtoRequest {
 
     public void setActiva(final String activa) {
         this.activa = activa == null ? "true" : TextHelper.applyTrim(activa).toLowerCase();
-        validateActiva();
+        ValidateHelper.validateActivo(this.activa);
     }
 
     public String getFechaInicio() {
@@ -70,7 +63,7 @@ public final class ActualizarAplicacionDtoRequest {
 
     public void setFechaInicio(final String fechaInicio) {
         this.fechaInicio = TextHelper.applyTrim(fechaInicio);
-        validateFechaInicio();
+        ValidateHelper.validateFecha(this.fechaInicio, "fecha de inicio");
     }
 
     public String getFechaFinal() {
@@ -79,52 +72,6 @@ public final class ActualizarAplicacionDtoRequest {
 
     public void setFechaFinal(final String fechaFinal) {
         this.fechaFinal = TextHelper.applyTrim(fechaFinal);
-        validateFechaFinal();
-    }
-
-    private void validateNombre() {
-        if (TextHelper.isBlank(nombre)) {
-            throw ValidationException.build("El nombre de la aplicacion es obligatorio.");
-        }
-        if (nombre.length() < 3 || nombre.length() > 50) {
-            throw ValidationException.build("El nombre debe tener entre 3 y 50 caracteres.");
-        }
-    }
-
-    private void validateIdOrganizacion() {
-        if (TextHelper.isBlank(idOrganizacion)) {
-            throw ValidationException.build("El identificador de la organizacion es obligatorio.");
-        }
-        try {
-            UUID.fromString(idOrganizacion);
-        } catch (IllegalArgumentException e) {
-            throw ValidationException.build("El identificador de la organizacion no es valido. Valor recibido: " + idOrganizacion);
-        }
-    }
-
-    private void validateActiva() {
-        if (!"true".equals(activa) && !"false".equals(activa)) {
-            throw ValidationException.build("El estado activo debe ser 'true' o 'false'. Valor recibido: " + activa);
-        }
-    }
-
-    private void validateFechaInicio() {
-        if (!TextHelper.isBlank(fechaInicio)) {
-            try {
-                LocalDateTime.parse(fechaInicio, DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha de inicio no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaInicio);
-            }
-        }
-    }
-
-    private void validateFechaFinal() {
-        if (!TextHelper.isBlank(fechaFinal)) {
-            try {
-                LocalDateTime.parse(fechaFinal, DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw ValidationException.build("La fecha final no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fechaFinal);
-            }
-        }
+        ValidateHelper.validateFecha(this.fechaFinal, "fecha final");
     }
 }
