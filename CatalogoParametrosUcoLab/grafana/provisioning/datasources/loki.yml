@@ -11,6 +11,6 @@ datasources:
       maxLines: 1000
       derivedFields:
         - datasourceUid: jaeger
-          matcherRegex: '"traceId":"(\w+)"'
+          matcherRegex: '\[traceId=([a-fA-F0-9]+)'
           name: TraceID
           url: '$${__value.raw}'
