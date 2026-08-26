@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.modulo.ModuloResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.eliminarmodulo.primaryports.interactor.EliminarModuloInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.eliminarmodulo.secondaryports.publisher.EliminarModuloPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametroResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -41,17 +44,23 @@ public final class ModuloController {
     private final CrearModuloPublisher crearModuloPublisher;
     private final ActualizarModuloInteractor actualizarModuloInteractor;
     private final ActualizarModuloPublisher actualizarModuloPublisher;
+    private final EliminarModuloInteractor eliminarModuloInteractor;
+    private final EliminarModuloPublisher eliminarModuloPublisher;
 
     public ModuloController(final CrearModuloInteractor crearModuloInteractor,
             final ConsultarModuloInteractor consultarModuloInteractor,
             final CrearModuloPublisher crearModuloPublisher,
             final ActualizarModuloInteractor actualizarModuloInteractor,
-            final ActualizarModuloPublisher actualizarModuloPublisher) {
+            final ActualizarModuloPublisher actualizarModuloPublisher,
+            final EliminarModuloInteractor eliminarModuloInteractor,
+            final EliminarModuloPublisher eliminarModuloPublisher) {
         this.crearModuloInteractor = crearModuloInteractor;
         this.consultarModuloInteractor = consultarModuloInteractor;
         this.crearModuloPublisher = crearModuloPublisher;
         this.actualizarModuloInteractor = actualizarModuloInteractor;
         this.actualizarModuloPublisher = actualizarModuloPublisher;
+        this.eliminarModuloInteractor = eliminarModuloInteractor;
+        this.eliminarModuloPublisher = eliminarModuloPublisher;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -66,9 +75,22 @@ public final class ModuloController {
                         .event("modulo")
                         .build());
 
+        var eventosEliminar = eliminarModuloPublisher.getStream().cast(ModuloEvent.class)
+                .map(event -> ServerSentEvent.builder(event).event("modulo").build());
+
         return Flux.concat(Mono.just(ServerSentEvent.<ModuloEvent>builder()
                 .comment("connected")
-                .build()), Flux.merge(eventosCrear, eventosActualizar));
+                .build()), Flux.merge(eventosCrear, eventosActualizar, eventosEliminar));
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<ParametroResponse>> eliminar(@PathVariable final UUID id) {
+        return Mono.fromCallable(() -> {
+            var response = new ParametroResponse();
+            eliminarModuloInteractor.execute(id);
+            response.getMensajes().add("Modulo eliminado exitosamente.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @PostMapping

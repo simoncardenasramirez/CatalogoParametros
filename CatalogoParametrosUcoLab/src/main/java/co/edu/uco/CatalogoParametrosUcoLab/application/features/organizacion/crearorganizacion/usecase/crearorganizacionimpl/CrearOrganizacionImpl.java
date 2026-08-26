@@ -40,7 +40,7 @@ public class CrearOrganizacionImpl implements CrearOrganizacion {
             crearOrganizacionRuleValidator.validate(data);
             data.generateId();
 
-            var entity = OrganizacionEntity.create(data.getId(), data.getNombre());
+            var entity = OrganizacionEntity.create(data.getId(), data.getNombre(), data.getFechaInicio(), data.getFechaFinal());
             var savedEntity = organizacionRepository.save(entity);
             crearOrganizacionPublisher.sendEvent(CrearOrganizacionEvent.created(savedEntity));
             logger.info("[CREAR-ORGANIZACION] Organizacion creada exitosamente con id: {}", savedEntity.getId());

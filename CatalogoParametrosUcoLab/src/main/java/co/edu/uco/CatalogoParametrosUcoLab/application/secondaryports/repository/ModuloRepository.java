@@ -12,6 +12,8 @@ public interface ModuloRepository {
 
     ModuloEntity update(ModuloEntity modulo);
 
+    void deleteById(UUID id);
+
     boolean existsByNombre(String nombre);
 
     Optional<ModuloEntity> findById(UUID id);

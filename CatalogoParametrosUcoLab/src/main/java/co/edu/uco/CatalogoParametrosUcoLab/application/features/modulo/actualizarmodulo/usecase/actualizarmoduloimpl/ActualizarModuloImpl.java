@@ -45,11 +45,10 @@ public class ActualizarModuloImpl implements ActualizarModulo {
     @Override
     public void execute(final ActualizarModuloDomain data) {
         telemetryService.recordBusinessOperation(OPERATION_NAME, () -> {
-            logger.info("[ACTUALIZAR-MODULO] Iniciando actualizacion de modulo con id: {}", data.getId());
-
             if (data == null || UUIDHelper.getDefault().equals(data.getId())) {
                 throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-70"));
             }
+            logger.info("[ACTUALIZAR-MODULO] Iniciando actualizacion de modulo con id: {}", data.getId());
 
             if (moduloRepository.findById(data.getId()).isEmpty()) {
                 throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-69"));

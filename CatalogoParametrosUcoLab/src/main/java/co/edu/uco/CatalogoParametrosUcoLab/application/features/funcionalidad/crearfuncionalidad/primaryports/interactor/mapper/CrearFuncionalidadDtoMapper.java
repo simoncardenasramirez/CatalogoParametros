@@ -29,6 +29,7 @@ public final class CrearFuncionalidadDtoMapper {
         final var activo = Boolean.parseBoolean(dtoToMap.getActivo());
         final var fechaInicio = LocalDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
         final var fechaFinal = LocalDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
+        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateRangoFechas(fechaInicio, fechaFinal);
         return CrearFuncionalidadDtoInput.create(
                 dtoToMap.getNombre(),
                 idModulo,

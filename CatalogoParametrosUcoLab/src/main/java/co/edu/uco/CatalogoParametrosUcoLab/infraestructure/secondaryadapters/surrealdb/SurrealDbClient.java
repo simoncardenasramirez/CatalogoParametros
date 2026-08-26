@@ -75,6 +75,8 @@ public class SurrealDbClient {
                 DEFINE TABLE IF NOT EXISTS organizaciones SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS aplicaciones SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS tipos_parametro SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS tipos_metadato SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS metadatos SCHEMALESS;
                 %s
                 """.formatted(properties.getNamespace(), properties.getNamespace(), properties.getDatabase(),
                 properties.getDatabase(), query);

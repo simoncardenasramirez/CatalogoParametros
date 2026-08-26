@@ -22,6 +22,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualiza
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.consultarmodulo.primaryports.interactor.ConsultarModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.interactor.CrearModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.secondaryports.publisher.CrearModuloPublisher;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.eliminarmodulo.primaryports.interactor.EliminarModuloInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.eliminarmodulo.secondaryports.publisher.EliminarModuloPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.exceptionhandler.GlobalExceptionHandler;
@@ -45,6 +47,10 @@ class ModuloControllerTest {
     @Mock
     private ActualizarModuloPublisher actualizarModuloPublisher;
     @Mock
+    private EliminarModuloInteractor eliminarModuloInteractor;
+    @Mock
+    private EliminarModuloPublisher eliminarModuloPublisher;
+    @Mock
     private ConsultarMensajePort consultarMensajePort;
 
     private WebTestClient webTestClient;
@@ -55,9 +61,18 @@ class ModuloControllerTest {
                 consultarMensajePort);
         webTestClient = WebTestClient.bindToController(
                 new ModuloController(crearModuloInteractor, consultarModuloInteractor,
-                        crearModuloPublisher, actualizarModuloInteractor, actualizarModuloPublisher))
+                        crearModuloPublisher, actualizarModuloInteractor, actualizarModuloPublisher,
+                        eliminarModuloInteractor, eliminarModuloPublisher))
                 .controllerAdvice(handler)
                 .build();
+    }
+
+    @Test
+    void debeEliminarModuloYDevolver200() {
+        webTestClient.delete().uri(RUTA_BASE + "/{id}", UUID.randomUUID())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]").isEqualTo("Modulo eliminado exitosamente.");
     }
 
     private String bodyJsonValido(final String nombre) {
@@ -135,6 +150,7 @@ class ModuloControllerTest {
     void debeDevolver200CuandoSeConsultanLosEventos() {
         when(crearModuloPublisher.getStream()).thenReturn(Flux.empty());
         when(actualizarModuloPublisher.getStream()).thenReturn(Flux.empty());
+        when(eliminarModuloPublisher.getStream()).thenReturn(Flux.empty());
 
         webTestClient.get().uri(RUTA_BASE + "/events")
                 .exchange()

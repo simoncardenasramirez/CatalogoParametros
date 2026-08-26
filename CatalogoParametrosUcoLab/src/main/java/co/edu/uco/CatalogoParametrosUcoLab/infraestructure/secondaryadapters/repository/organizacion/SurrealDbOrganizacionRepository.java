@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.organizacion;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,10 +31,13 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
         var query = """
                 BEGIN TRANSACTION;
                 CREATE type::record('%s', '%s') CONTENT {
-                    nombre: '%s'
+                    nombre: '%s',
+                    fechaInicio: %s,
+                    fechaFinal: %s
                 };
                 COMMIT TRANSACTION;
-                """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()));
+                """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()),
+                formatDateTime(organizacion.getFechaInicio()), formatDateTime(organizacion.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return organizacion;
@@ -96,10 +100,13 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
         var query = """
                 BEGIN TRANSACTION;
                 UPDATE type::record('%s', '%s') CONTENT {
-                    nombre: '%s'
+                    nombre: '%s',
+                    fechaInicio: %s,
+                    fechaFinal: %s
                 };
                 COMMIT TRANSACTION;
-                """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()));
+                """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()),
+                formatDateTime(organizacion.getFechaInicio()), formatDateTime(organizacion.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return organizacion;
@@ -121,7 +128,9 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
     private OrganizacionEntity toEntity(final JsonNode node) {
         return OrganizacionEntity.create(
                 extractUuid(node.path("id")),
-                node.path("nombre").asText()
+                node.path("nombre").asText(),
+                extractDateTime(node.path("fechaInicio")),
+                extractDateTime(node.path("fechaFinal"))
         );
     }
 
@@ -144,5 +153,18 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
 
     private String escape(final String value) {
         return value.replace("\\", "\\\\").replace("'", "\\'");
+    }
+
+    private LocalDateTime extractDateTime(final JsonNode node) {
+        if (node.isNull() || TextHelper.isBlank(node.asText())) return null;
+        var value = node.asText();
+        if (value.startsWith("d'") && value.endsWith("'")) value = value.substring(2, value.length() - 1);
+        if (value.endsWith("Z")) value = value.substring(0, value.length() - 1);
+        if (value.length() == 16) value += ":00";
+        return LocalDateTime.parse(value);
+    }
+
+    private String formatDateTime(final LocalDateTime value) {
+        return value == null ? "null" : "'" + value + "'";
     }
 }

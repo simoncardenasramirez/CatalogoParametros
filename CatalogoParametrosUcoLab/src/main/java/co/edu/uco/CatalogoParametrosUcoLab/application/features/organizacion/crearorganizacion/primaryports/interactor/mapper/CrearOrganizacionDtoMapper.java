@@ -1,5 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.interactor.mapper;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoRequest;
@@ -7,6 +9,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cre
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
 
 public final class CrearOrganizacionDtoMapper {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static final CrearOrganizacionDtoMapper INSTANCE = new CrearOrganizacionDtoMapper();
 
@@ -22,13 +26,23 @@ public final class CrearOrganizacionDtoMapper {
     public CrearOrganizacionDtoInput toDtoInput(final CrearOrganizacionDtoRequest dto) {
         var dtoToMap = dto == null ? new CrearOrganizacionDtoRequest() : dto;
         final var nombre = dtoToMap.getNombre();
-        return CrearOrganizacionDtoInput.create(nombre);
+        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateNombre(nombre,
+                "de la organizacion");
+        final var fechaInicio = parseFecha(dtoToMap.getFechaInicio());
+        final var fechaFinal = parseFecha(dtoToMap.getFechaFinal());
+        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateRangoFechas(fechaInicio, fechaFinal);
+        return CrearOrganizacionDtoInput.create(nombre, fechaInicio, fechaFinal);
     }
 
     public CrearOrganizacionDomain toDomain(final CrearOrganizacionDtoInput dtoInput) {
         return CrearOrganizacionDomain.create(
                 UUID.randomUUID(),
-                dtoInput.getNombre()
+                dtoInput.getNombre(), dtoInput.getFechaInicio(), dtoInput.getFechaFinal()
         );
+    }
+
+    private LocalDateTime parseFecha(final String fecha) {
+        return co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper.isBlank(fecha)
+                ? null : LocalDateTime.parse(fecha, DATE_FORMATTER);
     }
 }

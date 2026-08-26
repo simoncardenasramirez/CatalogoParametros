@@ -50,4 +50,10 @@ public final class ValidateHelper {
             }
         }
     }
+
+    public static void validateRangoFechas(final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+        if (fechaInicio != null && fechaFinal != null && fechaFinal.isBefore(fechaInicio)) {
+            throw ValidationException.build("La fecha final no puede ser anterior a la fecha de inicio.");
+        }
+    }
 }
