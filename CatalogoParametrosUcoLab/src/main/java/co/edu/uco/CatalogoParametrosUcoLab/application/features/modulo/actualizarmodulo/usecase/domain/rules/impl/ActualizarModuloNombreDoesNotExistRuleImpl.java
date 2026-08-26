@@ -30,7 +30,11 @@ public final class ActualizarModuloNombreDoesNotExistRuleImpl implements Actuali
     public void execute(final ActualizarModuloDomain data) {
         final var nombre = TextHelper.applyTrim(data.getNombre());
         final var id = data.getId();
-        if (moduloRepository.existsByNombre(nombre) && !UUIDHelper.getDefault().equals(id)) {
+        final var nombreActual = moduloRepository.findById(id)
+                .map(modulo -> TextHelper.applyTrim(modulo.getNombre()))
+                .orElse(TextHelper.EMPTY);
+        if (!nombre.equalsIgnoreCase(nombreActual) && moduloRepository.existsByNombre(nombre)
+                && !UUIDHelper.getDefault().equals(id)) {
             throw ConflictException.build(consultarMensajePort.consultarMensaje("MSG-75"));
         }
     }

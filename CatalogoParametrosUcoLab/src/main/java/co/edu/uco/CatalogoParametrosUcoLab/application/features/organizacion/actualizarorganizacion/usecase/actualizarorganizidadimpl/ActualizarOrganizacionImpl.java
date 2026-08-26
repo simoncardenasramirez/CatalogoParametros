@@ -50,7 +50,7 @@ public class ActualizarOrganizacionImpl implements ActualizarOrganizacion {
                 throw NotFoundException.build(consultarMensajePort.consultarMensaje("MSG-93"));
             }
             actualizarOrganizacionRuleValidator.validate(domain);
-            var entity = OrganizacionEntity.create(domain.getId(), domain.getNombre());
+            var entity = OrganizacionEntity.create(domain.getId(), domain.getNombre(), domain.getFechaInicio(), domain.getFechaFinal());
             var updatedEntity = organizacionRepository.update(entity);
             actualizarOrganizacionPublisher.sendEvent(ActualizarOrganizacionEvent.updated(updatedEntity));
             logger.info("[ACTUALIZAR-ORGANIZACION] Organizacion actualizada exitosamente con id: {}", updatedEntity.getId());

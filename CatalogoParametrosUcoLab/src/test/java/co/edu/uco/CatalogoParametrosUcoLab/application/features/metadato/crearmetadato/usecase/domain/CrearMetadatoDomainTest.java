@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 class CrearMetadatoDomainTest {
 
@@ -20,58 +21,62 @@ class CrearMetadatoDomainTest {
         var idParametro = UUID.randomUUID();
         var idTipoMetadato = UUID.randomUUID();
 
-        var dominio = CrearMetadatoDomain.create(id, idParametro, idTipoMetadato, "valor");
+        var dominio = CrearMetadatoDomain.create(id, idParametro, idTipoMetadato, text("valor"));
 
         assertEquals(id, dominio.getId());
         assertEquals(idParametro, dominio.getIdParametro());
         assertEquals(idTipoMetadato, dominio.getIdTipoMetadato());
-        assertEquals("valor", dominio.getValor());
+        assertEquals("valor", dominio.getValor().asText());
     }
 
     @Test
-    void debeRecortarElValorCuandoTieneEspaciosAlInicioYAlFinal() {
+    void debeConservarElValorJsonRecibido() {
         var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), "  valor  ");
+                UUID.randomUUID(), text("  valor  "));
 
-        assertEquals("valor", dominio.getValor());
+        assertEquals("  valor  ", dominio.getValor().asText());
     }
 
     @Test
     void debeAsignarElUuidPorDefectoCuandoElIdEsNulo() {
-        var dominio = CrearMetadatoDomain.create(null, UUID.randomUUID(), UUID.randomUUID(), "valor");
+        var dominio = CrearMetadatoDomain.create(null, UUID.randomUUID(), UUID.randomUUID(), text("valor"));
 
         assertEquals(UUID.fromString(UUID_DEFAULT), dominio.getId());
     }
 
     @Test
     void debeAsignarElUuidPorDefectoCuandoElIdParametroEsNulo() {
-        var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), null, UUID.randomUUID(), "valor");
+        var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), null, UUID.randomUUID(), text("valor"));
 
         assertEquals(UUID.fromString(UUID_DEFAULT), dominio.getIdParametro());
     }
 
     @Test
     void debeAsignarElUuidPorDefectoCuandoElIdTipoMetadatoEsNulo() {
-        var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), UUID.randomUUID(), null, "valor");
+        var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), UUID.randomUUID(), null, text("valor"));
 
         assertEquals(UUID.fromString(UUID_DEFAULT), dominio.getIdTipoMetadato());
     }
 
     @Test
-    void debeAsignarValorVacioCuandoElValorEsNulo() {
+    void debeAsignarNodoNuloCuandoElValorEsNulo() {
         var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), UUID.randomUUID(),
                 UUID.randomUUID(), null);
 
-        assertEquals("", dominio.getValor());
+        assertEquals(true, dominio.getValor().isNull());
     }
 
     @Test
     void debeGenerarUnIdNoNuloCuandoSeInvocaGenerateId() {
-        var dominio = CrearMetadatoDomain.create(null, UUID.randomUUID(), UUID.randomUUID(), "valor");
+        var dominio = CrearMetadatoDomain.create(null, UUID.randomUUID(), UUID.randomUUID(), text("valor"));
 
         dominio.generateId();
 
         assertNotNull(dominio.getId());
         assertNotEquals(UUIDHelper.getDefault(), dominio.getId());
+    }
+
+    private tools.jackson.databind.JsonNode text(final String value) {
+        return JsonNodeFactory.instance.textNode(value);
     }
 }

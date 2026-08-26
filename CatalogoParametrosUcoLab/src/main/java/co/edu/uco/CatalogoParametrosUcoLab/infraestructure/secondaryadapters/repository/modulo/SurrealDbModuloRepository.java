@@ -69,6 +69,11 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     }
 
     @Override
+    public void deleteById(final UUID id) {
+        surrealDbClient.execute("DELETE type::record('%s', '%s');".formatted(TABLE_NAME, id));
+    }
+
+    @Override
     public boolean existsByNombre(final String nombre) {
         var query = "SELECT id FROM %s WHERE nombre = '%s' LIMIT 1;"
                 .formatted(TABLE_NAME, escape(nombre));
