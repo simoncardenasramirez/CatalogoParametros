@@ -2,19 +2,25 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearm
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 public final class CrearMetadatoDtoRequest {
     private String idParametro;
     private String idTipoMetadato;
-    private String valor;
+    private JsonNode valor;
 
-    public CrearMetadatoDtoRequest() { this(TextHelper.EMPTY, TextHelper.EMPTY, TextHelper.EMPTY); }
-    public CrearMetadatoDtoRequest(final String idParametro, final String idTipoMetadato, final String valor) {
+    public CrearMetadatoDtoRequest() {
+        idParametro = TextHelper.EMPTY;
+        idTipoMetadato = TextHelper.EMPTY;
+        valor = JsonNodeFactory.instance.nullNode();
+    }
+    public CrearMetadatoDtoRequest(final String idParametro, final String idTipoMetadato, final JsonNode valor) {
         setIdParametro(idParametro);
         setIdTipoMetadato(idTipoMetadato);
         setValor(valor);
     }
-    public static CrearMetadatoDtoRequest create(final String idParametro, final String idTipoMetadato, final String valor) {
+    public static CrearMetadatoDtoRequest create(final String idParametro, final String idTipoMetadato, final JsonNode valor) {
         return new CrearMetadatoDtoRequest(idParametro, idTipoMetadato, valor);
     }
     public String getIdParametro() { return idParametro; }
@@ -27,6 +33,8 @@ public final class CrearMetadatoDtoRequest {
         idTipoMetadato = TextHelper.applyTrim(value);
         ValidateHelper.validateId(idTipoMetadato, "identificador del tipo de metadato");
     }
-    public String getValor() { return valor; }
-    public void setValor(final String valor) { this.valor = TextHelper.applyTrim(valor); }
+    public JsonNode getValor() { return valor; }
+    public void setValor(final JsonNode valor) {
+        this.valor = valor == null ? JsonNodeFactory.instance.nullNode() : valor.deepCopy();
+    }
 }

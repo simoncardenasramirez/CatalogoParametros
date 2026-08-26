@@ -21,17 +21,19 @@ public final class SurrealDbMetadatoRepository implements MetadatoRepository {
     @Override public MetadatoEntity save(final MetadatoEntity entity) {
         client.execute("""
                 CREATE type::record('%s', '%s') CONTENT {
-                    idParametro: '%s', idTipoMetadato: '%s', valor: '%s'
+                    idParametro: '%s', idTipoMetadato: '%s', valor: %s
                 };
-                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), escape(entity.getValor())));
+                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(),
+                serialize(entity.getValor())));
         return entity;
     }
     @Override public MetadatoEntity update(final MetadatoEntity entity) {
         client.execute("""
                 UPDATE type::record('%s', '%s') CONTENT {
-                    idParametro: '%s', idTipoMetadato: '%s', valor: '%s'
+                    idParametro: '%s', idTipoMetadato: '%s', valor: %s
                 };
-                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), escape(entity.getValor())));
+                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(),
+                serialize(entity.getValor())));
         return entity;
     }
     @Override public void deleteById(final UUID id) {
@@ -57,11 +59,11 @@ public final class SurrealDbMetadatoRepository implements MetadatoRepository {
     }
     private MetadatoEntity toEntity(final JsonNode node) {
         return MetadatoEntity.create(uuid(node.path("id").asText()), UUID.fromString(node.path("idParametro").asText()),
-                UUID.fromString(node.path("idTipoMetadato").asText()), node.path("valor").asText());
+                UUID.fromString(node.path("idTipoMetadato").asText()), node.path("valor").deepCopy());
     }
     private UUID uuid(final String recordId) {
         var value = recordId.replace("`", "").replace("u'", "").replace("'", "");
         return UUID.fromString(value.substring(value.indexOf(':') + 1));
     }
-    private String escape(final String value) { return value.replace("\\", "\\\\").replace("'", "\\'"); }
+    private String serialize(final JsonNode value) { return value == null ? "null" : value.toString(); }
 }

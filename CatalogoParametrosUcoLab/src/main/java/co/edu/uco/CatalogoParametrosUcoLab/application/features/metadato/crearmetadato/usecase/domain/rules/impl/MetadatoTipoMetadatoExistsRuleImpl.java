@@ -6,13 +6,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearme
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadato.usecase.domain.rules.MetadatoTipoMetadatoExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.MetadatoValorTypeRule;
 
 @Service
 public final class MetadatoTipoMetadatoExistsRuleImpl implements MetadatoTipoMetadatoExistsRule {
     private final TipoMetadatoRepository repository;
     public MetadatoTipoMetadatoExistsRuleImpl(final TipoMetadatoRepository repository) { this.repository = repository; }
     @Override public void execute(final CrearMetadatoDomain data) {
-        if (repository.findById(data.getIdTipoMetadato()).isEmpty())
-            throw NotFoundException.build("El tipo de metadato no existe.");
+        var tipo = repository.findById(data.getIdTipoMetadato())
+                .orElseThrow(() -> NotFoundException.build("El tipo de metadato no existe."));
+        MetadatoValorTypeRule.execute(tipo.getTipo(), data.getValor());
     }
 }
