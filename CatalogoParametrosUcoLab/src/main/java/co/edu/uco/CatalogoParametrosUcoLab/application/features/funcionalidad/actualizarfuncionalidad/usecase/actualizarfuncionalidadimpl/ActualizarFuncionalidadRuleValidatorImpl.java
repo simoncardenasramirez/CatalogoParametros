@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.actualizarfuncionalidadimpl;
 
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.RangoFechasIsValidRule;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.ActualizarFuncionalidadRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.ActualizarFuncionalidadDomain;
@@ -39,5 +40,6 @@ public class ActualizarFuncionalidadRuleValidatorImpl implements ActualizarFunci
         funcionalidadNombreDoesNotExistRule.execute(data);
         funcionalidadModuloExistsRule.execute(data);
         funcionalidadIdExistsRule.execute(data);
+        RangoFechasIsValidRule.execute(data.getFechaInicio(), data.getFechaFinal());
     }
 }

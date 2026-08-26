@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.primaryports.interactor.mapper;
 
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -28,7 +29,6 @@ public final class CrearAplicacionDtoMapper {
         final var activa = Boolean.parseBoolean(dto.getActiva());
         final var fechaInicio = LocalDateTime.parse(dto.getFechaInicio(), DATE_FORMATTER);
         final var fechaFinal = LocalDateTime.parse(dto.getFechaFinal(), DATE_FORMATTER);
-        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateRangoFechas(fechaInicio, fechaFinal);
 
         return CrearAplicacionDtoInput.create(
                 dto.getNombre(),

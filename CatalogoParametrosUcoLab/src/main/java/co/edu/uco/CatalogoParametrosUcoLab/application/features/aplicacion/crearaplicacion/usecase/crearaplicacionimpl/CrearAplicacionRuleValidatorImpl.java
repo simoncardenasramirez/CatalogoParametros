@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.crearaplicacionimpl;
 
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.RangoFechasIsValidRule;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.CrearAplicacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreDoesNotExistRule;
@@ -33,5 +34,6 @@ public class CrearAplicacionRuleValidatorImpl implements CrearAplicacionRuleVali
         aplicacionNombreIsNotEmptyRule.execute(data);
         aplicacionNombreDoesNotExistRule.execute(data);
         aplicacionOrganizacionExistsRule.execute(data);
+        RangoFechasIsValidRule.execute(data.getFechaInicio(), data.getFechaFinal());
     }
 }

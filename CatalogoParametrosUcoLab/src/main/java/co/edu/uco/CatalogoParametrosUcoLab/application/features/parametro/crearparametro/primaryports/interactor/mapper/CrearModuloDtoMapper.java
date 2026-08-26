@@ -1,5 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.interactor.mapper;
 
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -23,7 +24,6 @@ public final class CrearModuloDtoMapper {
         final var activo = Boolean.parseBoolean(dtoToMap.getActivo());
         final var fechaInicio = LocalDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
         final var fechaFinal = LocalDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
-        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateRangoFechas(fechaInicio, fechaFinal);
         return CrearModuloDomain.create(
                 UUID.randomUUID(),
                 dtoToMap.getNombre(),

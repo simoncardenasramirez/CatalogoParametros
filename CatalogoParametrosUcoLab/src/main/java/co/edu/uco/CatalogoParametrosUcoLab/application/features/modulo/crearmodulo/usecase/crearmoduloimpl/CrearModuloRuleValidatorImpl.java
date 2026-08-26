@@ -6,6 +6,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodu
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotEmptyRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotNullRule;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.RangoFechasIsValidRule;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.CrearModuloRuleValidator;
 
@@ -33,5 +34,6 @@ public class CrearModuloRuleValidatorImpl implements CrearModuloRuleValidator {
         moduloNombreIsNotEmptyRule.execute(data);
         moduloNombreDoesNotExistRule.execute(data);
         moduloAplicacionExistsRule.execute(data);
+        RangoFechasIsValidRule.execute(data.getFechaInicio(), data.getFechaFinal());
     }
 }

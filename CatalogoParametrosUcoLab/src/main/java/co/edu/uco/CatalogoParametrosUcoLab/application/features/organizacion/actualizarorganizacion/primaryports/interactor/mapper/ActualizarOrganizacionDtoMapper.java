@@ -1,5 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.interactor.mapper;
 
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -20,11 +23,10 @@ public enum ActualizarOrganizacionDtoMapper {
 
     public ActualizarOrganizacionDtoInput toDtoInput(final ActualizarOrganizacionDtoRequest dto) {
         var dtoToMap = dto == null ? new ActualizarOrganizacionDtoRequest() : dto;
-        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateNombre(dtoToMap.getNombre(),
+        ValidateHelper.validateNombre(dtoToMap.getNombre(),
                 "de la organizacion");
         final var fechaInicio = parseFecha(dtoToMap.getFechaInicio());
         final var fechaFinal = parseFecha(dtoToMap.getFechaFinal());
-        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateRangoFechas(fechaInicio, fechaFinal);
         return ActualizarOrganizacionDtoInput.create(dtoToMap.getNombre(), fechaInicio, fechaFinal);
     }
 
@@ -33,7 +35,7 @@ public enum ActualizarOrganizacionDtoMapper {
     }
 
     private LocalDateTime parseFecha(final String fecha) {
-        return co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper.isBlank(fecha)
+        return TextHelper.isBlank(fecha)
                 ? null : LocalDateTime.parse(fecha, DATE_FORMATTER);
     }
 }

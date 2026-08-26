@@ -14,14 +14,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 class ActualizarOrganizacionDtoMapperTest {
 
     @Test
-    void debeRechazarFechaFinalAnteriorALaInicial() {
-        var request = ActualizarOrganizacionDtoRequest.create("organizacion",
-                "2026-12-31 23:59:59", "2026-01-01 00:00:00");
-
-        assertThrows(ValidationException.class, () -> ActualizarOrganizacionDtoMapper.INSTANCE.toDtoInput(request));
-    }
-
-    @Test
     void debeConvertirRequestEnInputConElNombre() {
         var request = ActualizarOrganizacionDtoRequest.create("organizacion");
 
