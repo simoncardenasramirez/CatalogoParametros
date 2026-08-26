@@ -1,7 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.interactor.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.UUID;
 
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto.ActualizarOrganizacionDtoRequest;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 
 class ActualizarOrganizacionDtoMapperTest {
 
@@ -22,13 +20,12 @@ class ActualizarOrganizacionDtoMapperTest {
         assertEquals("organizacion", input.getNombre());
     }
 
-@Test
-    void debeLanzarValidationExceptionCuandoElRequestEsNulo() {
-        assertThrows(ValidationException.class,
-                () -> ActualizarOrganizacionDtoMapper.INSTANCE.toDtoInput(null));
-        assertThrows(ValidationException.class,
-                () -> ActualizarOrganizacionDtoMapper.INSTANCE.toDomain(UUID.randomUUID(),
-                        (ActualizarOrganizacionDtoRequest) null));
+    @Test
+    void debeMapearRequestNuloAValoresPorDefecto() {
+        var id = UUID.randomUUID();
+        assertEquals("", ActualizarOrganizacionDtoMapper.INSTANCE.toDtoInput(null).getNombre());
+        assertEquals("", ActualizarOrganizacionDtoMapper.INSTANCE
+                .toDomain(id, (ActualizarOrganizacionDtoRequest) null).getNombre());
     }
 
     @Test

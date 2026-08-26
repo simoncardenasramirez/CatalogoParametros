@@ -1,6 +1,5 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.interactor.mapper;
 
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 import java.time.LocalDateTime;
@@ -23,8 +22,6 @@ public enum ActualizarOrganizacionDtoMapper {
 
     public ActualizarOrganizacionDtoInput toDtoInput(final ActualizarOrganizacionDtoRequest dto) {
         var dtoToMap = dto == null ? new ActualizarOrganizacionDtoRequest() : dto;
-        ValidateHelper.validateNombre(dtoToMap.getNombre(),
-                "de la organizacion");
         final var fechaInicio = parseFecha(dtoToMap.getFechaInicio());
         final var fechaFinal = parseFecha(dtoToMap.getFechaFinal());
         return ActualizarOrganizacionDtoInput.create(dtoToMap.getNombre(), fechaInicio, fechaFinal);

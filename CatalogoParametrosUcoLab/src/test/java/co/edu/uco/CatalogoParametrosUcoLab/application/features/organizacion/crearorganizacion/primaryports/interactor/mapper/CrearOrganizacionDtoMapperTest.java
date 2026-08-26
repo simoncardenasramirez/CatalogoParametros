@@ -2,13 +2,11 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.cr
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoInput;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto.CrearOrganizacionDtoRequest;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 class CrearOrganizacionDtoMapperTest {
@@ -22,12 +20,11 @@ class CrearOrganizacionDtoMapperTest {
         assertEquals("organizacion", input.getNombre());
     }
 
-@Test
-    void debeLanzarValidationExceptionCuandoElRequestEsNulo() {
-        assertThrows(ValidationException.class,
-                () -> CrearOrganizacionDtoMapper.INSTANCE.toDtoInput(null));
-        assertThrows(ValidationException.class,
-                () -> CrearOrganizacionDtoMapper.INSTANCE.toDomain((CrearOrganizacionDtoRequest) null));
+    @Test
+    void debeMapearRequestNuloAValoresPorDefecto() {
+        assertEquals("", CrearOrganizacionDtoMapper.INSTANCE.toDtoInput(null).getNombre());
+        assertEquals("", CrearOrganizacionDtoMapper.INSTANCE
+                .toDomain((CrearOrganizacionDtoRequest) null).getNombre());
     }
 
     @Test
