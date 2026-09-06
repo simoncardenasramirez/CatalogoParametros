@@ -1,40 +1,40 @@
-trigger:
-  - main
+  trigger:
+    - develop
 
-pr: none
+  pool:
+    vmImage: ubuntu-latest
 
-pool:
-  vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: self
 
-variables:
+  - task: JavaToolInstaller@0
+    displayName: Configurar Java 21
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: x64
+      jdkSourceOption: PreInstalled
 
-  dockerRegistryServiceConnection: 'DockerHubConnection'
+  - bash: bash ./mvnw -B -ntp clean verify
+    displayName: Compilar y ejecutar pruebas
+    workingDirectory: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
 
-  imageRepository: 'simon4219/catalogo-parametros'
+  - task: PublishTestResults@2
+    displayName: Publicar resultados de pruebas
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+      searchFolder: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true
 
-  dockerfilePath: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab/Dockerfile'
-
-  buildContext: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
-
-  tag: '$(Build.BuildId)'
-
-steps:
-
-- task: Docker@2
-  displayName: 'Construir y publicar imagen Docker'
-
-  inputs:
-
-    command: 'buildAndPush'
-
-    containerRegistry: '$(dockerRegistryServiceConnection)'
-
-    repository: '$(imageRepository)'
-
-    Dockerfile: '$(dockerfilePath)'
-
-    buildContext: '$(buildContext)'
-
-    tags: |
-      $(tag)
-      latest
+  - task: Docker@2
+    displayName: Construir y publicar imagen
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      command: buildAndPush
+      containerRegistry: DockerHubConnection
+      repository: simon4219/catalogo-parametros
+      Dockerfile: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab/Dockerfile'
+      buildContext: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
+      tags: 'develop-$(Build.BuildId)'
