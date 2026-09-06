@@ -10,8 +10,14 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 class CrearOrganizacionDtoRequestTest {
 
     @Test
-    void debeLanzarValidationExceptionCuandoSeUsaElConstructorSinArgumentos() {
-        assertThrows(ValidationException.class, () -> new CrearOrganizacionDtoRequest());
+    void debePermitirAsignarNombreCuandoSeUsaElConstructorSinArgumentos() {
+        var dto = new CrearOrganizacionDtoRequest();
+
+        dto.setNombre("  organizacion  ");
+
+        assertEquals("organizacion", dto.getNombre());
+        assertEquals("", dto.getFechaInicio());
+        assertEquals("", dto.getFechaFinal());
     }
 
     @Test
