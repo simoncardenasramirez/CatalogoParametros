@@ -22,6 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Verificar disponibilidad de SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -z "$SONAR_TOKEN" ]]; then
+            echo "::error::SONAR_TOKEN no esta disponible en esta ejecucion. Revisa el secreto de Actions del repositorio y si el PR proviene de un fork o de Dependabot."
+            exit 1
+          fi
+          echo "SONAR_TOKEN esta disponible; su validez y permisos se comprobaran durante el analisis."
+
       - name: Configurar JDK 21
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
@@ -45,4 +56,4 @@ jobs:
       - name: Construir y analizar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=simoncardenasramirez_CatalogoParametros
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar.projectKey=simoncardenasramirez_CatalogoParametros
