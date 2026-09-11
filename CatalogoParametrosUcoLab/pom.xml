@@ -21,6 +21,7 @@
     <properties>
         <java.version>21</java.version>
         <sonar.organization>simoncardenasramirez</sonar.organization>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencyManagement>
@@ -109,6 +110,47 @@
         </extensions>
 
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <executions>
+                    <execution>
+                        <id>instrumentar-pruebas</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generar-reporte-cobertura</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exigir-cobertura-minima</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

@@ -53,7 +53,19 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Construir y analizar
+      - name: Construir, probar y exigir cobertura del 80 por ciento
+        run: mvn -B -ntp clean verify
+
+      - name: Publicar reporte de cobertura
+        if: ${{ !cancelled() && hashFiles('CatalogoParametrosUcoLab/target/site/jacoco/jacoco.xml') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-jacoco
+          path: CatalogoParametrosUcoLab/target/site/jacoco/
+          if-no-files-found: error
+
+      - name: Analizar y esperar el Quality Gate
+        if: ${{ !cancelled() && hashFiles('CatalogoParametrosUcoLab/target/site/jacoco/jacoco.xml') != '' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar.projectKey=simoncardenasramirez_CatalogoParametros
+        run: mvn -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar.projectKey=simoncardenasramirez_CatalogoParametros -Dsonar.qualitygate.wait=true
