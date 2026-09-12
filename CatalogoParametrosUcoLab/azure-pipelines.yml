@@ -5,7 +5,6 @@ trigger:
     include:
       - develop
 
-# Para repositorios alojados en GitHub.
 pr:
   branches:
     include:
