@@ -1,6 +1,5 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.modulo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
@@ -40,8 +40,8 @@ public class SurrealDbModuloRepository implements ModuloRepository {
                 COMMIT TRANSACTION;
                 """.formatted(TABLE_NAME, modulo.getId(), escape(modulo.getNombre()),
                 modulo.getIdAplicacion(), modulo.isActivo(),
-                formatDateTime(modulo.getFechaInicio()),
-                formatDateTime(modulo.getFechaFinal()));
+                DateTimeHelper.format(modulo.getFechaInicio()),
+                DateTimeHelper.format(modulo.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return modulo;
@@ -61,8 +61,8 @@ public class SurrealDbModuloRepository implements ModuloRepository {
                 COMMIT TRANSACTION;
                 """.formatted(TABLE_NAME, modulo.getId(), escape(modulo.getNombre()),
                 modulo.getIdAplicacion(), modulo.isActivo(),
-                formatDateTime(modulo.getFechaInicio()),
-                formatDateTime(modulo.getFechaFinal()));
+                DateTimeHelper.format(modulo.getFechaInicio()),
+                DateTimeHelper.format(modulo.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return modulo;
@@ -146,8 +146,8 @@ public class SurrealDbModuloRepository implements ModuloRepository {
                 node.path("nombre").asText(),
                 extractUuid(node.path("idAplicacion")),
                 node.path("activo").asBoolean(),
-                extractDateTime(node.path("fechaInicio")),
-                extractDateTime(node.path("fechaFinal"))
+                DateTimeHelper.parse(node.path("fechaInicio")),
+                DateTimeHelper.parse(node.path("fechaFinal"))
         );
     }
 
@@ -166,33 +166,6 @@ public class SurrealDbModuloRepository implements ModuloRepository {
         } catch (final IllegalArgumentException exception) {
             return UUIDHelper.getDefault();
         }
-    }
-
-    private LocalDateTime extractDateTime(final JsonNode dateNode) {
-        if (dateNode.isNull() || TextHelper.isBlank(dateNode.asText())) {
-            return null;
-        }
-        var text = dateNode.asText();
-        // Remove SurrealDB date wrapper d'...'
-        if (text.startsWith("d'") && text.endsWith("'")) {
-            text = text.substring(2, text.length() - 1);
-        }
-        // Remove Z timezone suffix if present
-        if (text.endsWith("Z")) {
-            text = text.substring(0, text.length() - 1);
-        }
-        // Ensure seconds are present for LocalDateTime.parse
-        if (text.length() == 16) { // yyyy-MM-ddTHH:mm
-            text = text + ":00";
-        }
-        return LocalDateTime.parse(text);
-    }
-
-    private String formatDateTime(final LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return "null";
-        }
-        return "'" + dateTime.toString() + "'";
     }
 
     private String escape(final String value) {

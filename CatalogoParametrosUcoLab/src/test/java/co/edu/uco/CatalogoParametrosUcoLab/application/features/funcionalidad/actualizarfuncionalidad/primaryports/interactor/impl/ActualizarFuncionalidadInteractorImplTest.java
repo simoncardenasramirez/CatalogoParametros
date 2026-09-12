@@ -28,7 +28,7 @@ class ActualizarFuncionalidadInteractorImplTest {
 
     private ActualizarFuncionalidadDtoRequest dtoRequestValido() {
         return ActualizarFuncionalidadDtoRequest.create("funcionalidad", UUID.randomUUID().toString(), "true",
-                "2026-01-01 00:00:00", "2026-12-31 23:59:59");
+                "2026-01-01T00:00:00-05:00", "2026-12-31T23:59:59-05:00");
     }
 
     @Test

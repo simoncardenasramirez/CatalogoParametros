@@ -28,7 +28,7 @@ class ActualizarAplicacionInteractorImplTest {
     void debeDelegarEnElUseCaseCuandoLosDatosSonValidos() {
         var id = UUID.randomUUID();
         var request = ActualizarAplicacionDtoRequest.create("aplicacion", UUID.randomUUID().toString(), "true",
-                "2024-01-01 00:00:00", "2024-12-31 23:59:59");
+                "2024-01-01T00:00:00-05:00", "2024-12-31T23:59:59-05:00");
 
         interactor.execute(id, request);
 

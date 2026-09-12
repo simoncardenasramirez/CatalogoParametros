@@ -3,7 +3,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.pu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class CrearModuloPublisherImplTest {
     void debeEmitirElEventoCuandoSePublica() {
         var publisher = new CrearModuloPublisherImpl();
         var modulo = ModuloEntity.create(UUID.randomUUID(), "modulo", UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
         var evento = CrearModuloEvent.created(modulo);
 
         publisher.sendEvent(evento);

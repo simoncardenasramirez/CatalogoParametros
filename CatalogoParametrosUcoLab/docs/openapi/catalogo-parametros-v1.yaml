@@ -1,0 +1,620 @@
+openapi: 3.0.3
+info:
+  title: Catálogo de Parámetros UcoLab
+  version: 1.0.0
+  description: |
+    Contrato público y versionado del módulo Catálogo de Parámetros.
+    Este archivo es la fuente de verdad para productores y consumidores.
+servers:
+  - url: http://localhost:8080
+    description: Desarrollo local
+tags:
+  - name: Organizaciones
+  - name: Aplicaciones
+  - name: Módulos
+  - name: Funcionalidades
+  - name: Parámetros
+  - name: Metadatos
+  - name: Tipos de parámetro
+  - name: Tipos de metadato
+
+paths:
+  /catalogo-parametros/api/v1/organizaciones:
+    get:
+      tags: [Organizaciones]
+      operationId: consultarOrganizaciones
+      summary: Consulta organizaciones paginadas
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { $ref: '#/components/responses/OrganizacionesOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Organizaciones]
+      operationId: crearOrganizacion
+      summary: Crea una organización
+      requestBody:
+        $ref: '#/components/requestBodies/OrganizacionRequest'
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/organizaciones/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Organizaciones]
+      operationId: consultarOrganizacionPorId
+      responses:
+        '200': { $ref: '#/components/responses/OrganizacionesOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Organizaciones]
+      operationId: actualizarOrganizacion
+      requestBody:
+        $ref: '#/components/requestBodies/OrganizacionRequest'
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Organizaciones]
+      operationId: eliminarOrganizacion
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/organizaciones/events:
+    get:
+      tags: [Organizaciones]
+      operationId: observarEventosOrganizacion
+      summary: Flujo SSE de cambios de organizaciones
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/aplicaciones:
+    get:
+      tags: [Aplicaciones]
+      operationId: consultarAplicaciones
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { $ref: '#/components/responses/AplicacionesOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Aplicaciones]
+      operationId: crearAplicacion
+      requestBody: { $ref: '#/components/requestBodies/AplicacionRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/aplicaciones/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Aplicaciones]
+      operationId: consultarAplicacionPorId
+      responses:
+        '200': { $ref: '#/components/responses/AplicacionesOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Aplicaciones]
+      operationId: actualizarAplicacion
+      requestBody: { $ref: '#/components/requestBodies/AplicacionRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Aplicaciones]
+      operationId: eliminarAplicacion
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/aplicaciones/events:
+    get:
+      tags: [Aplicaciones]
+      operationId: observarEventosAplicacion
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/modulos:
+    get:
+      tags: [Módulos]
+      operationId: consultarModulos
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200': { $ref: '#/components/responses/ModulosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Módulos]
+      operationId: crearModulo
+      requestBody: { $ref: '#/components/requestBodies/ModuloRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/modulos/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Módulos]
+      operationId: consultarModuloPorId
+      responses:
+        '200': { $ref: '#/components/responses/ModulosOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Módulos]
+      operationId: actualizarModulo
+      requestBody: { $ref: '#/components/requestBodies/ModuloRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Módulos]
+      operationId: eliminarModulo
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/modulos/events:
+    get:
+      tags: [Módulos]
+      operationId: observarEventosModulo
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/funcionalidades:
+    get:
+      tags: [Funcionalidades]
+      operationId: consultarFuncionalidades
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200': { $ref: '#/components/responses/FuncionalidadesOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Funcionalidades]
+      operationId: crearFuncionalidad
+      requestBody: { $ref: '#/components/requestBodies/FuncionalidadRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/funcionalidades/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Funcionalidades]
+      operationId: consultarFuncionalidadPorId
+      responses:
+        '200': { $ref: '#/components/responses/FuncionalidadesOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Funcionalidades]
+      operationId: actualizarFuncionalidad
+      requestBody: { $ref: '#/components/requestBodies/FuncionalidadRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Funcionalidades]
+      operationId: eliminarFuncionalidad
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/funcionalidades/events:
+    get:
+      tags: [Funcionalidades]
+      operationId: observarEventosFuncionalidad
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/parametros:
+    get:
+      tags: [Parámetros]
+      operationId: consultarParametros
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200': { $ref: '#/components/responses/ParametrosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Parámetros]
+      operationId: crearParametro
+      requestBody: { $ref: '#/components/requestBodies/ParametroRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/parametros/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Parámetros]
+      operationId: consultarParametroPorId
+      responses:
+        '200': { $ref: '#/components/responses/ParametrosOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Parámetros]
+      operationId: actualizarParametro
+      requestBody: { $ref: '#/components/requestBodies/ParametroRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Parámetros]
+      operationId: eliminarParametro
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/parametros/events:
+    get:
+      tags: [Parámetros]
+      operationId: observarEventosParametro
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/metadatos:
+    get:
+      tags: [Metadatos]
+      operationId: consultarMetadatos
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200': { $ref: '#/components/responses/MetadatosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Metadatos]
+      operationId: crearMetadato
+      requestBody: { $ref: '#/components/requestBodies/MetadatoRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/Created' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/metadatos/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Metadatos]
+      operationId: consultarMetadatoPorId
+      responses:
+        '200': { $ref: '#/components/responses/MetadatosOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Metadatos]
+      operationId: actualizarMetadato
+      requestBody: { $ref: '#/components/requestBodies/MetadatoRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Metadatos]
+      operationId: eliminarMetadato
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/metadatos/events:
+    get:
+      tags: [Metadatos]
+      operationId: observarEventosMetadato
+      responses:
+        '200': { $ref: '#/components/responses/EventStream' }
+
+  /catalogo-parametros/api/v1/tipos-parametro:
+    get:
+      tags: [Tipos de parámetro]
+      operationId: consultarTiposParametro
+      responses:
+        '200': { $ref: '#/components/responses/TiposParametroOk' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/tipos-parametro/{id}:
+    get:
+      tags: [Tipos de parámetro]
+      operationId: consultarTipoParametroPorId
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200': { $ref: '#/components/responses/TiposParametroOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/tipos-metadato:
+    get:
+      tags: [Tipos de metadato]
+      operationId: consultarTiposMetadato
+      responses:
+        '200': { $ref: '#/components/responses/TiposMetadatoOk' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/tipos-metadato/{id}:
+    get:
+      tags: [Tipos de metadato]
+      operationId: consultarTipoMetadatoPorId
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200': { $ref: '#/components/responses/TiposMetadatoOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Identificador UUID del recurso
+      schema: { type: string, format: uuid }
+    Page:
+      name: page
+      in: query
+      description: Página basada en uno
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      name: pageSize
+      in: query
+      description: Cantidad máxima de registros solicitados
+      schema: { type: integer, minimum: 1, default: 10 }
+  requestBodies:
+    OrganizacionRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OrganizacionRequest' }
+    AplicacionRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AplicacionRequest' }
+    ModuloRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ModuloRequest' }
+    FuncionalidadRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/FuncionalidadRequest' }
+    ParametroRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ParametroRequest' }
+    MetadatoRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/MetadatoRequest' }
+  responses:
+    Success:
+      description: Operación exitosa
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    Created:
+      description: Recurso creado
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    BadRequest:
+      description: Petición inválida o regla de negocio incumplida
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    NotFound:
+      description: Recurso no encontrado
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    Conflict:
+      description: Conflicto con el estado actual del catálogo
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    InternalError:
+      description: Error técnico no esperado
+      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
+    EventStream:
+      description: Conexión SSE. El campo `event` del JSON vale CREATED, UPDATED o DELETED.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          example: "event: parametro\ndata: {\"parametro\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"idioma\",\"idFuncionalidad\":\"123e4567-e89b-12d3-a456-426614174001\",\"idTipoParametro\":\"123e4567-e89b-12d3-a456-426614174002\",\"activo\":true},\"event\":\"CREATED\"}\n\n"
+    OrganizacionesOk: { description: Organizaciones encontradas, content: { application/json: { schema: { $ref: '#/components/schemas/OrganizacionResponse' } } } }
+    AplicacionesOk: { description: Aplicaciones encontradas, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
+    ModulosOk: { description: Módulos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/ModuloResponse' } } } }
+    FuncionalidadesOk: { description: Funcionalidades encontradas, content: { application/json: { schema: { $ref: '#/components/schemas/FuncionalidadResponse' } } } }
+    ParametrosOk: { description: Parámetros encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
+    MetadatosOk: { description: Metadatos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
+    TiposParametroOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoParametroResponse' } } } }
+    TiposMetadatoOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoMetadatoResponse' } } } }
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+      example: 123e4567-e89b-12d3-a456-426614174000
+    InputUuid:
+      type: string
+      format: uuid
+      description: Los DTO actuales reciben el UUID como cadena JSON.
+      example: 123e4567-e89b-12d3-a456-426614174000
+    InputBoolean:
+      type: string
+      enum: ['true', 'false']
+      default: 'true'
+      description: Los DTO actuales reciben el booleano como cadena JSON.
+    InputDateTime:
+      type: string
+      format: date-time
+      description: Fecha y hora ISO-8601 con desplazamiento obligatorio; se recomienda enviar la zona de Colombia como -05:00.
+      example: '2026-09-11T08:30:00-05:00'
+    MessageResponse:
+      type: object
+      required: [mensajes]
+      properties:
+        mensajes: { type: array, items: { type: string } }
+    OrganizacionRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, fechaInicio, fechaFinal]
+      properties:
+        nombre: { type: string, minLength: 1, example: UCO }
+        fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
+        fechaFinal: { $ref: '#/components/schemas/InputDateTime' }
+    AplicacionRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, idOrganizacion, activa, fechaInicio, fechaFinal]
+      properties:
+        nombre: { type: string, minLength: 1, example: UcoLab }
+        idOrganizacion: { $ref: '#/components/schemas/InputUuid' }
+        activa: { $ref: '#/components/schemas/InputBoolean' }
+        fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
+        fechaFinal: { $ref: '#/components/schemas/InputDateTime' }
+    ModuloRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, idAplicacion, activo, fechaInicio, fechaFinal]
+      properties:
+        nombre: { type: string, minLength: 1, example: Matrículas }
+        idAplicacion: { $ref: '#/components/schemas/InputUuid' }
+        activo: { $ref: '#/components/schemas/InputBoolean' }
+        fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
+        fechaFinal: { $ref: '#/components/schemas/InputDateTime' }
+    FuncionalidadRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, idModulo, activo, fechaInicio, fechaFinal]
+      properties:
+        nombre: { type: string, minLength: 1, example: Crear matrícula }
+        idModulo: { $ref: '#/components/schemas/InputUuid' }
+        activo: { $ref: '#/components/schemas/InputBoolean' }
+        fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
+        fechaFinal: { $ref: '#/components/schemas/InputDateTime' }
+    ParametroRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, idFuncionalidad, idTipoParametro, activo]
+      properties:
+        nombre: { type: string, minLength: 1, example: idioma }
+        idFuncionalidad: { $ref: '#/components/schemas/InputUuid' }
+        idTipoParametro: { $ref: '#/components/schemas/InputUuid' }
+        activo: { $ref: '#/components/schemas/InputBoolean' }
+    MetadatoRequest:
+      type: object
+      additionalProperties: false
+      required: [idParametro, idTipoMetadato, valor]
+      properties:
+        idParametro: { $ref: '#/components/schemas/InputUuid' }
+        idTipoMetadato: { $ref: '#/components/schemas/InputUuid' }
+        valor:
+          description: JSON cuyo tipo debe coincidir con el tipo de metadato asociado.
+    Organizacion:
+      type: object
+      required: [id, nombre]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+        fechaInicio: { type: string, format: date-time, nullable: true, example: '2026-09-11T13:30:00Z' }
+        fechaFinal: { type: string, format: date-time, nullable: true, example: '2026-12-31T04:59:59Z' }
+    Aplicacion:
+      type: object
+      required: [id, nombre, idOrganizacion, activa]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+        idOrganizacion: { $ref: '#/components/schemas/Uuid' }
+        activa: { type: boolean }
+        fechaInicio: { type: string, format: date-time, nullable: true, example: '2026-09-11T13:30:00Z' }
+        fechaFinal: { type: string, format: date-time, nullable: true, example: '2026-12-31T04:59:59Z' }
+    Modulo:
+      type: object
+      required: [id, nombre, idAplicacion, activo]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+        idAplicacion: { $ref: '#/components/schemas/Uuid' }
+        activo: { type: boolean }
+        fechaInicio: { type: string, format: date-time, nullable: true, example: '2026-09-11T13:30:00Z' }
+        fechaFinal: { type: string, format: date-time, nullable: true, example: '2026-12-31T04:59:59Z' }
+    Funcionalidad:
+      type: object
+      required: [id, nombre, idModulo, activo]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+        idModulo: { $ref: '#/components/schemas/Uuid' }
+        activo: { type: boolean }
+        fechaInicio: { type: string, format: date-time, nullable: true, example: '2026-09-11T13:30:00Z' }
+        fechaFinal: { type: string, format: date-time, nullable: true, example: '2026-12-31T04:59:59Z' }
+    Parametro:
+      type: object
+      required: [id, nombre, idFuncionalidad, idTipoParametro, activo]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+        idFuncionalidad: { $ref: '#/components/schemas/Uuid' }
+        idTipoParametro: { $ref: '#/components/schemas/Uuid' }
+        activo: { type: boolean }
+    Metadato:
+      type: object
+      required: [id, idParametro, idTipoMetadato, valor]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        idParametro: { $ref: '#/components/schemas/Uuid' }
+        idTipoMetadato: { $ref: '#/components/schemas/Uuid' }
+        valor: { description: Valor JSON tipado por idTipoMetadato }
+    TipoParametro:
+      type: object
+      required: [id, nombre]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string }
+    TipoMetadato:
+      type: object
+      required: [id, tipo, detalle]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        tipo: { type: string, example: STRING }
+        detalle: { type: string }
+    OrganizacionResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [organizaciones], properties: { organizaciones: { type: array, items: { $ref: '#/components/schemas/Organizacion' } } } }] }
+    AplicacionResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [aplicaciones], properties: { aplicaciones: { type: array, items: { $ref: '#/components/schemas/Aplicacion' } } } }] }
+    ModuloResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [modulos], properties: { modulos: { type: array, items: { $ref: '#/components/schemas/Modulo' } } } }] }
+    FuncionalidadResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [funcionalidades], properties: { funcionalidades: { type: array, items: { $ref: '#/components/schemas/Funcionalidad' } } } }] }
+    ParametroResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [parametros], properties: { parametros: { type: array, items: { $ref: '#/components/schemas/Parametro' } } } }] }
+    MetadatoResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [metadatos], properties: { metadatos: { type: array, items: { $ref: '#/components/schemas/Metadato' } } } }] }
+    TipoParametroResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [tiposParametro], properties: { tiposParametro: { type: array, items: { $ref: '#/components/schemas/TipoParametro' } } } }] }
+    TipoMetadatoResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [tiposMetadato], properties: { tiposMetadato: { type: array, items: { $ref: '#/components/schemas/TipoMetadato' } } } }] }

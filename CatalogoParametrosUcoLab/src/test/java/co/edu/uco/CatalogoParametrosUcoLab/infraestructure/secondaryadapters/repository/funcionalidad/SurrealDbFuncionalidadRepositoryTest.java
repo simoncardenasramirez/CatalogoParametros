@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,7 @@ import tools.jackson.databind.node.ObjectNode;
 class SurrealDbFuncionalidadRepositoryTest {
     private static final UUID ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private static final UUID PADRE = UUID.fromString("22222222-2222-2222-2222-222222222222");
-    private static final LocalDateTime FECHA = LocalDateTime.of(2026, 1, 2, 10, 30);
+    private static final OffsetDateTime FECHA = OffsetDateTime.of(2026, 1, 2, 10, 30, 0, 0, ZoneOffset.of("-05:00"));
     private final SurrealDbClient cliente = mock(SurrealDbClient.class);
     private final SurrealDbFuncionalidadRepository repositorio = new SurrealDbFuncionalidadRepository(cliente);
     private final ObjectMapper mapper = new ObjectMapper();
@@ -36,7 +37,7 @@ class SurrealDbFuncionalidadRepositoryTest {
                 () -> assertTrue(consulta.getValue().contains("O\\'Reilly\\\\UCO")),
                 () -> assertTrue(consulta.getValue().contains("idModulo: '" + PADRE + "'")),
                 () -> assertTrue(consulta.getValue().contains("activo: true")),
-                () -> assertTrue(consulta.getValue().contains("fechaInicio: '2026-01-02T10:30'")),
+                () -> assertTrue(consulta.getValue().contains("fechaInicio: '2026-01-02T10:30-05:00'")),
                 () -> assertTrue(consulta.getValue().contains("fechaFinal: null")),
                 () -> assertTrue(consulta.getValue().stripTrailing().endsWith("COMMIT TRANSACTION;")));
     }
@@ -52,7 +53,7 @@ class SurrealDbFuncionalidadRepositoryTest {
                 () -> assertTrue(consulta.getValue().contains("nombre: 'Actualizado'")),
                 () -> assertTrue(consulta.getValue().contains("activo: false")),
                 () -> assertTrue(consulta.getValue().contains("fechaInicio: null")),
-                () -> assertTrue(consulta.getValue().contains("fechaFinal: '2026-01-02T10:30'")),
+                () -> assertTrue(consulta.getValue().contains("fechaFinal: '2026-01-02T10:30-05:00'")),
                 () -> assertTrue(consulta.getValue().contains("COMMIT TRANSACTION;")));
     }
 
@@ -129,7 +130,7 @@ class SurrealDbFuncionalidadRepositoryTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"2026-01-02T10:30", "2026-01-02T10:30:00", "2026-01-02T10:30:00Z", "d'2026-01-02T10:30:00Z'"})
+    @ValueSource(strings = {"2026-01-02T10:30-05:00", "2026-01-02T10:30:00-05:00", "d'2026-01-02T10:30:00-05:00'"})
     void debeNormalizarFechaCuandoSurrealDevuelveFormatosSoportados(final String fecha) {
         responder(registro().put("fechaInicio", fecha).put("fechaFinal", fecha));
         var entidad = repositorio.findById(ID).orElseThrow();
@@ -156,7 +157,7 @@ class SurrealDbFuncionalidadRepositoryTest {
         var registro = mapper.createObjectNode()
                 .put("id", "funcionalidades:`" + ID + "`")
                 .put("nombre", "Catalogo")
-                .put("fechaInicio", "d'2026-01-02T10:30Z'")
+                .put("fechaInicio", "d'2026-01-02T10:30-05:00'")
                 .putNull("fechaFinal");
         registro.put("idModulo", PADRE.toString()).put("activo", true);
         return registro;
@@ -172,4 +173,3 @@ class SurrealDbFuncionalidadRepositoryTest {
         when(cliente.execute(anyString())).thenReturn(respuesta);
     }
 }
-

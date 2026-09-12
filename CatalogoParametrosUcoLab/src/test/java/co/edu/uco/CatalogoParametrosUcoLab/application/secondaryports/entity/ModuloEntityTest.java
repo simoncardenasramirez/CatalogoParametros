@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,8 @@ class ModuloEntityTest {
     void debeCrearConLosValoresCuandoLosDatosSonValidos() {
         var id = UUID.randomUUID();
         var idAplicacion = UUID.randomUUID();
-        var fechaInicio = LocalDateTime.of(2026, 1, 1, 0, 0, 0);
-        var fechaFinal = LocalDateTime.of(2026, 12, 31, 23, 59, 59);
+        var fechaInicio = OffsetDateTime.of(2026, 1, 1, 0, 0, 0, 0, ZoneOffset.of("-05:00"));
+        var fechaFinal = OffsetDateTime.of(2026, 12, 31, 23, 59, 59, 0, ZoneOffset.of("-05:00"));
 
         var entity = ModuloEntity.create(id, "modulo", idAplicacion, true, fechaInicio, fechaFinal);
 

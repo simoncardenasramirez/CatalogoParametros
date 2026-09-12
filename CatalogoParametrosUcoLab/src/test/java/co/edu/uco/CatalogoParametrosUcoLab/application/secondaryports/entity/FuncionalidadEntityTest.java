@@ -3,7 +3,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class FuncionalidadEntityTest {
     void debeConservarLosValoresCuandoSeCreanConDatosValidos() {
         var id = UUID.randomUUID();
         var idModulo = UUID.randomUUID();
-        var fechaInicio = LocalDateTime.now();
+        var fechaInicio = OffsetDateTime.now(ZoneOffset.of("-05:00"));
         var fechaFinal = fechaInicio.plusDays(1);
 
         var entity = FuncionalidadEntity.create(id, "funcionalidad", idModulo, true, fechaInicio, fechaFinal);

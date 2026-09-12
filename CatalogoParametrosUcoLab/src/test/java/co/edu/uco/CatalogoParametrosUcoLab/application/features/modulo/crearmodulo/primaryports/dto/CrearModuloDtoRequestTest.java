@@ -11,19 +11,19 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 class CrearModuloDtoRequestTest {
 
-    private static final String FECHA_VALIDA = "2026-01-01 00:00:00";
+    private static final String FECHA_VALIDA = "2026-01-01T00:00:00-05:00";
 
     @Test
     void debeCrearConLosValoresCuandoLosDatosSonValidos() {
         var idAplicacion = UUID.randomUUID().toString();
         var dto = CrearModuloDtoRequest.create("modulo", idAplicacion, "true",
-                FECHA_VALIDA, "2026-12-31 23:59:59");
+                FECHA_VALIDA, "2026-12-31T23:59:59-05:00");
 
         assertEquals("modulo", dto.getNombre());
         assertEquals(idAplicacion, dto.getIdAplicacion());
         assertEquals("true", dto.getActivo());
         assertEquals(FECHA_VALIDA, dto.getFechaInicio());
-        assertEquals("2026-12-31 23:59:59", dto.getFechaFinal());
+        assertEquals("2026-12-31T23:59:59-05:00", dto.getFechaFinal());
     }
 
     @Test

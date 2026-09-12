@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
@@ -9,7 +9,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 public final class ValidateHelper {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     private ValidateHelper() {
     }
@@ -44,14 +44,14 @@ public final class ValidateHelper {
     public static void validateFecha(final String fecha, final String fieldName) {
         if (!TextHelper.isBlank(fecha)) {
             try {
-                LocalDateTime.parse(fecha, DATE_FORMATTER);
+                OffsetDateTime.parse(fecha, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                throw ValidationException.build("La " + fieldName + " no tiene un formato valido (yyyy-MM-dd HH:mm:ss). Valor recibido: " + fecha);
+                throw ValidationException.build("La " + fieldName + " no tiene un formato valido (ISO-8601, por ejemplo yyyy-MM-dd'T'HH:mm:ss-05:00). Valor recibido: " + fecha);
             }
         }
     }
 
-    public static void validateRangoFechas(final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public static void validateRangoFechas(final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         if (fechaInicio != null && fechaFinal != null && fechaFinal.isBefore(fechaInicio)) {
             throw ValidationException.build("La fecha final no puede ser anterior a la fecha de inicio.");
         }

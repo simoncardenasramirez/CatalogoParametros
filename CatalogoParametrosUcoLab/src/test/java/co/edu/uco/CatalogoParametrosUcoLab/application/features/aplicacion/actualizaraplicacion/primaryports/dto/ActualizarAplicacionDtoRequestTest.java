@@ -11,7 +11,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 class ActualizarAplicacionDtoRequestTest {
 
-    private static final String FECHA_VALIDA = "2024-01-01 00:00:00";
+    private static final String FECHA_VALIDA = "2024-01-01T00:00:00-05:00";
     private static final String UUID_VALIDO = UUID.randomUUID().toString();
 
     @Test
@@ -21,13 +21,13 @@ class ActualizarAplicacionDtoRequestTest {
 
     @Test
     void debeCrearConDatosRealesCuandoLosValoresSonValidos() {
-        var dto = ActualizarAplicacionDtoRequest.create("aplicacion", UUID_VALIDO, "true", FECHA_VALIDA, "2024-12-31 23:59:59");
+        var dto = ActualizarAplicacionDtoRequest.create("aplicacion", UUID_VALIDO, "true", FECHA_VALIDA, "2024-12-31T23:59:59-05:00");
 
         assertEquals("aplicacion", dto.getNombre());
         assertEquals(UUID_VALIDO, dto.getIdOrganizacion());
         assertEquals("true", dto.getActiva());
         assertEquals(FECHA_VALIDA, dto.getFechaInicio());
-        assertEquals("2024-12-31 23:59:59", dto.getFechaFinal());
+        assertEquals("2024-12-31T23:59:59-05:00", dto.getFechaFinal());
     }
 
     @Test

@@ -7,7 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ class ActualizarFuncionalidadImplTest {
 
     private ActualizarFuncionalidadDomain domainValido() {
         return ActualizarFuncionalidadDomain.create(UUID.randomUUID(), "funcionalidad", UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
     }
 
     @Test
