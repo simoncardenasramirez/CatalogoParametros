@@ -3,7 +3,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.pu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class CrearFuncionalidadPublisherImplTest {
     void debeEmitirElEventoCuandoSePublica() {
         var publisher = new CrearFuncionalidadPublisherImpl();
         var funcionalidad = FuncionalidadEntity.create(UUID.randomUUID(), "funcionalidad", UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
         var evento = CrearFuncionalidadEvent.created(funcionalidad);
 
         publisher.sendEvent(evento);

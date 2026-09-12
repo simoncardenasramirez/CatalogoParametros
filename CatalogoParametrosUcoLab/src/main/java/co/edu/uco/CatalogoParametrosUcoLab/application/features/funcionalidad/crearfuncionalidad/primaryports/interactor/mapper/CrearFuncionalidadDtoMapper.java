@@ -1,7 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.interactor.mapper;
 
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.cr
 
 public final class CrearFuncionalidadDtoMapper {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     public static final CrearFuncionalidadDtoMapper INSTANCE = new CrearFuncionalidadDtoMapper();
 
@@ -28,8 +28,8 @@ public final class CrearFuncionalidadDtoMapper {
         var dtoToMap = dto == null ? new CrearFuncionalidadDtoRequest() : dto;
         final var idModulo = UUID.fromString(dtoToMap.getIdModulo());
         final var activo = Boolean.parseBoolean(dtoToMap.getActivo());
-        final var fechaInicio = LocalDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
-        final var fechaFinal = LocalDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
+        final var fechaInicio = OffsetDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
+        final var fechaFinal = OffsetDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
         return CrearFuncionalidadDtoInput.create(
                 dtoToMap.getNombre(),
                 idModulo,

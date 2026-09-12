@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public final class ModuloEntity {
@@ -9,11 +9,11 @@ public final class ModuloEntity {
     private String nombre;
     private UUID idAplicacion;
     private boolean activo;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private OffsetDateTime fechaInicio;
+    private OffsetDateTime fechaFinal;
 
     public static ModuloEntity create(final UUID id, final String nombre, final UUID idAplicacion,
-            final boolean activo, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+            final boolean activo, final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         var entity = new ModuloEntity();
         entity.setId(id);
         entity.setNombre(nombre);
@@ -56,19 +56,19 @@ public final class ModuloEntity {
         this.activo = activo;
     }
 
-    public LocalDateTime getFechaInicio() {
+    public OffsetDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(final LocalDateTime fechaInicio) {
+    public void setFechaInicio(final OffsetDateTime fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public LocalDateTime getFechaFinal() {
+    public OffsetDateTime getFechaFinal() {
         return fechaFinal;
     }
 
-    public void setFechaFinal(final LocalDateTime fechaFinal) {
+    public void setFechaFinal(final OffsetDateTime fechaFinal) {
         this.fechaFinal = fechaFinal;
     }
 }

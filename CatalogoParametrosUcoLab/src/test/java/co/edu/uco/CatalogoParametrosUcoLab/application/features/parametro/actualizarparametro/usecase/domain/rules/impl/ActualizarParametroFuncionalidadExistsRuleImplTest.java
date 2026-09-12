@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ class ActualizarParametroFuncionalidadExistsRuleImplTest {
 
     private FuncionalidadEntity funcionalidadConId(final UUID id) {
         return FuncionalidadEntity.create(id, "funcionalidad", UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
     }
 
     @Test

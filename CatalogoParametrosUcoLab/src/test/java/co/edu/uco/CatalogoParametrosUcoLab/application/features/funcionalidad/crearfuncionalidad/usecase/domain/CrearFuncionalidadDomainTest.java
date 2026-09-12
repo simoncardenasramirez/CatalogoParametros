@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class CrearFuncionalidadDomainTest {
     void debeConservarLosDatosRealesCuandoSeCreaConValoresValidos() {
         var id = UUID.randomUUID();
         var idModulo = UUID.randomUUID();
-        var fechaInicio = LocalDateTime.now();
+        var fechaInicio = OffsetDateTime.now(ZoneOffset.of("-05:00"));
         var fechaFinal = fechaInicio.plusDays(1);
 
         var domain = CrearFuncionalidadDomain.create(id, "funcionalidad", idModulo, false, fechaInicio, fechaFinal);

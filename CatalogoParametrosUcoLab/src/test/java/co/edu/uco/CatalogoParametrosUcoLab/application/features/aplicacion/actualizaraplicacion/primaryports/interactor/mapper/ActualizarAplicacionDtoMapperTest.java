@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -34,9 +35,9 @@ class ActualizarAplicacionDtoMapperTest {
         assertEquals("aplicacion", input.getNombre());
         assertEquals(UUID.fromString(idOrganizacion), input.getIdOrganizacion());
         assertTrue(input.isActiva());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO,
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO,
                 java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), input.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL,
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL,
                 java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), input.getFechaFinal());
     }
 

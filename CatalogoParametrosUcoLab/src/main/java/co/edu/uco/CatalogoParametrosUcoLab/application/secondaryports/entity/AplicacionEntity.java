@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -12,8 +12,8 @@ public final class AplicacionEntity {
     private String nombre;
     private UUID idOrganizacion;
     private boolean activa;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private OffsetDateTime fechaInicio;
+    private OffsetDateTime fechaFinal;
 
     private AplicacionEntity() {
         setId(UUIDHelper.getDefault());
@@ -25,7 +25,7 @@ public final class AplicacionEntity {
     }
 
     private AplicacionEntity(final UUID id, final String nombre, final UUID idOrganizacion, final boolean activa,
-            final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+            final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         setId(id);
         setNombre(nombre);
         setIdOrganizacion(idOrganizacion);
@@ -35,7 +35,7 @@ public final class AplicacionEntity {
     }
 
     public static AplicacionEntity create(final UUID id, final String nombre, final UUID idOrganizacion,
-            final boolean activa, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+            final boolean activa, final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         return new AplicacionEntity(id, nombre, idOrganizacion, activa, fechaInicio, fechaFinal);
     }
 
@@ -71,19 +71,19 @@ public final class AplicacionEntity {
         this.activa = activa;
     }
 
-    public LocalDateTime getFechaInicio() {
+    public OffsetDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(final LocalDateTime fechaInicio) {
+    public void setFechaInicio(final OffsetDateTime fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public LocalDateTime getFechaFinal() {
+    public OffsetDateTime getFechaFinal() {
         return fechaFinal;
     }
 
-    public void setFechaFinal(final LocalDateTime fechaFinal) {
+    public void setFechaFinal(final OffsetDateTime fechaFinal) {
         this.fechaFinal = fechaFinal;
     }
 }

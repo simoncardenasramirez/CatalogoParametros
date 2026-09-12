@@ -1,7 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.primaryports.interactor.mapper;
 
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actua
 
 public final class ActualizarAplicacionDtoMapper {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     public static final ActualizarAplicacionDtoMapper INSTANCE = new ActualizarAplicacionDtoMapper();
 
@@ -28,8 +28,8 @@ public final class ActualizarAplicacionDtoMapper {
         var dtoToMap = dto == null ? new ActualizarAplicacionDtoRequest() : dto;
         final var idOrganizacion = UUID.fromString(dtoToMap.getIdOrganizacion());
         final var activa = Boolean.parseBoolean(dtoToMap.getActiva());
-        final var fechaInicio = LocalDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
-        final var fechaFinal = LocalDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
+        final var fechaInicio = OffsetDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
+        final var fechaFinal = OffsetDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
         return ActualizarAplicacionDtoInput.create(
                 dtoToMap.getNombre(),
                 idOrganizacion,

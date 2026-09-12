@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -31,8 +32,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", input.getNombre());
         assertEquals(UUID.fromString(idAplicacion), input.getIdAplicacion());
         assertTrue(input.isActivo());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
     }
 
     @Test
@@ -45,8 +46,8 @@ class ActualizarModuloDtoMapperTest {
         var id = UUID.randomUUID();
         var idAplicacion = UUID.randomUUID();
         var input = ActualizarModuloDtoInput.create("modulo", idAplicacion, true,
-                LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER),
-                LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER));
+                OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER),
+                OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER));
 
         ActualizarModuloDomain domain = ActualizarModuloDtoMapper.INSTANCE.toDomain(id, input);
 
@@ -54,8 +55,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(idAplicacion, domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER), domain.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER), domain.getFechaFinal());
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), domain.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), domain.getFechaFinal());
     }
 
     @Test

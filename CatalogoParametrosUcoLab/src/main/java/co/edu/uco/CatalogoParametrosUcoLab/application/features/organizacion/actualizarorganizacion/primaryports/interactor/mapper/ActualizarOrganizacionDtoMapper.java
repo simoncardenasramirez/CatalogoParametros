@@ -2,7 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.ac
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.act
 public enum ActualizarOrganizacionDtoMapper {
     INSTANCE;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     public ActualizarOrganizacionDomain toDomain(final UUID id, final ActualizarOrganizacionDtoRequest dto) {
         final var dtoInput = toDtoInput(dto);
@@ -31,8 +31,8 @@ public enum ActualizarOrganizacionDtoMapper {
         return ActualizarOrganizacionDomain.create(id, dtoInput.getNombre(), dtoInput.getFechaInicio(), dtoInput.getFechaFinal());
     }
 
-    private LocalDateTime parseFecha(final String fecha) {
+    private OffsetDateTime parseFecha(final String fecha) {
         return TextHelper.isBlank(fecha)
-                ? null : LocalDateTime.parse(fecha, DATE_FORMATTER);
+                ? null : OffsetDateTime.parse(fecha, DATE_FORMATTER);
     }
 }

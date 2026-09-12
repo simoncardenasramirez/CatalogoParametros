@@ -1,6 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -11,15 +11,15 @@ public final class ActualizarModuloDtoInput {
     private String nombre;
     private UUID idAplicacion;
     private boolean activo;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private OffsetDateTime fechaInicio;
+    private OffsetDateTime fechaFinal;
 
     public ActualizarModuloDtoInput() {
         this(TextHelper.EMPTY, UUIDHelper.getDefault(), false, null, null);
     }
 
     public ActualizarModuloDtoInput(final String nombre, final UUID idAplicacion, final boolean activo,
-                                   final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+                                   final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         setNombre(nombre);
         setIdAplicacion(idAplicacion);
         setActivo(activo);
@@ -28,7 +28,7 @@ public final class ActualizarModuloDtoInput {
     }
 
     public static ActualizarModuloDtoInput create(final String nombre, final UUID idAplicacion, final boolean activo,
-                                                 final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+                                                 final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         return new ActualizarModuloDtoInput(nombre, idAplicacion, activo, fechaInicio, fechaFinal);
     }
 
@@ -56,19 +56,19 @@ public final class ActualizarModuloDtoInput {
         this.activo = activo;
     }
 
-    public LocalDateTime getFechaInicio() {
+    public OffsetDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(final LocalDateTime fechaInicio) {
+    public void setFechaInicio(final OffsetDateTime fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public LocalDateTime getFechaFinal() {
+    public OffsetDateTime getFechaFinal() {
         return fechaFinal;
     }
 
-    public void setFechaFinal(final LocalDateTime fechaFinal) {
+    public void setFechaFinal(final OffsetDateTime fechaFinal) {
         this.fechaFinal = fechaFinal;
     }
 }

@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,7 @@ import tools.jackson.databind.node.ObjectNode;
 class SurrealDbFuncionalidadRepositoryTest {
     private static final UUID ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private static final UUID PADRE = UUID.fromString("22222222-2222-2222-2222-222222222222");
-    private static final LocalDateTime FECHA = LocalDateTime.of(2026, 1, 2, 10, 30);
+    private static final OffsetDateTime FECHA = OffsetDateTime.of(2026, 1, 2, 10, 30, 0, 0, ZoneOffset.of("-05:00"));
     private final SurrealDbClient cliente = mock(SurrealDbClient.class);
     private final SurrealDbFuncionalidadRepository repositorio = new SurrealDbFuncionalidadRepository(cliente);
     private final ObjectMapper mapper = new ObjectMapper();

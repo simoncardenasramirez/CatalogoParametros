@@ -1,6 +1,9 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.modulo;
 
+import java.time.OffsetDateTime;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -168,7 +171,7 @@ public class SurrealDbModuloRepository implements ModuloRepository {
         }
     }
 
-    private LocalDateTime extractDateTime(final JsonNode dateNode) {
+    private OffsetDateTime extractDateTime(final JsonNode dateNode) {
         if (dateNode.isNull() || TextHelper.isBlank(dateNode.asText())) {
             return null;
         }
@@ -178,17 +181,18 @@ public class SurrealDbModuloRepository implements ModuloRepository {
             text = text.substring(2, text.length() - 1);
         }
         // Remove Z timezone suffix if present
-        if (text.endsWith("Z")) {
-            text = text.substring(0, text.length() - 1);
-        }
-        // Ensure seconds are present for LocalDateTime.parse
+        // Ensure seconds are present for OffsetDateTime.parse
         if (text.length() == 16) { // yyyy-MM-ddTHH:mm
             text = text + ":00";
         }
-        return LocalDateTime.parse(text);
+        try {
+            return OffsetDateTime.parse(text);
+        } catch (DateTimeParseException exception) {
+            return LocalDateTime.parse(text).atOffset(ZoneOffset.of("-05:00"));
+        }
     }
 
-    private String formatDateTime(final LocalDateTime dateTime) {
+    private String formatDateTime(final OffsetDateTime dateTime) {
         if (dateTime == null) {
             return "null";
         }

@@ -10,8 +10,10 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Met
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
 @Service
 public final class ActualizarMetadatoImpl implements ActualizarMetadato {
-    private final MetadatoRepository repository; private final ActualizarMetadatoRuleValidator validator;
-    private final ActualizarMetadatoPublisher publisher; private final TelemetryService telemetry;
+    private final MetadatoRepository repository; 
+    private final ActualizarMetadatoRuleValidator validator;
+    private final ActualizarMetadatoPublisher publisher; 
+    private final TelemetryService telemetry;
     public ActualizarMetadatoImpl(final MetadatoRepository r, final ActualizarMetadatoRuleValidator v,
             final ActualizarMetadatoPublisher p, final TelemetryService t) { repository = r; validator = v; publisher = p; telemetry = t; }
     @Override public void execute(final ActualizarMetadatoDomain data) {

@@ -1,6 +1,9 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.organizacion;
 
+import java.time.OffsetDateTime;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -155,16 +158,19 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
         return value.replace("\\", "\\\\").replace("'", "\\'");
     }
 
-    private LocalDateTime extractDateTime(final JsonNode node) {
+    private OffsetDateTime extractDateTime(final JsonNode node) {
         if (node.isNull() || TextHelper.isBlank(node.asText())) return null;
         var value = node.asText();
         if (value.startsWith("d'") && value.endsWith("'")) value = value.substring(2, value.length() - 1);
-        if (value.endsWith("Z")) value = value.substring(0, value.length() - 1);
         if (value.length() == 16) value += ":00";
-        return LocalDateTime.parse(value);
+        try {
+            return OffsetDateTime.parse(value);
+        } catch (DateTimeParseException exception) {
+            return LocalDateTime.parse(value).atOffset(ZoneOffset.of("-05:00"));
+        }
     }
 
-    private String formatDateTime(final LocalDateTime value) {
+    private String formatDateTime(final OffsetDateTime value) {
         return value == null ? "null" : "'" + value + "'";
     }
 }
