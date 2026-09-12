@@ -1,11 +1,29 @@
-  trigger:
-    - develop
+name: catalogo-$(SourceBranchName)-$(Date:yyyyMMdd).$(Rev:r)
 
-  pool:
-    vmImage: ubuntu-latest
+trigger:
+  branches:
+    include:
+      - develop
 
-  steps:
+pr:
+  branches:
+    include:
+      - '*'
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
+  IMAGE_VERSION_PREFIX: '0.0'
+  # Contador persistente por pipeline y rama; los PR no consumen el de develop.
+  # Reserva el numero al iniciar, incluso si la ejecucion falla.
+  IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 2)]
+
+steps:
   - checkout: self
+    fetchDepth: 0
 
   - task: JavaToolInstaller@0
     displayName: Configurar Java 21
@@ -14,9 +32,38 @@
       jdkArchitectureOption: x64
       jdkSourceOption: PreInstalled
 
-  - bash: bash ./mvnw -B -ntp clean verify
-    displayName: Compilar y ejecutar pruebas
-    workingDirectory: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
+  - task: Cache@2
+    displayName: Cache de Maven
+    inputs:
+      key: 'maven | "$(Agent.OS)" | **/pom.xml'
+      restoreKeys: |
+        maven | "$(Agent.OS)"
+      path: $(MAVEN_CACHE_FOLDER)
+
+  - task: Cache@2
+    displayName: Cache de Sonar
+    inputs:
+      key: 'sonar | "$(Agent.OS)"'
+      path: $(SONAR_USER_HOME)/cache
+
+  - bash: |
+      set -euo pipefail
+      # Separar el literal evita que Azure lo sustituya dentro del script.
+      token_sin_resolver='$''(SONAR_TOKEN)'
+      if [[ -z "${SONAR_TOKEN:-}" || "$SONAR_TOKEN" == "$token_sin_resolver" ]]; then
+        echo "##vso[task.logissue type=error]Configura SONAR_TOKEN como variable secreta del pipeline."
+        exit 1
+      fi
+    displayName: Verificar configuración de Sonar
+    env:
+      SONAR_TOKEN: $(SONAR_TOKEN)
+
+  - bash: |
+      bash ./mvnw -B -ntp \
+        "-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)" \
+        clean verify
+    displayName: Compilar, probar y exigir cobertura del 80%
+    workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
 
   - task: PublishTestResults@2
     displayName: Publicar resultados de pruebas
@@ -24,17 +71,56 @@
     inputs:
       testResultsFormat: JUnit
       testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
-      searchFolder: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
+      searchFolder: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
       failTaskOnFailedTests: true
       failTaskOnMissingResultsFile: true
 
+  - task: PublishCodeCoverageResults@2
+    displayName: Publicar cobertura JaCoCo
+    condition: succeededOrFailed()
+    inputs:
+      summaryFileLocation: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab/target/site/jacoco/jacoco.xml
+      pathToSources: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab/src/main/java
+      failIfCoverageEmpty: true
+
+  - bash: |
+      bash ./mvnw -B -ntp \
+        "-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)" \
+        org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.organization=simoncardenasramirez \
+        -Dsonar.projectKey=simoncardenasramirez_CatalogoParametros \
+        -Dsonar.qualitygate.wait=true \
+        -Dsonar.qualitygate.timeout=300
+    displayName: Analizar Sonar y exigir Quality Gate
+    workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
+    env:
+      SONAR_TOKEN: $(SONAR_TOKEN)
+      SONAR_USER_HOME: $(SONAR_USER_HOME)
+
+  - bash: |
+      set -euo pipefail
+
+      tag="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
+      if [[ ! "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "##vso[task.logissue type=error]La versión de imagen debe ser X.Y.Z."
+        exit 1
+      fi
+
+      echo "Imagen: simon4219/catalogo-parametros:${tag}"
+      echo "##vso[task.setvariable variable=imageTag]${tag}"
+    displayName: Calcular versión de imagen
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
+    workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
+
   - task: Docker@2
-    displayName: Construir y publicar imagen
+    displayName: Construir y publicar imagen validada
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     inputs:
       command: buildAndPush
       containerRegistry: DockerHubConnection
       repository: simon4219/catalogo-parametros
-      Dockerfile: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab/Dockerfile'
-      buildContext: '$(Build.SourcesDirectory)/CatalogoParametrosUcoLab'
-      tags: 'develop-$(Build.BuildId)'
+      Dockerfile: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab/Dockerfile
+      buildContext: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
+      tags: |
+        $(imageTag)
