@@ -16,6 +16,10 @@ pool:
 variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
   SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
+  IMAGE_VERSION_PREFIX: '0.0'
+  # Contador persistente por pipeline y rama; los PR no consumen el de develop.
+  # Reserva el numero al iniciar, incluso si la ejecucion falla.
+  IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 2)]
 
 steps:
   - checkout: self
@@ -97,20 +101,12 @@ steps:
   - bash: |
       set -euo pipefail
 
-      version=$(python3 - <<'PY'
-      import xml.etree.ElementTree as ET
-      root = ET.parse("pom.xml").getroot()
-      print(root.findtext("{http://maven.apache.org/POM/4.0.0}version"))
-      PY
-      )
-
-      base="${version%-SNAPSHOT}"
-      if [[ ! "$base" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "##vso[task.logissue type=error]La versión del pom debe ser X.Y.Z o X.Y.Z-SNAPSHOT."
+      tag="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
+      if [[ ! "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "##vso[task.logissue type=error]La versión de imagen debe ser X.Y.Z."
         exit 1
       fi
 
-      tag="${base}"
       echo "Imagen: simon4219/catalogo-parametros:${tag}"
       echo "##vso[task.setvariable variable=imageTag]${tag}"
     displayName: Calcular versión de imagen
