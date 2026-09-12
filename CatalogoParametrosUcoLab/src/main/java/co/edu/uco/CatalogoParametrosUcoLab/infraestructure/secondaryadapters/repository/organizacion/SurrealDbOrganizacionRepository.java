@@ -1,6 +1,5 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.organizacion;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
@@ -37,7 +37,7 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
                 };
                 COMMIT TRANSACTION;
                 """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()),
-                formatDateTime(organizacion.getFechaInicio()), formatDateTime(organizacion.getFechaFinal()));
+                DateTimeHelper.format(organizacion.getFechaInicio()), DateTimeHelper.format(organizacion.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return organizacion;
@@ -106,7 +106,7 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
                 };
                 COMMIT TRANSACTION;
                 """.formatted(TABLE_NAME, organizacion.getId(), escape(organizacion.getNombre()),
-                formatDateTime(organizacion.getFechaInicio()), formatDateTime(organizacion.getFechaFinal()));
+                DateTimeHelper.format(organizacion.getFechaInicio()), DateTimeHelper.format(organizacion.getFechaFinal()));
 
         surrealDbClient.execute(query);
         return organizacion;
@@ -129,8 +129,8 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
         return OrganizacionEntity.create(
                 extractUuid(node.path("id")),
                 node.path("nombre").asText(),
-                extractDateTime(node.path("fechaInicio")),
-                extractDateTime(node.path("fechaFinal"))
+                DateTimeHelper.parse(node.path("fechaInicio")),
+                DateTimeHelper.parse(node.path("fechaFinal"))
         );
     }
 
@@ -153,17 +153,5 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
 
     private String escape(final String value) {
         return value.replace("\\", "\\\\").replace("'", "\\'");
-    }
-
-    private OffsetDateTime extractDateTime(final JsonNode node) {
-        if (node.isNull() || TextHelper.isBlank(node.asText())) return null;
-        var value = node.asText();
-        if (value.startsWith("d'") && value.endsWith("'")) value = value.substring(2, value.length() - 1);
-        if (value.length() == 16) value += ":00";
-        return OffsetDateTime.parse(value);
-    }
-
-    private String formatDateTime(final OffsetDateTime value) {
-        return value == null ? "null" : "'" + value + "'";
     }
 }
