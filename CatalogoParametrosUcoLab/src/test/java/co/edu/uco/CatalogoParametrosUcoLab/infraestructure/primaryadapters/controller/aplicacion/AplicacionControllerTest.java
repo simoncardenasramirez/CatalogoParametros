@@ -75,7 +75,7 @@ class AplicacionControllerTest {
     private String bodyCrearValido() {
         var idOrganizacion = UUID.randomUUID();
         return "{\"nombre\":\"aplicacion\",\"idOrganizacion\":\"" + idOrganizacion
-                + "\",\"activa\":\"true\",\"fechaInicio\":\"2024-01-01 00:00:00\",\"fechaFinal\":\"2024-12-31 23:59:59\"}";
+                + "\",\"activa\":\"true\",\"fechaInicio\":\"2024-01-01T00:00:00-05:00\",\"fechaFinal\":\"2024-12-31T23:59:59-05:00\"}";
     }
 
     @Test

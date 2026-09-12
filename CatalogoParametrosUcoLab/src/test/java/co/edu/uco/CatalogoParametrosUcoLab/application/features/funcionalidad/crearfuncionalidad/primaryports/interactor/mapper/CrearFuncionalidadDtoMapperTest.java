@@ -18,9 +18,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 class CrearFuncionalidadDtoMapperTest {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String FECHA_INICIO = "2024-01-01 00:00:00";
-    private static final String FECHA_FINAL = "2024-12-31 23:59:59";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final String FECHA_INICIO = "2024-01-01T00:00:00-05:00";
+    private static final String FECHA_FINAL = "2024-12-31T23:59:59-05:00";
 
     private CrearFuncionalidadDtoRequest requestValido() {
         return CrearFuncionalidadDtoRequest.create("funcionalidad", UUID.randomUUID().toString(), "true",

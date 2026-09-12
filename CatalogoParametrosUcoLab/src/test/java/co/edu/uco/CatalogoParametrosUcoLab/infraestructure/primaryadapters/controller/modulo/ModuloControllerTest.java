@@ -78,7 +78,7 @@ class ModuloControllerTest {
 
     private String bodyJsonValido(final String nombre) {
         return "{\"nombre\":\"" + nombre + "\",\"idAplicacion\":\"" + UUID.randomUUID()
-                + "\",\"activo\":\"true\",\"fechaInicio\":\"2026-01-01 00:00:00\",\"fechaFinal\":\"2026-12-31 23:59:59\"}";
+                + "\",\"activo\":\"true\",\"fechaInicio\":\"2026-01-01T00:00:00-05:00\",\"fechaFinal\":\"2026-12-31T23:59:59-05:00\"}";
     }
 
     private ModuloEntity entidad(final String nombre) {
