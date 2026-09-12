@@ -1,9 +1,6 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.repository.funcionalidad;
 
 import java.time.OffsetDateTime;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -183,11 +180,7 @@ public class SurrealDbFuncionalidadRepository implements FuncionalidadRepository
         if (text.length() == 16) { // yyyy-MM-ddTHH:mm
             text = text + ":00";
         }
-        try {
-            return OffsetDateTime.parse(text);
-        } catch (DateTimeParseException exception) {
-            return LocalDateTime.parse(text).atOffset(ZoneOffset.of("-05:00"));
-        }
+        return OffsetDateTime.parse(text);
     }
 
     private String formatDateTime(final OffsetDateTime dateTime) {
