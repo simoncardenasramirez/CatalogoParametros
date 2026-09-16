@@ -23,6 +23,16 @@
         <springdoc.version>3.0.3</springdoc.version>
         <sonar.organization>simoncardenasramirez</sonar.organization>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!--
+            DTOs, domain state holders and persistence entities intentionally mirror the
+            same catalogue fields. Exclude only that structural boilerplate from CPD;
+            Sonar still analyzes these files for every other quality metric.
+        -->
+        <sonar.cpd.exclusions>
+            **/primaryports/dto/*DtoInput.java,
+            **/usecase/domain/*Domain.java,
+            **/secondaryports/entity/*Entity.java
+        </sonar.cpd.exclusions>
     </properties>
 
     <dependencyManagement>
