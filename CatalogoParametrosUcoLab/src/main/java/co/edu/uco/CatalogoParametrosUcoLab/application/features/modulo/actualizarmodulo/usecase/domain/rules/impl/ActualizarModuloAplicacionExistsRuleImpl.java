@@ -3,8 +3,6 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualiz
 import org.springframework.beans.factory.annotation.Autowired;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;

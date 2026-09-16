@@ -26,7 +26,7 @@ class CrearMetadatoDomainTest {
         assertEquals(id, dominio.getId());
         assertEquals(idParametro, dominio.getIdParametro());
         assertEquals(idTipoMetadato, dominio.getIdTipoMetadato());
-        assertEquals("valor", dominio.getValor().asText());
+        assertEquals("valor", dominio.getValor().asString());
     }
 
     @Test
@@ -34,7 +34,7 @@ class CrearMetadatoDomainTest {
         var dominio = CrearMetadatoDomain.create(UUID.randomUUID(), UUID.randomUUID(),
                 UUID.randomUUID(), text("  valor  "));
 
-        assertEquals("  valor  ", dominio.getValor().asText());
+        assertEquals("  valor  ", dominio.getValor().asString());
     }
 
     @Test
@@ -77,6 +77,6 @@ class CrearMetadatoDomainTest {
     }
 
     private tools.jackson.databind.JsonNode text(final String value) {
-        return JsonNodeFactory.instance.textNode(value);
+        return JsonNodeFactory.instance.stringNode(value);
     }
 }

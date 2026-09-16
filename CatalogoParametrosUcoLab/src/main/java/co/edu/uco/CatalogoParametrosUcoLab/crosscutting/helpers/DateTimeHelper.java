@@ -11,10 +11,10 @@ public final class DateTimeHelper {
     }
 
     public static OffsetDateTime parse(final JsonNode dateNode) {
-        if (dateNode == null || dateNode.isNull() || TextHelper.isBlank(dateNode.asText())) {
+        if (dateNode == null || dateNode.isNull() || TextHelper.isBlank(dateNode.asString())) {
             return null;
         }
-        var text = dateNode.asText();
+        var text = dateNode.asString();
         if (text.startsWith("d'") && text.endsWith("'")) {
             text = text.substring(2, text.length() - 1);
         }

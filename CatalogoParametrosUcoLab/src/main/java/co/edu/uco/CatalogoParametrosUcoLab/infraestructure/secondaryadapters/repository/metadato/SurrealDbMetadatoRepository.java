@@ -58,8 +58,8 @@ public final class SurrealDbMetadatoRepository implements MetadatoRepository {
                 : tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
     }
     private MetadatoEntity toEntity(final JsonNode node) {
-        return MetadatoEntity.create(uuid(node.path("id").asText()), UUID.fromString(node.path("idParametro").asText()),
-                UUID.fromString(node.path("idTipoMetadato").asText()), node.path("valor").deepCopy());
+        return MetadatoEntity.create(uuid(node.path("id").asString()), UUID.fromString(node.path("idParametro").asString()),
+                UUID.fromString(node.path("idTipoMetadato").asString()), node.path("valor").deepCopy());
     }
     private UUID uuid(final String recordId) {
         var value = recordId.replace("`", "").replace("u'", "").replace("'", "");

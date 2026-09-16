@@ -10,7 +10,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 public final class MetadatoValorIsNotEmptyRuleImpl implements MetadatoValorIsNotEmptyRule {
     @Override public void execute(final CrearMetadatoDomain data) {
         if (data.getValor() == null || data.getValor().isNull() || data.getValor().isMissingNode()
-                || data.getValor().isTextual() && data.getValor().asText().isBlank()) {
+                || data.getValor().isString() && data.getValor().asString().isBlank()) {
             throw ValidationException.build("El valor del metadato es obligatorio.");
         }
     }

@@ -55,9 +55,9 @@ public class SurrealDbClient {
         }
 
         for (var statement : response) {
-            var status = statement.path("status").asText();
+            var status = statement.path("status").asString();
             if (!"OK".equalsIgnoreCase(status)) {
-                var detail = statement.path("detail").asText(statement.path("result").toString());
+                var detail = statement.path("detail").asString(statement.path("result").toString());
                 throw TechnicalException.build("SurrealDB rechazo la operacion: " + detail);
             }
         }

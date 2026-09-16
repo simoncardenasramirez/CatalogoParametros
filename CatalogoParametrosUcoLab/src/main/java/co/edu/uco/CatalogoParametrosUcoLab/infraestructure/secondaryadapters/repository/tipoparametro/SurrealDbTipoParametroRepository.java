@@ -103,12 +103,12 @@ public class SurrealDbTipoParametroRepository implements TipoParametroRepository
     private TipoParametroEntity toEntity(final JsonNode node) {
         return TipoParametroEntity.create(
                 extractUuid(node.path("id")),
-                node.path("nombre").asText()
+                node.path("nombre").asString()
         );
     }
 
     private UUID extractUuid(final JsonNode idNode) {
-        var value = idNode.asText();
+        var value = idNode.asString();
         var separatorIndex = value.indexOf(':');
         if (separatorIndex >= 0 && separatorIndex < value.length() - 1) {
             value = value.substring(separatorIndex + 1);

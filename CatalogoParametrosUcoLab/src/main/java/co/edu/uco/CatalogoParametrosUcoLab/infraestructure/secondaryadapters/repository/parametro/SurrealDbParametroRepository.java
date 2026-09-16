@@ -150,13 +150,13 @@ public class SurrealDbParametroRepository implements ParametroRepository {
     }
 
     private ParametroEntity toEntity(final JsonNode node) {
-        return ParametroEntity.create(extractUuid(node.path("id")), node.path("nombre").asText(),
+        return ParametroEntity.create(extractUuid(node.path("id")), node.path("nombre").asString(),
                 extractUuid(node.path("idFuncionalidad")), extractUuid(node.path("idTipoParametro")),
                 node.path("activo").asBoolean());
     }
 
     private UUID extractUuid(final JsonNode idNode) {
-        var value = idNode.asText();
+        var value = idNode.asString();
         var separatorIndex = value.indexOf(':');
         if (separatorIndex >= 0 && separatorIndex < value.length() - 1) {
             value = value.substring(separatorIndex + 1);

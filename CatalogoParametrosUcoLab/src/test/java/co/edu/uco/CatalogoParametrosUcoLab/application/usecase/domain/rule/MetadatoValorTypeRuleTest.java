@@ -19,13 +19,13 @@ class MetadatoValorTypeRuleTest {
     @Test
     void debeRechazarCadenaParaTipoJson() {
         assertThrows(ValidationException.class,
-                () -> MetadatoValorTypeRule.execute("Json", JsonNodeFactory.instance.textNode("{}")));
+                () -> MetadatoValorTypeRule.execute("Json", JsonNodeFactory.instance.stringNode("{}")));
     }
 
     @Test
     void debeAceptarSoloCadenaParaTipoAlfanumerico() {
         assertDoesNotThrow(() -> MetadatoValorTypeRule.execute("alfanumerico",
-                JsonNodeFactory.instance.textNode("COP")));
+                JsonNodeFactory.instance.stringNode("COP")));
         assertThrows(ValidationException.class,
                 () -> MetadatoValorTypeRule.execute("alfanumerico", JsonNodeFactory.instance.objectNode()));
     }
@@ -33,8 +33,8 @@ class MetadatoValorTypeRuleTest {
     @Test
     void debeValidarFormatoDelTipoDate() {
         assertDoesNotThrow(() -> MetadatoValorTypeRule.execute("date",
-                JsonNodeFactory.instance.textNode("2026-08-26")));
+                JsonNodeFactory.instance.stringNode("2026-08-26")));
         assertThrows(ValidationException.class,
-                () -> MetadatoValorTypeRule.execute("date", JsonNodeFactory.instance.textNode("26/08/2026")));
+                () -> MetadatoValorTypeRule.execute("date", JsonNodeFactory.instance.stringNode("26/08/2026")));
     }
 }
