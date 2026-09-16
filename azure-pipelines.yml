@@ -1,6 +1,7 @@
 name: catalogo-$(SourceBranchName)-$(Date:yyyyMMdd).$(Rev:r)
 
 trigger:
+  batch: true
   branches:
     include:
       - develop
@@ -17,6 +18,7 @@ variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
   SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
   IMAGE_VERSION_PREFIX: '0.0'
+  # La version se asigna al latest ANTERIOR, no a la imagen nueva.
   # Contador persistente por pipeline y rama; los PR no consumen el de develop.
   # Reserva el numero al iniciar, incluso si la ejecucion falla.
   IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 2)]
@@ -98,29 +100,100 @@ steps:
       SONAR_TOKEN: $(SONAR_TOKEN)
       SONAR_USER_HOME: $(SONAR_USER_HOME)
 
+  - task: Docker@2
+    displayName: Autenticarse en Docker Hub
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      command: login
+      containerRegistry: DockerHubConnection
+
   - bash: |
       set -euo pipefail
 
-      tag="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
-      if [[ ! "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "##vso[task.logissue type=error]La versión de imagen debe ser X.Y.Z."
+      repositorio="simon4219/catalogo-parametros"
+      version_anterior="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
+      imagen_nueva="catalogo-candidato:${BUILD_BUILDID}"
+
+      if [[ ! "$version_anterior" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "##vso[task.logissue type=error]La versión debe tener formato X.Y.Z."
         exit 1
       fi
 
-      echo "Imagen: simon4219/catalogo-parametros:${tag}"
-      echo "##vso[task.setvariable variable=imageTag]${tag}"
-    displayName: Calcular versión de imagen
+      # Construir primero sin modificar las imágenes de Docker Hub.
+      echo "Construyendo nueva imagen..."
+
+      docker build \
+        --file Dockerfile \
+        --tag "$imagen_nueva" \
+        .
+
+      archivo_error="$(mktemp)"
+      trap 'rm -f "$archivo_error"' EXIT
+
+      # Recuperar la imagen que actualmente tiene la etiqueta latest.
+      echo "Buscando latest anterior..."
+
+      if docker pull "${repositorio}:latest" 2>"$archivo_error"; then
+
+        # Evitar sobrescribir una versión histórica existente.
+        if docker manifest inspect \
+          "${repositorio}:${version_anterior}" \
+          > /dev/null 2>"$archivo_error"; then
+
+          echo "##vso[task.logissue type=error]La versión ${version_anterior} ya existe. No se sobrescribirá."
+          exit 1
+
+        elif ! grep -Eqi \
+          'manifest unknown|no such manifest' "$archivo_error"; then
+
+          cat "$archivo_error" >&2
+          echo "##vso[task.logissue type=error]No se pudo comprobar si la versión histórica existe."
+          exit 1
+        fi
+
+        # Dar una versión a la imagen anterior antes de reemplazar latest.
+        echo "Guardando latest anterior como ${repositorio}:${version_anterior}..."
+
+        docker tag \
+          "${repositorio}:latest" \
+          "${repositorio}:${version_anterior}"
+
+        docker push "${repositorio}:${version_anterior}"
+
+        echo "Imagen anterior conservada como ${version_anterior}."
+
+      elif grep -Eqi 'manifest unknown' "$archivo_error"; then
+
+        # Primera ejecución cuando todavía no existe latest.
+        echo "No existe latest anterior. Se publicará el primer latest."
+
+      else
+
+        # No confundir errores de autenticación o red con una imagen inexistente.
+        cat "$archivo_error" >&2
+        echo "##vso[task.logissue type=error]No se pudo descargar latest. Se cancela la publicación."
+        exit 1
+
+      fi
+
+      # La nueva imagen se publica únicamente con la etiqueta latest.
+      echo "Publicando nueva imagen como ${repositorio}:latest..."
+
+      docker tag \
+        "$imagen_nueva" \
+        "${repositorio}:latest"
+
+      docker push "${repositorio}:latest"
+
+      echo "Publicación completada."
+      echo "Imagen actual: ${repositorio}:latest"
+    displayName: Versionar imagen anterior y publicar nueva como latest
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
 
   - task: Docker@2
-    displayName: Construir y publicar imagen validada
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
+    displayName: Cerrar sesión en Docker Hub
+    condition: and(always(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     inputs:
-      command: buildAndPush
+      command: logout
       containerRegistry: DockerHubConnection
-      repository: simon4219/catalogo-parametros
-      Dockerfile: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab/Dockerfile
-      buildContext: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
-      tags: |
-        $(imageTag)
