@@ -128,14 +128,14 @@ public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
     private OrganizacionEntity toEntity(final JsonNode node) {
         return OrganizacionEntity.create(
                 extractUuid(node.path("id")),
-                node.path("nombre").asText(),
+                node.path("nombre").asString(),
                 DateTimeHelper.parse(node.path("fechaInicio")),
                 DateTimeHelper.parse(node.path("fechaFinal"))
         );
     }
 
     private UUID extractUuid(final JsonNode idNode) {
-        var value = idNode.asText();
+        var value = idNode.asString();
         var separatorIndex = value.indexOf(':');
         if (separatorIndex >= 0 && separatorIndex < value.length() - 1) {
             value = value.substring(separatorIndex + 1);

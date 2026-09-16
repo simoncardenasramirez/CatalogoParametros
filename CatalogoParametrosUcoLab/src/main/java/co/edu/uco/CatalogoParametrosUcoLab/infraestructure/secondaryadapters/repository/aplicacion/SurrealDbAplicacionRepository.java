@@ -144,7 +144,7 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
     private AplicacionEntity toEntity(final JsonNode node) {
         return AplicacionEntity.create(
                 extractUuid(node.path("id")),
-                node.path("nombre").asText(),
+                node.path("nombre").asString(),
                 extractUuid(node.path("idOrganizacion")),
                 node.path("activa").asBoolean(),
                 DateTimeHelper.parse(node.path("fechaInicio")),
@@ -153,7 +153,7 @@ public class SurrealDbAplicacionRepository implements AplicacionRepository {
     }
 
     private UUID extractUuid(final JsonNode idNode) {
-        var value = idNode.asText();
+        var value = idNode.asString();
         var separatorIndex = value.indexOf(':');
         if (separatorIndex >= 0 && separatorIndex < value.length() - 1) {
             value = value.substring(separatorIndex + 1);

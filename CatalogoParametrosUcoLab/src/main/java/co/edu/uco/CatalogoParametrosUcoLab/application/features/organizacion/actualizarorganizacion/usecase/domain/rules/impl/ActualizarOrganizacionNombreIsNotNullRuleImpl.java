@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreIsNotNullRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
 
 @Service

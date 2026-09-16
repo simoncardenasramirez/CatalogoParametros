@@ -55,8 +55,8 @@ public final class SurrealDbTipoMetadatoRepository implements TipoMetadatoReposi
     }
 
     private TipoMetadatoEntity toEntity(final JsonNode node) {
-        var rawId = node.path("id").asText().replace("`", "").replace("u'", "").replace("'", "");
+        var rawId = node.path("id").asString().replace("`", "").replace("u'", "").replace("'", "");
         rawId = rawId.substring(rawId.indexOf(':') + 1);
-        return TipoMetadatoEntity.create(UUID.fromString(rawId), node.path("tipo").asText(), node.path("detalle").asText());
+        return TipoMetadatoEntity.create(UUID.fromString(rawId), node.path("tipo").asString(), node.path("detalle").asString());
     }
 }

@@ -143,7 +143,7 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     private ModuloEntity toEntity(final JsonNode node) {
         return ModuloEntity.create(
                 extractUuid(node.path("id")),
-                node.path("nombre").asText(),
+                node.path("nombre").asString(),
                 extractUuid(node.path("idAplicacion")),
                 node.path("activo").asBoolean(),
                 DateTimeHelper.parse(node.path("fechaInicio")),
@@ -152,7 +152,7 @@ public class SurrealDbModuloRepository implements ModuloRepository {
     }
 
     private UUID extractUuid(final JsonNode idNode) {
-        var value = idNode.asText();
+        var value = idNode.asString();
         var separatorIndex = value.indexOf(':');
         if (separatorIndex >= 0 && separatorIndex < value.length() - 1) {
             value = value.substring(separatorIndex + 1);

@@ -14,14 +14,14 @@ public final class MetadatoValorTypeRule {
 
     public static void execute(final String tipo, final JsonNode valor) {
         if (valor == null || valor.isNull() || valor.isMissingNode()
-                || valor.isTextual() && TextHelper.isBlank(valor.asText())) {
+                || valor.isString() && TextHelper.isBlank(valor.asString())) {
             throw ValidationException.build("El valor del metadato es obligatorio.");
         }
 
         if ("json".equalsIgnoreCase(tipo) && !valor.isObject() && !valor.isArray()) {
             throw ValidationException.build("El valor debe ser un objeto o arreglo JSON.");
         }
-        if ("alfanumerico".equalsIgnoreCase(tipo) && !valor.isTextual()) {
+        if ("alfanumerico".equalsIgnoreCase(tipo) && !valor.isString()) {
             throw ValidationException.build("El valor del metadato alfanumerico debe ser una cadena.");
         }
         if ("date".equalsIgnoreCase(tipo)) {
@@ -30,11 +30,11 @@ public final class MetadatoValorTypeRule {
     }
 
     private static void validateDate(final JsonNode valor) {
-        if (!valor.isTextual()) {
+        if (!valor.isString()) {
             throw ValidationException.build("El valor del metadato date debe ser una fecha en formato yyyy-MM-dd.");
         }
         try {
-            LocalDate.parse(valor.asText());
+            LocalDate.parse(valor.asString());
         } catch (final DateTimeParseException exception) {
             throw ValidationException.build("El valor del metadato date debe ser una fecha en formato yyyy-MM-dd.");
         }
