@@ -7,7 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +33,7 @@ class ConsultarModuloInteractorImplTest {
 
     private ModuloEntity entidad(final String nombre) {
         return ModuloEntity.create(UUID.randomUUID(), nombre, UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
     }
 
     @Test

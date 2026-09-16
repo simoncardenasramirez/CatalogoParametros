@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -17,9 +18,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 class ActualizarModuloDtoMapperTest {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String FECHA_INICIO = "2026-01-01 00:00:00";
-    private static final String FECHA_FINAL = "2026-12-31 23:59:59";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final String FECHA_INICIO = "2026-01-01T00:00:00-05:00";
+    private static final String FECHA_FINAL = "2026-12-31T23:59:59-05:00";
 
     @Test
     void debeConvertirRequestEnInputConDatosReales() {
@@ -31,8 +32,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", input.getNombre());
         assertEquals(UUID.fromString(idAplicacion), input.getIdAplicacion());
         assertTrue(input.isActivo());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
     }
 
     @Test
@@ -45,8 +46,8 @@ class ActualizarModuloDtoMapperTest {
         var id = UUID.randomUUID();
         var idAplicacion = UUID.randomUUID();
         var input = ActualizarModuloDtoInput.create("modulo", idAplicacion, true,
-                LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER),
-                LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER));
+                OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER),
+                OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER));
 
         ActualizarModuloDomain domain = ActualizarModuloDtoMapper.INSTANCE.toDomain(id, input);
 
@@ -54,8 +55,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(idAplicacion, domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER), domain.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER), domain.getFechaFinal());
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), domain.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), domain.getFechaFinal());
     }
 
     @Test

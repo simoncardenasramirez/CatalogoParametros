@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ class ValidateHelperTest {
 
     @Test
     void debeRechazarFechaFinalAnteriorALaFechaInicio() {
-        var inicio = LocalDateTime.of(2026, 8, 26, 10, 0);
+        var inicio = OffsetDateTime.of(2026, 8, 26, 10, 0, 0, 0, ZoneOffset.of("-05:00"));
         var finalAnterior = inicio.minusSeconds(1);
 
         var exception = assertThrows(ValidationException.class,
@@ -25,13 +26,13 @@ class ValidateHelperTest {
 
     @Test
     void debePermitirFechasIguales() {
-        var fecha = LocalDateTime.of(2026, 8, 26, 10, 0);
+        var fecha = OffsetDateTime.of(2026, 8, 26, 10, 0, 0, 0, ZoneOffset.of("-05:00"));
         assertDoesNotThrow(() -> ValidateHelper.validateRangoFechas(fecha, fecha));
     }
 
     @Test
     void debePermitirFechaFinalPosterior() {
-        var inicio = LocalDateTime.of(2026, 8, 26, 10, 0);
+        var inicio = OffsetDateTime.of(2026, 8, 26, 10, 0, 0, 0, ZoneOffset.of("-05:00"));
         assertDoesNotThrow(() -> ValidateHelper.validateRangoFechas(inicio, inicio.plusDays(1)));
     }
 

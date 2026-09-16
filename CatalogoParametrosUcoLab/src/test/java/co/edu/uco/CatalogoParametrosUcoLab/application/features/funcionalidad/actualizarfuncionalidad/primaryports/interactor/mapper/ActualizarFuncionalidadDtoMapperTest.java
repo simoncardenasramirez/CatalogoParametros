@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -17,9 +18,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationExc
 
 class ActualizarFuncionalidadDtoMapperTest {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String FECHA_INICIO = "2024-01-01 00:00:00";
-    private static final String FECHA_FINAL = "2024-12-31 23:59:59";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final String FECHA_INICIO = "2024-01-01T00:00:00-05:00";
+    private static final String FECHA_FINAL = "2024-12-31T23:59:59-05:00";
 
     private ActualizarFuncionalidadDtoRequest requestValido() {
         return ActualizarFuncionalidadDtoRequest.create("funcionalidad", UUID.randomUUID().toString(), "true",
@@ -37,8 +38,8 @@ class ActualizarFuncionalidadDtoMapperTest {
         assertEquals("funcionalidad", input.getNombre());
         assertEquals(UUID.fromString(idModulo), input.getIdModulo());
         assertTrue(input.isActivo());
-        assertEquals(LocalDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
-        assertEquals(LocalDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
+        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
     }
 
     @Test

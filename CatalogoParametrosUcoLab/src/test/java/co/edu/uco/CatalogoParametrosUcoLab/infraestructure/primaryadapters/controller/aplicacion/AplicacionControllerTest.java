@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,13 +69,13 @@ class AplicacionControllerTest {
 
     private AplicacionEntity entidad(final String nombre) {
         return AplicacionEntity.create(UUID.randomUUID(), nombre, UUID.randomUUID(), true,
-                LocalDateTime.now(), null);
+                OffsetDateTime.now(ZoneOffset.of("-05:00")), null);
     }
 
     private String bodyCrearValido() {
         var idOrganizacion = UUID.randomUUID();
         return "{\"nombre\":\"aplicacion\",\"idOrganizacion\":\"" + idOrganizacion
-                + "\",\"activa\":\"true\",\"fechaInicio\":\"2024-01-01 00:00:00\",\"fechaFinal\":\"2024-12-31 23:59:59\"}";
+                + "\",\"activa\":\"true\",\"fechaInicio\":\"2024-01-01T00:00:00-05:00\",\"fechaFinal\":\"2024-12-31T23:59:59-05:00\"}";
     }
 
     @Test

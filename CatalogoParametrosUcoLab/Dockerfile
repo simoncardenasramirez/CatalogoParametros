@@ -7,6 +7,7 @@ WORKDIR /app
 
 COPY pom.xml .
 COPY src ./src
+COPY docs/openapi ./docs/openapi
 
 RUN mvn clean package -DskipTests
 

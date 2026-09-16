@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualiza
 @ExtendWith(MockitoExtension.class)
 class ActualizarModuloInteractorImplTest {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     @Mock
     private ActualizarModulo actualizarModulo;
@@ -35,7 +36,7 @@ class ActualizarModuloInteractorImplTest {
         var id = UUID.randomUUID();
         var idAplicacion = UUID.randomUUID().toString();
         var request = ActualizarModuloDtoRequest.create("modulo", idAplicacion, "true",
-                "2026-01-01 00:00:00", "2026-12-31 23:59:59");
+                "2026-01-01T00:00:00-05:00", "2026-12-31T23:59:59-05:00");
 
         interactor.execute(id, request);
 
@@ -46,7 +47,7 @@ class ActualizarModuloInteractorImplTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(UUID.fromString(idAplicacion), domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(LocalDateTime.parse("2026-01-01 00:00:00", DATE_FORMATTER), domain.getFechaInicio());
-        assertEquals(LocalDateTime.parse("2026-12-31 23:59:59", DATE_FORMATTER), domain.getFechaFinal());
+        assertEquals(OffsetDateTime.parse("2026-01-01T00:00:00-05:00", DATE_FORMATTER), domain.getFechaInicio());
+        assertEquals(OffsetDateTime.parse("2026-12-31T23:59:59-05:00", DATE_FORMATTER), domain.getFechaFinal());
     }
 }

@@ -1,12 +1,12 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public final class ActualizarOrganizacionDtoInput {
 
     private String nombre;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFinal;
+    private OffsetDateTime fechaInicio;
+    private OffsetDateTime fechaFinal;
 
     public ActualizarOrganizacionDtoInput() {
         this("", null, null);
@@ -16,7 +16,7 @@ public final class ActualizarOrganizacionDtoInput {
         this(nombre, null, null);
     }
 
-    public ActualizarOrganizacionDtoInput(final String nombre, final LocalDateTime fechaInicio, final LocalDateTime fechaFinal) {
+    public ActualizarOrganizacionDtoInput(final String nombre, final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
         setNombre(nombre); this.fechaInicio = fechaInicio; this.fechaFinal = fechaFinal;
     }
 
@@ -24,8 +24,8 @@ public final class ActualizarOrganizacionDtoInput {
         return new ActualizarOrganizacionDtoInput(nombre);
     }
 
-    public static ActualizarOrganizacionDtoInput create(final String nombre, final LocalDateTime fechaInicio,
-            final LocalDateTime fechaFinal) { return new ActualizarOrganizacionDtoInput(nombre, fechaInicio, fechaFinal); }
+    public static ActualizarOrganizacionDtoInput create(final String nombre, final OffsetDateTime fechaInicio,
+            final OffsetDateTime fechaFinal) { return new ActualizarOrganizacionDtoInput(nombre, fechaInicio, fechaFinal); }
 
     public String getNombre() {
         return nombre;
@@ -35,8 +35,8 @@ public final class ActualizarOrganizacionDtoInput {
         this.nombre = nombre;
     }
 
-    public LocalDateTime getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(final LocalDateTime value) { fechaInicio = value; }
-    public LocalDateTime getFechaFinal() { return fechaFinal; }
-    public void setFechaFinal(final LocalDateTime value) { fechaFinal = value; }
+    public OffsetDateTime getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(final OffsetDateTime value) { fechaInicio = value; }
+    public OffsetDateTime getFechaFinal() { return fechaFinal; }
+    public void setFechaFinal(final OffsetDateTime value) { fechaFinal = value; }
 }
