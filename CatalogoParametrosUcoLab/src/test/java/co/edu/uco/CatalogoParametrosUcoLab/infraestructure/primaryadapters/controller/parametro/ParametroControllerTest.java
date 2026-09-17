@@ -153,6 +153,17 @@ class ParametroControllerTest {
     }
 
     @Test
+    void debeCambiarEstadoDeParametroYDevolver200() {
+        webTestClient.post().uri("/catalogo-parametros/api/v1/parametros/{id}/changestatus", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"activo\":false}")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Estado del parametro actualizado exitosamente.");
+    }
+
+    @Test
     void debeExponerElStreamDeEventosCuandoSeConsultaEvents() {
         when(crearParametroPublisher.getStream()).thenReturn(Flux.empty());
         when(actualizarParametroPublisher.getStream()).thenReturn(Flux.empty());

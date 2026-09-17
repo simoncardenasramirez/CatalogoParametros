@@ -152,6 +152,17 @@ class AplicacionControllerTest {
     }
 
     @Test
+    void debeCambiarEstadoDeAplicacionYDevolver200() {
+        webTestClient.post().uri("/catalogo-parametros/api/v1/aplicaciones/{id}/changestatus", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"activo\":false}")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Estado de la aplicacion actualizado exitosamente.");
+    }
+
+    @Test
     void debeDevolver200YElComentarioConnectedAlConsultarLosEventos() {
         when(crearAplicacionPublisher.getStream()).thenReturn(Flux.empty());
         when(actualizarAplicacionPublisher.getStream()).thenReturn(Flux.empty());

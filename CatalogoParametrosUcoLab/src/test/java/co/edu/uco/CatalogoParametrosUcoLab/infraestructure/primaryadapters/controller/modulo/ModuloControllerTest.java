@@ -79,6 +79,17 @@ class ModuloControllerTest {
                 .expectBody().jsonPath("$.mensajes[0]").isEqualTo("Modulo eliminado exitosamente.");
     }
 
+    @Test
+    void debeCambiarEstadoDeModuloYDevolver200() {
+        webTestClient.post().uri("/catalogo-parametros/api/v1/modulos/{id}/changestatus", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"activo\":false}")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Estado del modulo actualizado exitosamente.");
+    }
+
     private String bodyJsonValido(final String nombre) {
         return "{\"nombre\":\"" + nombre + "\",\"idAplicacion\":\"" + UUID.randomUUID()
                 + "\",\"activo\":\"true\",\"fechaInicio\":\"2026-01-01T00:00:00-05:00\",\"fechaFinal\":\"2026-12-31T23:59:59-05:00\"}";

@@ -147,6 +147,17 @@ class FuncionalidadControllerTest {
     }
 
     @Test
+    void debeCambiarEstadoDeFuncionalidadYDevolver200() {
+        webTestClient.post().uri(RUTA_BASE + "/{id}/changestatus", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"activo\":false}")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Estado de la funcionalidad actualizado exitosamente.");
+    }
+
+    @Test
     void debeDevolver400CuandoLaEliminacionFallaPorValidacion() {
         var id = UUID.randomUUID();
         doThrow(ValidationException.build("El id de la funcionalidad es obligatorio para eliminar."))
