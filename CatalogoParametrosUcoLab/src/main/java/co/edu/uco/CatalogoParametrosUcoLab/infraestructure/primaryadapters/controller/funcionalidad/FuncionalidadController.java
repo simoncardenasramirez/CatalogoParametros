@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.dto.CambiarEstadoDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor.TipoRecurso;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.interactor.ActualizarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.secondaryports.publisher.ActualizarFuncionalidadPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.primaryports.dto.CrearFuncionalidadDtoRequest;
@@ -37,6 +42,8 @@ import reactor.core.scheduler.Schedulers;
 @RequestMapping("/catalogo-parametros/api/v1/funcionalidades")
 public final class FuncionalidadController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FuncionalidadController.class);
+
     private final CrearFuncionalidadInteractor crearFuncionalidadInteractor;
     private final ActualizarFuncionalidadInteractor actualizarFuncionalidadInteractor;
     private final EliminarFuncionalidadInteractor eliminarFuncionalidadInteractor;
@@ -44,6 +51,7 @@ public final class FuncionalidadController {
     private final CrearFuncionalidadPublisher crearFuncionalidadPublisher;
     private final ActualizarFuncionalidadPublisher actualizarFuncionalidadPublisher;
     private final EliminarFuncionalidadPublisher eliminarFuncionalidadPublisher;
+    private final CambiarEstadoInteractor cambiarEstadoInteractor;
 
     public FuncionalidadController(final CrearFuncionalidadInteractor crearFuncionalidadInteractor,
             final ActualizarFuncionalidadInteractor actualizarFuncionalidadInteractor,
@@ -51,7 +59,8 @@ public final class FuncionalidadController {
             final ConsultarFuncionalidadInteractor consultarFuncionalidadInteractor,
             final CrearFuncionalidadPublisher crearFuncionalidadPublisher,
             final ActualizarFuncionalidadPublisher actualizarFuncionalidadPublisher,
-            final EliminarFuncionalidadPublisher eliminarFuncionalidadPublisher) {
+            final EliminarFuncionalidadPublisher eliminarFuncionalidadPublisher,
+            final CambiarEstadoInteractor cambiarEstadoInteractor) {
         this.crearFuncionalidadInteractor = crearFuncionalidadInteractor;
         this.actualizarFuncionalidadInteractor = actualizarFuncionalidadInteractor;
         this.eliminarFuncionalidadInteractor = eliminarFuncionalidadInteractor;
@@ -59,6 +68,7 @@ public final class FuncionalidadController {
         this.crearFuncionalidadPublisher = crearFuncionalidadPublisher;
         this.actualizarFuncionalidadPublisher = actualizarFuncionalidadPublisher;
         this.eliminarFuncionalidadPublisher = eliminarFuncionalidadPublisher;
+        this.cambiarEstadoInteractor = cambiarEstadoInteractor;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -112,6 +122,17 @@ public final class FuncionalidadController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
+    @PostMapping("/{id}/changestatus")
+    public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
+            @RequestBody final CambiarEstadoDtoRequest request) {
+        return Mono.fromCallable(() -> {
+            cambiarEstadoInteractor.execute(TipoRecurso.FUNCIONALIDAD, id, request.getActivo());
+            var response = new ParametroResponse();
+            response.getMensajes().add("Estado de la funcionalidad actualizado exitosamente.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<ParametroResponse>> eliminarFuncionalidad(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
@@ -141,6 +162,7 @@ public final class FuncionalidadController {
                 response.getFuncionalidades().addAll(funcionalidades);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } catch (final Exception exception) {
+                LOGGER.error("Error consultando las funcionalidades", exception);
                 response.getMensajes().add("Ocurrio un error consultando las funcionalidades.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }

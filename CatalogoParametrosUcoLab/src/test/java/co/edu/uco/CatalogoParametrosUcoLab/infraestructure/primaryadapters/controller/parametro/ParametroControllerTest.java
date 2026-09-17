@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.interactor.ActualizarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.publisher.ActualizarParametroPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.consultarparametro.primaryports.interactor.ConsultarParametroInteractor;
@@ -48,6 +49,8 @@ class ParametroControllerTest {
     @Mock
     private EliminarParametroPublisher eliminarParametroPublisher;
     @Mock
+    private CambiarEstadoInteractor cambiarEstadoInteractor;
+    @Mock
     private ConsultarMensajePort consultarMensajePort;
 
     private WebTestClient webTestClient;
@@ -59,7 +62,8 @@ class ParametroControllerTest {
         webTestClient = WebTestClient.bindToController(
                 new ParametroController(crearParametroInteractor, actualizarParametroInteractor,
                         eliminarParametroInteractor, consultarParametroInteractor,
-                        crearParametroPublisher, actualizarParametroPublisher, eliminarParametroPublisher))
+                        crearParametroPublisher, actualizarParametroPublisher, eliminarParametroPublisher,
+                        cambiarEstadoInteractor))
                 .controllerAdvice(handler)
                 .build();
     }

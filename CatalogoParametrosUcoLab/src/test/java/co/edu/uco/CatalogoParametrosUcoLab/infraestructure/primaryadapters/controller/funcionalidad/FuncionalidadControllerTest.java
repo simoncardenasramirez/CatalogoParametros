@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.dto.ActualizarFuncionalidadDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.primaryports.interactor.ActualizarFuncionalidadInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.secondaryports.publisher.ActualizarFuncionalidadPublisher;
@@ -54,6 +55,8 @@ class FuncionalidadControllerTest {
     @Mock
     private EliminarFuncionalidadPublisher eliminarFuncionalidadPublisher;
     @Mock
+    private CambiarEstadoInteractor cambiarEstadoInteractor;
+    @Mock
     private ConsultarMensajePort consultarMensajePort;
 
     private WebTestClient webTestClient;
@@ -66,7 +69,7 @@ class FuncionalidadControllerTest {
                 .bindToController(new FuncionalidadController(crearFuncionalidadInteractor,
                         actualizarFuncionalidadInteractor, eliminarFuncionalidadInteractor,
                         consultarFuncionalidadInteractor, crearFuncionalidadPublisher,
-                        actualizarFuncionalidadPublisher, eliminarFuncionalidadPublisher))
+                        actualizarFuncionalidadPublisher, eliminarFuncionalidadPublisher, cambiarEstadoInteractor))
                 .controllerAdvice(handler)
                 .build();
     }

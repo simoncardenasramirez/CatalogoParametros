@@ -13,6 +13,9 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actua
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.primaryports.interactor.EliminarAplicacionInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.eliminaraplicacion.secondaryports.publisher.EliminarAplicacionPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.secondaryports.event.AplicacionEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.dto.CambiarEstadoDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor.TipoRecurso;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.aplicacion.AplicacionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,6 +46,7 @@ public final class AplicacionController {
     private final ActualizarAplicacionPublisher actualizarAplicacionPublisher;
     private final EliminarAplicacionInteractor eliminarAplicacionInteractor;
     private final EliminarAplicacionPublisher eliminarAplicacionPublisher;
+    private final CambiarEstadoInteractor cambiarEstadoInteractor;
 
     public AplicacionController(final CrearAplicacionInteractor crearAplicacionInteractor,
                                 final ConsultarAplicacionInteractor consultarAplicacionInteractor,
@@ -50,7 +54,8 @@ public final class AplicacionController {
                                 final ActualizarAplicacionInteractor actualizarAplicacionInteractor,
                                 final ActualizarAplicacionPublisher actualizarAplicacionPublisher,
                                 final EliminarAplicacionInteractor eliminarAplicacionInteractor,
-                                final EliminarAplicacionPublisher eliminarAplicacionPublisher) {
+                                final EliminarAplicacionPublisher eliminarAplicacionPublisher,
+                                final CambiarEstadoInteractor cambiarEstadoInteractor) {
         this.crearAplicacionInteractor = crearAplicacionInteractor;
         this.consultarAplicacionInteractor = consultarAplicacionInteractor;
         this.crearAplicacionPublisher = crearAplicacionPublisher;
@@ -58,6 +63,7 @@ public final class AplicacionController {
         this.actualizarAplicacionPublisher = actualizarAplicacionPublisher;
         this.eliminarAplicacionInteractor = eliminarAplicacionInteractor;
         this.eliminarAplicacionPublisher = eliminarAplicacionPublisher;
+        this.cambiarEstadoInteractor = cambiarEstadoInteractor;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -173,6 +179,17 @@ public final class AplicacionController {
                 response.getMensajes().add("Ocurrio un error eliminando la aplicacion.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @PostMapping("/{id}/changestatus")
+    public Mono<ResponseEntity<AplicacionResponse>> cambiarEstado(@PathVariable final UUID id,
+            @RequestBody final CambiarEstadoDtoRequest request) {
+        return Mono.fromCallable(() -> {
+            cambiarEstadoInteractor.execute(TipoRecurso.APLICACION, id, request.getActivo());
+            var response = new AplicacionResponse();
+            response.getMensajes().add("Estado de la aplicacion actualizado exitosamente.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 }
