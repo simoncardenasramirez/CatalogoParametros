@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.dto.ActualizarParametroDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.dto.CambiarEstadoDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor.TipoRecurso;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.primaryports.interactor.ActualizarParametroInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.secondaryports.publisher.ActualizarParametroPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.crearparametro.primaryports.dto.CrearParametroDtoRequest;
@@ -43,6 +46,7 @@ public final class ParametroController {
     private final CrearParametroPublisher crearParametroPublisher;
     private final ActualizarParametroPublisher actualizarParametroPublisher;
     private final EliminarParametroPublisher eliminarParametroPublisher;
+    private final CambiarEstadoInteractor cambiarEstadoInteractor;
 
     public ParametroController(final CrearParametroInteractor crearParametroInteractor,
             final ActualizarParametroInteractor actualizarParametroInteractor,
@@ -50,7 +54,8 @@ public final class ParametroController {
             final ConsultarParametroInteractor consultarParametroInteractor,
             final CrearParametroPublisher crearParametroPublisher,
             final ActualizarParametroPublisher actualizarParametroPublisher,
-            final EliminarParametroPublisher eliminarParametroPublisher) {
+            final EliminarParametroPublisher eliminarParametroPublisher,
+            final CambiarEstadoInteractor cambiarEstadoInteractor) {
         this.crearParametroInteractor = crearParametroInteractor;
         this.actualizarParametroInteractor = actualizarParametroInteractor;
         this.eliminarParametroInteractor = eliminarParametroInteractor;
@@ -58,6 +63,7 @@ public final class ParametroController {
         this.crearParametroPublisher = crearParametroPublisher;
         this.actualizarParametroPublisher = actualizarParametroPublisher;
         this.eliminarParametroPublisher = eliminarParametroPublisher;
+        this.cambiarEstadoInteractor = cambiarEstadoInteractor;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -108,6 +114,17 @@ public final class ParametroController {
                 response.getMensajes().add("Ocurrio un error actualizando el parametro.");
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @PostMapping("/{id}/changestatus")
+    public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
+            @RequestBody final CambiarEstadoDtoRequest request) {
+        return Mono.fromCallable(() -> {
+            cambiarEstadoInteractor.execute(TipoRecurso.PARAMETRO, id, request.getActivo());
+            var response = new ParametroResponse();
+            response.getMensajes().add("Estado del parametro actualizado exitosamente.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 

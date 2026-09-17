@@ -3,6 +3,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.cont
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.dto.ActualizarModuloDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.dto.CambiarEstadoDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor.TipoRecurso;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.interactor.ActualizarModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.secondaryports.publisher.ActualizarModuloPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.consultarmodulo.primaryports.interactor.ConsultarModuloInteractor;
@@ -44,6 +47,7 @@ public final class ModuloController {
     private final ActualizarModuloPublisher actualizarModuloPublisher;
     private final EliminarModuloInteractor eliminarModuloInteractor;
     private final EliminarModuloPublisher eliminarModuloPublisher;
+    private final CambiarEstadoInteractor cambiarEstadoInteractor;
 
     public ModuloController(final CrearModuloInteractor crearModuloInteractor,
             final ConsultarModuloInteractor consultarModuloInteractor,
@@ -51,7 +55,8 @@ public final class ModuloController {
             final ActualizarModuloInteractor actualizarModuloInteractor,
             final ActualizarModuloPublisher actualizarModuloPublisher,
             final EliminarModuloInteractor eliminarModuloInteractor,
-            final EliminarModuloPublisher eliminarModuloPublisher) {
+            final EliminarModuloPublisher eliminarModuloPublisher,
+            final CambiarEstadoInteractor cambiarEstadoInteractor) {
         this.crearModuloInteractor = crearModuloInteractor;
         this.consultarModuloInteractor = consultarModuloInteractor;
         this.crearModuloPublisher = crearModuloPublisher;
@@ -59,6 +64,7 @@ public final class ModuloController {
         this.actualizarModuloPublisher = actualizarModuloPublisher;
         this.eliminarModuloInteractor = eliminarModuloInteractor;
         this.eliminarModuloPublisher = eliminarModuloPublisher;
+        this.cambiarEstadoInteractor = cambiarEstadoInteractor;
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -125,6 +131,17 @@ public final class ModuloController {
                 response.getMensajes().add("Ocurrio un error actualizando el modulo: " + exception.getMessage());
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @PostMapping("/{id}/changestatus")
+    public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
+            @RequestBody final CambiarEstadoDtoRequest request) {
+        return Mono.fromCallable(() -> {
+            cambiarEstadoInteractor.execute(TipoRecurso.MODULO, id, request.getActivo());
+            var response = new ParametroResponse();
+            response.getMensajes().add("Estado del modulo actualizado exitosamente.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 

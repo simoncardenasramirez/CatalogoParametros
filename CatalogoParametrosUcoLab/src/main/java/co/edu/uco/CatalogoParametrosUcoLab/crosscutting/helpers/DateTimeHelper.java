@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 
 import tools.jackson.databind.JsonNode;
 
@@ -21,7 +22,13 @@ public final class DateTimeHelper {
         if (text.length() == 16) {
             text += ":00";
         }
-        return OffsetDateTime.parse(text);
+        try {
+            return OffsetDateTime.parse(text);
+        } catch (final DateTimeParseException exception) {
+            // Los registros históricos pueden contener fechas vacías o con formatos
+            // anteriores. Una fecha inválida no debe impedir consultar todo el catálogo.
+            return null;
+        }
     }
 
     public static String format(final OffsetDateTime dateTime) {

@@ -134,6 +134,17 @@ paths:
       operationId: observarEventosAplicacion
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
+  /catalogo-parametros/api/v1/aplicaciones/{id}/changestatus:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    post:
+      tags: [Aplicaciones]
+      operationId: cambiarEstadoAplicacion
+      summary: Cambia únicamente el estado activo de la aplicación
+      requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /catalogo-parametros/api/v1/modulos:
     get:
@@ -187,6 +198,17 @@ paths:
       operationId: observarEventosModulo
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
+  /catalogo-parametros/api/v1/modulos/{id}/changestatus:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    post:
+      tags: [Módulos]
+      operationId: cambiarEstadoModulo
+      summary: Cambia únicamente el estado activo del módulo
+      requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /catalogo-parametros/api/v1/funcionalidades:
     get:
@@ -240,6 +262,17 @@ paths:
       operationId: observarEventosFuncionalidad
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
+  /catalogo-parametros/api/v1/funcionalidades/{id}/changestatus:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    post:
+      tags: [Funcionalidades]
+      operationId: cambiarEstadoFuncionalidad
+      summary: Cambia únicamente el estado activo de la funcionalidad
+      requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /catalogo-parametros/api/v1/parametros:
     get:
@@ -293,6 +326,17 @@ paths:
       operationId: observarEventosParametro
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
+  /catalogo-parametros/api/v1/parametros/{id}/changestatus:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    post:
+      tags: [Parámetros]
+      operationId: cambiarEstadoParametro
+      summary: Cambia únicamente el estado activo del parámetro
+      requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /catalogo-parametros/api/v1/metadatos:
     get:
@@ -398,6 +442,11 @@ components:
       description: Cantidad máxima de registros solicitados
       schema: { type: integer, minimum: 1, default: 10 }
   requestBodies:
+    CambiarEstadoRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/CambiarEstadoRequest' }
     OrganizacionRequest:
       required: true
       content:
@@ -462,6 +511,11 @@ components:
     TiposParametroOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoParametroResponse' } } } }
     TiposMetadatoOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoMetadatoResponse' } } } }
   schemas:
+    CambiarEstadoRequest:
+      type: object
+      required: [activo]
+      properties:
+        activo: { type: boolean, example: false }
     Uuid:
       type: string
       format: uuid

@@ -147,6 +147,14 @@ class SurrealDbFuncionalidadRepositoryTest {
     }
 
     @Test
+    void debeRetornarLaFuncionalidadAunqueUnaFechaHistoricaSeaInvalida() {
+        responder(registro().put("fechaInicio", "fecha-invalida"));
+        var entidad = repositorio.findById(ID).orElseThrow();
+        assertEquals(ID, entidad.getId());
+        assertNull(entidad.getFechaInicio());
+    }
+
+    @Test
     void debePropagarFalloCuandoClienteRechazaConsulta() {
         var error = TechnicalException.build("Error de persistencia");
         when(cliente.execute(anyString())).thenThrow(error);

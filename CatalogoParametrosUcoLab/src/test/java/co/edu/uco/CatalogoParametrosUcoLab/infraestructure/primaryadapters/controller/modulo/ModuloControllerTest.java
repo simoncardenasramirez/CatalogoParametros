@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.TelemetryService;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.primaryports.interactor.CambiarEstadoInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.primaryports.interactor.ActualizarModuloInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.secondaryports.publisher.ActualizarModuloPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.consultarmodulo.primaryports.interactor.ConsultarModuloInteractor;
@@ -52,6 +53,8 @@ class ModuloControllerTest {
     @Mock
     private EliminarModuloPublisher eliminarModuloPublisher;
     @Mock
+    private CambiarEstadoInteractor cambiarEstadoInteractor;
+    @Mock
     private ConsultarMensajePort consultarMensajePort;
 
     private WebTestClient webTestClient;
@@ -63,7 +66,7 @@ class ModuloControllerTest {
         webTestClient = WebTestClient.bindToController(
                 new ModuloController(crearModuloInteractor, consultarModuloInteractor,
                         crearModuloPublisher, actualizarModuloInteractor, actualizarModuloPublisher,
-                        eliminarModuloInteractor, eliminarModuloPublisher))
+                        eliminarModuloInteractor, eliminarModuloPublisher, cambiarEstadoInteractor))
                 .controllerAdvice(handler)
                 .build();
     }
@@ -74,6 +77,17 @@ class ModuloControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("$.mensajes[0]").isEqualTo("Modulo eliminado exitosamente.");
+    }
+
+    @Test
+    void debeCambiarEstadoDeModuloYDevolver200() {
+        webTestClient.post().uri("/catalogo-parametros/api/v1/modulos/{id}/changestatus", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"activo\":false}")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Estado del modulo actualizado exitosamente.");
     }
 
     private String bodyJsonValido(final String nombre) {
