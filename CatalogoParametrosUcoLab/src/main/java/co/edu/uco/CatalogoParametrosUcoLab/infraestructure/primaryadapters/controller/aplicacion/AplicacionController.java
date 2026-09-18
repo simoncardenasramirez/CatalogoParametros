@@ -34,9 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/aplicaciones")
+@Tag(name = "Aplicaciones", description = "Administracion y consulta de las aplicaciones del catalogo de parametros.")
 public final class AplicacionController {
 
     private final CrearAplicacionInteractor crearAplicacionInteractor;
@@ -67,6 +70,7 @@ public final class AplicacionController {
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Suscribirse a eventos de aplicaciones", description = "Mantiene una conexion SSE abierta y publica eventos de creacion, actualizacion y eliminacion de aplicaciones.")
     public Flux<ServerSentEvent<AplicacionEvent>> publicarEventos() {
         var crearEventos = crearAplicacionPublisher.getStream().cast(AplicacionEvent.class)
                 .map(event -> ServerSentEvent.builder(event)
@@ -92,6 +96,7 @@ public final class AplicacionController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar aplicaciones", description = "Obtiene las aplicaciones de forma paginada. La numeracion de paginas inicia en 1.")
     public Mono<ResponseEntity<AplicacionResponse>> consultarTodasLasAplicaciones(
             @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
@@ -109,6 +114,7 @@ public final class AplicacionController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar una aplicacion", description = "Busca una aplicacion por su identificador UUID.")
     public Mono<ResponseEntity<AplicacionResponse>> consultarAplicacionesPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new AplicacionResponse();
@@ -131,6 +137,7 @@ public final class AplicacionController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear una aplicacion", description = "Registra una nueva aplicacion asociada a una organizacion.")
     public Mono<ResponseEntity<AplicacionResponse>> crear(@RequestBody final CrearAplicacionDtoRequest aplicacion) {
         return Mono.fromCallable(() -> {
             var response = new AplicacionResponse();
@@ -148,6 +155,7 @@ public final class AplicacionController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una aplicacion", description = "Actualiza los datos de la aplicacion identificada por el UUID indicado.")
     public Mono<ResponseEntity<AplicacionResponse>> actualizar(@PathVariable final UUID id,
                                                                @RequestBody final ActualizarAplicacionDtoRequest aplicacion) {
         return Mono.fromCallable(() -> {
@@ -166,6 +174,7 @@ public final class AplicacionController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una aplicacion", description = "Elimina la aplicacion indicada cuando no esta siendo utilizada por otros recursos.")
     public Mono<ResponseEntity<AplicacionResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new AplicacionResponse();
@@ -182,7 +191,8 @@ public final class AplicacionController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    @PostMapping("/{id}/changestatus")
+    @PostMapping("/{id}/cambiarestado")
+    @Operation(summary = "Cambiar el estado de una aplicacion", description = "Activa o desactiva la aplicacion identificada por el UUID indicado.")
     public Mono<ResponseEntity<AplicacionResponse>> cambiarEstado(@PathVariable final UUID id,
             @RequestBody final CambiarEstadoDtoRequest request) {
         return Mono.fromCallable(() -> {

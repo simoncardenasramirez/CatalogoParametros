@@ -81,7 +81,7 @@ class ModuloControllerTest {
 
     @Test
     void debeCambiarEstadoDeModuloYDevolver200() {
-        webTestClient.post().uri("/catalogo-parametros/api/v1/modulos/{id}/changestatus", UUID.randomUUID())
+        webTestClient.post().uri("/catalogo-parametros/api/v1/modulos/{id}/cambiarestado", UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("{\"activo\":false}")
                 .exchange()

@@ -31,9 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/organizaciones")
+@Tag(name = "Organizaciones", description = "Administracion y consulta de las organizaciones del catalogo.")
 public final class OrganizacionController {
 
     private final CrearOrganizacionInteractor crearOrganizacionInteractor;
@@ -61,6 +64,7 @@ public final class OrganizacionController {
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Suscribirse a eventos de organizaciones", description = "Mantiene una conexion SSE abierta y publica cambios en las organizaciones.")
     public Flux<ServerSentEvent<OrganizacionEvent>> publicarEventos() {
         var crearEventos = crearOrganizacionPublisher.getStream().cast(OrganizacionEvent.class)
                 .map(event -> ServerSentEvent.builder(event)
@@ -86,6 +90,7 @@ public final class OrganizacionController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear una organizacion", description = "Registra una nueva organizacion en el catalogo.")
     public Mono<ResponseEntity<OrganizacionResponse>> crear(@RequestBody final CrearOrganizacionDtoRequest organizacion) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
@@ -103,6 +108,7 @@ public final class OrganizacionController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una organizacion", description = "Actualiza los datos de la organizacion indicada.")
     public Mono<ResponseEntity<OrganizacionResponse>> actualizar(@PathVariable final UUID id,
             @RequestBody final ActualizarOrganizacionDtoRequest organizacion) {
         return Mono.fromCallable(() -> {
@@ -121,6 +127,7 @@ public final class OrganizacionController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una organizacion", description = "Elimina una organizacion cuando no esta siendo utilizada por aplicaciones.")
     public Mono<ResponseEntity<OrganizacionResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();
@@ -138,6 +145,7 @@ public final class OrganizacionController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar organizaciones", description = "Obtiene las organizaciones de forma paginada.")
     public Mono<ResponseEntity<OrganizacionResponse>> consultarTodasLasOrganizaciones(
             @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
@@ -156,6 +164,7 @@ public final class OrganizacionController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar una organizacion", description = "Busca una organizacion por su identificador UUID.")
     public Mono<ResponseEntity<OrganizacionResponse>> consultarOrganizacionPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new OrganizacionResponse();

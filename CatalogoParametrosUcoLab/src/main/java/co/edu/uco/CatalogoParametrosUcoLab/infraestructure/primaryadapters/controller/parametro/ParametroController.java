@@ -34,9 +34,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.respo
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/parametros")
+@Tag(name = "Parametros", description = "Administracion y consulta de los parametros del catalogo.")
 public final class ParametroController {
 
     private final CrearParametroInteractor crearParametroInteractor;
@@ -67,6 +70,7 @@ public final class ParametroController {
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Suscribirse a eventos de parametros", description = "Mantiene una conexion SSE abierta y publica cambios en los parametros.")
     public Flux<ServerSentEvent<ParametroEvent>> publicarEventos() {
         var eventos = Flux.merge(crearParametroPublisher.getStream().cast(ParametroEvent.class),
                 actualizarParametroPublisher.getStream().cast(ParametroEvent.class),
@@ -81,6 +85,7 @@ public final class ParametroController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear un parametro", description = "Registra un nuevo parametro asociado a una funcionalidad y un tipo de parametro.")
     public Mono<ResponseEntity<ParametroResponse>> crearParametro(@RequestBody final CrearParametroDtoRequest parametro) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -99,6 +104,7 @@ public final class ParametroController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un parametro", description = "Actualiza los datos del parametro indicado.")
     public Mono<ResponseEntity<ParametroResponse>> actualizarParametro(@PathVariable final UUID id,
             @RequestBody final ActualizarParametroDtoRequest parametro) {
         return Mono.fromCallable(() -> {
@@ -117,7 +123,8 @@ public final class ParametroController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    @PostMapping("/{id}/changestatus")
+    @PostMapping("/{id}/cambiarestado")
+    @Operation(summary = "Cambiar el estado de un parametro", description = "Activa o desactiva el parametro indicado.")
     public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
             @RequestBody final CambiarEstadoDtoRequest request) {
         return Mono.fromCallable(() -> {
@@ -129,6 +136,7 @@ public final class ParametroController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un parametro", description = "Elimina el parametro identificado por el UUID indicado.")
     public Mono<ResponseEntity<ParametroResponse>> eliminarParametro(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -147,6 +155,7 @@ public final class ParametroController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar parametros", description = "Obtiene los parametros de forma paginada.")
     public Mono<ResponseEntity<ParametroResponse>> consultarTodosLosParametros(
             @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
@@ -164,6 +173,7 @@ public final class ParametroController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar un parametro", description = "Busca un parametro por su identificador UUID.")
     public Mono<ResponseEntity<ParametroResponse>> consultarParametroPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();

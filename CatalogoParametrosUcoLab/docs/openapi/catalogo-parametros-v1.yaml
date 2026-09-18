@@ -134,7 +134,7 @@ paths:
       operationId: observarEventosAplicacion
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
-  /catalogo-parametros/api/v1/aplicaciones/{id}/changestatus:
+  /catalogo-parametros/api/v1/aplicaciones/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
       tags: [Aplicaciones]
@@ -198,7 +198,7 @@ paths:
       operationId: observarEventosModulo
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
-  /catalogo-parametros/api/v1/modulos/{id}/changestatus:
+  /catalogo-parametros/api/v1/modulos/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
       tags: [Módulos]
@@ -262,7 +262,7 @@ paths:
       operationId: observarEventosFuncionalidad
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
-  /catalogo-parametros/api/v1/funcionalidades/{id}/changestatus:
+  /catalogo-parametros/api/v1/funcionalidades/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
       tags: [Funcionalidades]
@@ -326,7 +326,7 @@ paths:
       operationId: observarEventosParametro
       responses:
         '200': { $ref: '#/components/responses/EventStream' }
-  /catalogo-parametros/api/v1/parametros/{id}/changestatus:
+  /catalogo-parametros/api/v1/parametros/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
       tags: [Parámetros]

@@ -2,6 +2,8 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.cambiarestado.p
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.secondaryports.event.ActualizarAplicacionEvent;
@@ -23,6 +25,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
 public final class CambiarEstadoInteractorImpl implements CambiarEstadoInteractor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CambiarEstadoInteractorImpl.class);
 
     private final AplicacionRepository aplicacionRepository;
     private final ModuloRepository moduloRepository;
@@ -58,12 +62,16 @@ public final class CambiarEstadoInteractorImpl implements CambiarEstadoInteracto
             throw ValidationException.build("El campo activo es obligatorio.");
         }
 
+        LOGGER.info("Iniciando cambio de estado: tipo={}, id={}, activo={}", tipoRecurso, id, activo);
+
         switch (tipoRecurso) {
             case APLICACION -> cambiarEstadoAplicacion(id, activo);
             case MODULO -> cambiarEstadoModulo(id, activo);
             case FUNCIONALIDAD -> cambiarEstadoFuncionalidad(id, activo);
             case PARAMETRO -> cambiarEstadoParametro(id, activo);
         }
+
+        LOGGER.info("Cambio de estado completado: tipo={}, id={}, activo={}", tipoRecurso, id, activo);
     }
 
     private void cambiarEstadoAplicacion(final UUID id, final boolean activo) {

@@ -148,7 +148,7 @@ class FuncionalidadControllerTest {
 
     @Test
     void debeCambiarEstadoDeFuncionalidadYDevolver200() {
-        webTestClient.post().uri(RUTA_BASE + "/{id}/changestatus", UUID.randomUUID())
+        webTestClient.post().uri(RUTA_BASE + "/{id}/cambiarestado", UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("{\"activo\":false}")
                 .exchange()

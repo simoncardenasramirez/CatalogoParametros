@@ -13,9 +13,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.tipoparametro.co
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.tipoparametro.TipoParametroResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/tipos-parametro")
+@Tag(name = "Tipos de parametro", description = "Consulta de los tipos de parametro disponibles.")
 public final class TipoParametroController {
 
     private final ConsultarTipoParametroInteractor consultarTipoParametroInteractor;
@@ -25,6 +28,7 @@ public final class TipoParametroController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar tipos de parametro", description = "Obtiene todos los tipos de parametro disponibles en el catalogo.")
     public Mono<ResponseEntity<TipoParametroResponse>> consultarTodosLosTiposParametro() {
         return Mono.fromCallable(() -> {
             var response = new TipoParametroResponse();
@@ -41,6 +45,7 @@ public final class TipoParametroController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar un tipo de parametro", description = "Busca un tipo de parametro por su identificador UUID.")
     public Mono<ResponseEntity<TipoParametroResponse>> consultarTipoParametroPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new TipoParametroResponse();

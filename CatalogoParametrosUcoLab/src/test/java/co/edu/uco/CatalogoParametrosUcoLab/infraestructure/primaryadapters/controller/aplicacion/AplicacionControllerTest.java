@@ -153,7 +153,7 @@ class AplicacionControllerTest {
 
     @Test
     void debeCambiarEstadoDeAplicacionYDevolver200() {
-        webTestClient.post().uri("/catalogo-parametros/api/v1/aplicaciones/{id}/changestatus", UUID.randomUUID())
+        webTestClient.post().uri("/catalogo-parametros/api/v1/aplicaciones/{id}/cambiarestado", UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("{\"activo\":false}")
                 .exchange()
