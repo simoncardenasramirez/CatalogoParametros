@@ -42,6 +42,9 @@ data/
 # Variables de entorno
 .env
 
+# Configuracion local de Docker Compose
+docker-compose.yml
+
 # SurrealDB
 surrealdb-data/
 
