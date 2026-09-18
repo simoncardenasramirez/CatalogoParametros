@@ -37,9 +37,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.respo
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/funcionalidades")
+@Tag(name = "Funcionalidades", description = "Administracion y consulta de las funcionalidades de los modulos.")
 public final class FuncionalidadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FuncionalidadController.class);
@@ -72,6 +75,7 @@ public final class FuncionalidadController {
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Suscribirse a eventos de funcionalidades", description = "Mantiene una conexion SSE abierta y publica cambios en las funcionalidades.")
     public Flux<ServerSentEvent<FuncionalidadEvent>> publicarEventos() {
         var eventos = Flux.merge(crearFuncionalidadPublisher.getStream().cast(FuncionalidadEvent.class),
                 actualizarFuncionalidadPublisher.getStream().cast(FuncionalidadEvent.class),
@@ -86,6 +90,7 @@ public final class FuncionalidadController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear una funcionalidad", description = "Registra una nueva funcionalidad asociada a un modulo.")
     public Mono<ResponseEntity<ParametroResponse>> crearFuncionalidad(@RequestBody final CrearFuncionalidadDtoRequest funcionalidad) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -104,6 +109,7 @@ public final class FuncionalidadController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una funcionalidad", description = "Actualiza los datos de una funcionalidad existente.")
     public Mono<ResponseEntity<ParametroResponse>> actualizarFuncionalidad(@PathVariable final UUID id,
             @RequestBody final ActualizarFuncionalidadDtoRequest funcionalidad) {
         return Mono.fromCallable(() -> {
@@ -122,7 +128,8 @@ public final class FuncionalidadController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    @PostMapping("/{id}/changestatus")
+    @PostMapping("/{id}/cambiarestado")
+    @Operation(summary = "Cambiar el estado de una funcionalidad", description = "Activa o desactiva la funcionalidad indicada.")
     public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
             @RequestBody final CambiarEstadoDtoRequest request) {
         return Mono.fromCallable(() -> {
@@ -134,6 +141,7 @@ public final class FuncionalidadController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una funcionalidad", description = "Elimina una funcionalidad cuando no esta siendo utilizada por parametros.")
     public Mono<ResponseEntity<ParametroResponse>> eliminarFuncionalidad(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -152,6 +160,7 @@ public final class FuncionalidadController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar funcionalidades", description = "Obtiene las funcionalidades de forma paginada.")
     public Mono<ResponseEntity<FuncionalidadResponse>> consultarTodasLasFuncionalidades(
             @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
@@ -170,6 +179,7 @@ public final class FuncionalidadController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar una funcionalidad", description = "Busca una funcionalidad por su identificador UUID.")
     public Mono<ResponseEntity<FuncionalidadResponse>> consultarFuncionalidadesPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new FuncionalidadResponse();

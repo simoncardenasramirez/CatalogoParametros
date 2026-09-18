@@ -13,9 +13,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.tipometadato.con
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.tipometadato.TipoMetadatoResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/tipos-metadato")
+@Tag(name = "Tipos de metadato", description = "Consulta de los tipos de metadato disponibles.")
 public final class TipoMetadatoController {
     private final ConsultarTipoMetadatoInteractor consultarTipoMetadatoInteractor;
 
@@ -24,6 +27,7 @@ public final class TipoMetadatoController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar tipos de metadato", description = "Obtiene todos los tipos de metadato disponibles en el catalogo.")
     public Mono<ResponseEntity<TipoMetadatoResponse>> consultarTodosLosTiposMetadato() {
         return Mono.fromCallable(() -> {
             var response = new TipoMetadatoResponse();
@@ -33,6 +37,7 @@ public final class TipoMetadatoController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar un tipo de metadato", description = "Busca un tipo de metadato por su identificador UUID.")
     public Mono<ResponseEntity<TipoMetadatoResponse>> consultarTipoMetadatoPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new TipoMetadatoResponse();

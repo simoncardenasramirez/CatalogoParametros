@@ -35,9 +35,12 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.respo
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/catalogo-parametros/api/v1/modulos")
+@Tag(name = "Modulos", description = "Administracion y consulta de los modulos de las aplicaciones.")
 public final class ModuloController {
 
     private final CrearModuloInteractor crearModuloInteractor;
@@ -68,6 +71,7 @@ public final class ModuloController {
     }
 
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Suscribirse a eventos de modulos", description = "Mantiene una conexion SSE abierta y publica cambios en los modulos.")
     public Flux<ServerSentEvent<ModuloEvent>> publicarEventos() {
         var eventosCrear = crearModuloPublisher.getStream().cast(ModuloEvent.class)
                 .map(event -> ServerSentEvent.builder(event)
@@ -88,6 +92,7 @@ public final class ModuloController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un modulo", description = "Elimina un modulo cuando no esta siendo utilizado por funcionalidades.")
     public Mono<ResponseEntity<ParametroResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -98,6 +103,7 @@ public final class ModuloController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear un modulo", description = "Registra un nuevo modulo asociado a una aplicacion.")
     public Mono<ResponseEntity<ParametroResponse>> crear(@RequestBody final CrearModuloDtoRequest modulo) {
         return Mono.fromCallable(() -> {
             var response = new ParametroResponse();
@@ -116,6 +122,7 @@ public final class ModuloController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un modulo", description = "Actualiza los datos del modulo identificado por el UUID indicado.")
     public Mono<ResponseEntity<ParametroResponse>> actualizar(@PathVariable final UUID id,
             @RequestBody final ActualizarModuloDtoRequest modulo) {
         return Mono.fromCallable(() -> {
@@ -134,7 +141,8 @@ public final class ModuloController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    @PostMapping("/{id}/changestatus")
+    @PostMapping("/{id}/cambiarestado")
+    @Operation(summary = "Cambiar el estado de un modulo", description = "Activa o desactiva el modulo indicado.")
     public Mono<ResponseEntity<ParametroResponse>> cambiarEstado(@PathVariable final UUID id,
             @RequestBody final CambiarEstadoDtoRequest request) {
         return Mono.fromCallable(() -> {
@@ -146,6 +154,7 @@ public final class ModuloController {
     }
 
     @GetMapping
+    @Operation(summary = "Consultar modulos", description = "Obtiene los modulos de forma paginada.")
     public Mono<ResponseEntity<ModuloResponse>> consultarTodosLosModulos(
             @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
@@ -163,6 +172,7 @@ public final class ModuloController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar un modulo", description = "Busca un modulo por su identificador UUID.")
     public Mono<ResponseEntity<ModuloResponse>> consultarModulosPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             var response = new ModuloResponse();
