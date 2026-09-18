@@ -1,5 +1,18 @@
 services:
 
+  # Frontend Angular servido por Nginx
+  frontend:
+    container_name: catalogo-parametros-frontend
+    build:
+      context: ../../CatalogoParametrosFrontend/CatalogoParametros-FrontEnd/catalogo-parametros-front
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    networks:
+      - monitoring
+    depends_on:
+      - app
+
   # ==========================================
   # APP - Spring Boot
   # ==========================================
