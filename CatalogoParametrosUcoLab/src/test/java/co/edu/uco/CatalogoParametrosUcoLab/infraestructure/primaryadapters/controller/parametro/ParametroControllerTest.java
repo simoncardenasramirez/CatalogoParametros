@@ -154,7 +154,7 @@ class ParametroControllerTest {
 
     @Test
     void debeCambiarEstadoDeParametroYDevolver200() {
-        webTestClient.post().uri("/catalogo-parametros/api/v1/parametros/{id}/changestatus", UUID.randomUUID())
+        webTestClient.post().uri("/catalogo-parametros/api/v1/parametros/{id}/cambiarestado", UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("{\"activo\":false}")
                 .exchange()
