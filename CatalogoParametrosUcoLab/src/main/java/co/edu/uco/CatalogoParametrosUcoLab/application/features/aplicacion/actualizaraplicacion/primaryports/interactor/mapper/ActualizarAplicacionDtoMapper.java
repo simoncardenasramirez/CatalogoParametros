@@ -2,6 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actu
 
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -29,8 +30,8 @@ public final class ActualizarAplicacionDtoMapper {
         var dtoToMap = dto == null ? new ActualizarAplicacionDtoRequest() : dto;
         final var idOrganizacion = UUID.fromString(dtoToMap.getIdOrganizacion());
         final var activa = Boolean.parseBoolean(dtoToMap.getActiva());
-        final var fechaInicio = OffsetDateTime.parse(dtoToMap.getFechaInicio(), DATE_FORMATTER);
-        final var fechaFinal = OffsetDateTime.parse(dtoToMap.getFechaFinal(), DATE_FORMATTER);
+        final var fechaInicio = parseFechaOpcional(dtoToMap.getFechaInicio());
+        final var fechaFinal = parseFechaOpcional(dtoToMap.getFechaFinal());
         return ActualizarAplicacionDtoInput.create(
                 dtoToMap.getNombre(),
                 idOrganizacion,
@@ -43,5 +44,8 @@ public final class ActualizarAplicacionDtoMapper {
     public ActualizarAplicacionDomain toDomain(final UUID id, final ActualizarAplicacionDtoInput dtoInput) {
         return ActualizarAplicacionDomain.create(id, dtoInput.getNombre(), dtoInput.getIdOrganizacion(), dtoInput.isActiva(),
                 dtoInput.getFechaInicio(), dtoInput.getFechaFinal());
+    }
+    private static OffsetDateTime parseFechaOpcional(final String fecha) {
+        return TextHelper.isBlank(fecha) ? null : OffsetDateTime.parse(fecha, DATE_FORMATTER);
     }
 }

@@ -70,4 +70,21 @@ class CrearAplicacionDtoMapperTest {
         assertEquals(viaRequest.getFechaInicio(), viaInput.getFechaInicio());
         assertEquals(viaRequest.getFechaFinal(), viaInput.getFechaFinal());
     }
+
+    @Test
+    void debeAceptarFechasOpcionalesCuandoEstanVacias() {
+        var request = CrearAplicacionDtoRequest.create("aplicacion", UUID.randomUUID().toString(), "true", "", null);
+        var input = CrearAplicacionDtoMapper.INSTANCE.toDtoInput(request);
+        org.junit.jupiter.api.Assertions.assertNull(input.getFechaInicio());
+        org.junit.jupiter.api.Assertions.assertNull(input.getFechaFinal());
+    }
+
+    @Test
+    void debeConservarHoraYDesfaseCuandoRecibeOtraZona() {
+        var fecha = "2026-07-15T18:35:42+05:30";
+        var request = CrearAplicacionDtoRequest.create("aplicacion", UUID.randomUUID().toString(), "true", fecha, fecha);
+        var input = CrearAplicacionDtoMapper.INSTANCE.toDtoInput(request);
+        assertEquals(OffsetDateTime.parse(fecha), input.getFechaInicio());
+        assertEquals(OffsetDateTime.parse(fecha), input.getFechaFinal());
+    }
 }

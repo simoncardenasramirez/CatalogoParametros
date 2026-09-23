@@ -2,6 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crea
 
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -28,8 +29,8 @@ public final class CrearAplicacionDtoMapper {
     public CrearAplicacionDtoInput toDtoInput(final CrearAplicacionDtoRequest dto) {
         final var idOrganizacion = UUID.fromString(dto.getIdOrganizacion());
         final var activa = Boolean.parseBoolean(dto.getActiva());
-        final var fechaInicio = OffsetDateTime.parse(dto.getFechaInicio(), DATE_FORMATTER);
-        final var fechaFinal = OffsetDateTime.parse(dto.getFechaFinal(), DATE_FORMATTER);
+        final var fechaInicio = parseFechaOpcional(dto.getFechaInicio());
+        final var fechaFinal = parseFechaOpcional(dto.getFechaFinal());
 
         return CrearAplicacionDtoInput.create(
                 dto.getNombre(),
@@ -49,5 +50,8 @@ public final class CrearAplicacionDtoMapper {
                 dtoInput.getFechaInicio(),
                 dtoInput.getFechaFinal()
         );
+    }
+    private static OffsetDateTime parseFechaOpcional(final String fecha) {
+        return TextHelper.isBlank(fecha) ? null : OffsetDateTime.parse(fecha, DATE_FORMATTER);
     }
 }
