@@ -15,8 +15,11 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  # Maven y Trivy comparten el repositorio local estándar del agente.
+  MAVEN_CACHE_FOLDER: /home/vsts/.m2/repository
   SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
+  TRIVY_CACHE_DIR: $(Pipeline.Workspace)/.trivy/cache
+  TRIVY_VERSION: '0.74.0'
   IMAGE_VERSION_PREFIX: '0.0'
   # La version se asigna al latest ANTERIOR, no a la imagen nueva.
   # Contador persistente por pipeline y rama; los PR no consumen el de develop.
@@ -48,6 +51,27 @@ steps:
       key: 'sonar | "$(Agent.OS)"'
       path: $(SONAR_USER_HOME)/cache
 
+  - task: Cache@2
+    displayName: Cache de Trivy
+    inputs:
+      key: 'trivy | "$(Agent.OS)" | "$(TRIVY_VERSION)"'
+      restoreKeys: |
+        trivy | "$(Agent.OS)"
+      path: $(TRIVY_CACHE_DIR)
+
+  - bash: |
+      set -euo pipefail
+
+      paquete_trivy="$(Agent.TempDirectory)/trivy_$(TRIVY_VERSION)_Linux-64bit.deb"
+
+      wget --quiet \
+        --output-document "$paquete_trivy" \
+        "https://github.com/aquasecurity/trivy/releases/download/v$(TRIVY_VERSION)/trivy_$(TRIVY_VERSION)_Linux-64bit.deb"
+
+      sudo dpkg --install "$paquete_trivy"
+      trivy --version
+    displayName: Instalar Trivy $(TRIVY_VERSION)
+
   - bash: |
       set -euo pipefail
       # Separar el literal evita que Azure lo sustituya dentro del script.
@@ -63,6 +87,7 @@ steps:
   - bash: |
       bash ./mvnw -B -ntp \
         "-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)" \
+        dependency:resolve \
         clean verify
     displayName: Compilar, probar y exigir cobertura del 80%
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
@@ -100,6 +125,20 @@ steps:
       SONAR_TOKEN: $(SONAR_TOKEN)
       SONAR_USER_HOME: $(SONAR_USER_HOME)
 
+  - bash: |
+      set -euo pipefail
+
+      trivy filesystem \
+        --cache-dir "$(TRIVY_CACHE_DIR)" \
+        --ignorefile .trivyignore.yaml \
+        --offline-scan \
+        --scanners vuln,secret,misconfig \
+        --severity HIGH,CRITICAL \
+        --exit-code 1 \
+        .
+    displayName: Analizar dependencias, secretos y configuración con Trivy
+    workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
+
   - task: Docker@2
     displayName: Autenticarse en Docker Hub
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
@@ -126,6 +165,16 @@ steps:
         --file Dockerfile \
         --tag "$imagen_nueva" \
         .
+
+      # Impedir la publicación si la imagen contiene vulnerabilidades graves.
+      echo "Analizando nueva imagen con Trivy..."
+
+      trivy image \
+        --cache-dir "$(TRIVY_CACHE_DIR)" \
+        --scanners vuln,secret \
+        --severity HIGH,CRITICAL \
+        --exit-code 1 \
+        "$imagen_nueva"
 
       archivo_error="$(mktemp)"
       trap 'rm -f "$archivo_error"' EXIT

@@ -1,0 +1,6 @@
+misconfigurations:
+  - id: AVD-DS-0002
+    paths:
+      - Dockerfile
+    expired_at: 2026-10-31
+    statement: Excepción temporal mientras se configura un usuario no-root.
