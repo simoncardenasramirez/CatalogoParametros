@@ -1,0 +1,8 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.primaryports.interactor;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.primaryports.dto.CrearEstadoMetadatoAmbienteDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
+
+public interface CrearEstadoMetadatoAmbienteInteractor {
+    EstadoMetadatoAmbienteEntity execute(CrearEstadoMetadatoAmbienteDtoRequest request);
+}

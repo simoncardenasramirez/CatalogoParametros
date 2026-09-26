@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.secondaryports.publisher;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.secondaryports.event.CrearEstadoMetadatoAmbienteEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.publisher.Publisher;
+
+public interface CrearEstadoMetadatoAmbientePublisher extends Publisher<CrearEstadoMetadatoAmbienteEvent> {
+}

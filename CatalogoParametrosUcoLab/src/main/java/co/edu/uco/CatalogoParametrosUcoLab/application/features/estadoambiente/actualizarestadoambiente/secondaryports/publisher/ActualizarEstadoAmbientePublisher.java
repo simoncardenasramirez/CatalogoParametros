@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.actualizarestadoambiente.secondaryports.publisher;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.actualizarestadoambiente.secondaryports.event.ActualizarEstadoAmbienteEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.publisher.Publisher;
+
+public interface ActualizarEstadoAmbientePublisher extends Publisher<ActualizarEstadoAmbienteEvent> {
+}

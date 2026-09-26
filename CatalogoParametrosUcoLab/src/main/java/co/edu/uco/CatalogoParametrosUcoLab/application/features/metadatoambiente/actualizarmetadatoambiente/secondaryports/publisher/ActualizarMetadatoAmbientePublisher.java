@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.actualizarmetadatoambiente.secondaryports.publisher;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.actualizarmetadatoambiente.secondaryports.event.ActualizarMetadatoAmbienteEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.publisher.Publisher;
+
+public interface ActualizarMetadatoAmbientePublisher extends Publisher<ActualizarMetadatoAmbienteEvent> {
+}
