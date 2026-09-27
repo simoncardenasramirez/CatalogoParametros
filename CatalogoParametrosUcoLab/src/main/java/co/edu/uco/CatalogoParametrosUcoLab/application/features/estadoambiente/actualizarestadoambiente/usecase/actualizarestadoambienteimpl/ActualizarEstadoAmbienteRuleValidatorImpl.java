@@ -9,18 +9,18 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.a
 
 @Service
 public final class ActualizarEstadoAmbienteRuleValidatorImpl implements ActualizarEstadoAmbienteRuleValidator {
-    private final ActualizarEstadoAmbienteExistsRule rule1;
-    private final ActualizarEstadoAmbienteNameDoesNotExistRule rule2;
+    private final ActualizarEstadoAmbienteExistsRule estadoAmbienteExistsRule;
+    private final ActualizarEstadoAmbienteNameDoesNotExistRule estadoAmbienteNameDoesNotExistRule;
 
-    public ActualizarEstadoAmbienteRuleValidatorImpl(final ActualizarEstadoAmbienteExistsRule rule1, final ActualizarEstadoAmbienteNameDoesNotExistRule rule2) {
-        this.rule1 = rule1;
-        this.rule2 = rule2;
+    public ActualizarEstadoAmbienteRuleValidatorImpl(final ActualizarEstadoAmbienteExistsRule estadoAmbienteExistsRule, final ActualizarEstadoAmbienteNameDoesNotExistRule estadoAmbienteNameDoesNotExistRule) {
+        this.estadoAmbienteExistsRule = estadoAmbienteExistsRule;
+        this.estadoAmbienteNameDoesNotExistRule = estadoAmbienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final ActualizarEstadoAmbienteDomain data) {
-        rule1.execute(data);
-        rule2.execute(data);
+        estadoAmbienteExistsRule.execute(data);
+        estadoAmbienteNameDoesNotExistRule.execute(data);
     }
 }
 

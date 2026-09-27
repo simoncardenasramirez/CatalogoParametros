@@ -8,15 +8,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.crearam
 
 @Service
 public final class CrearAmbienteRuleValidatorImpl implements CrearAmbienteRuleValidator {
-    private final AmbienteNameDoesNotExistRule rule1;
+    private final AmbienteNameDoesNotExistRule ambienteNameDoesNotExistRule;
 
-    public CrearAmbienteRuleValidatorImpl(final AmbienteNameDoesNotExistRule rule1) {
-        this.rule1 = rule1;
+    public CrearAmbienteRuleValidatorImpl(final AmbienteNameDoesNotExistRule ambienteNameDoesNotExistRule) {
+        this.ambienteNameDoesNotExistRule = ambienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final CrearAmbienteDomain data) {
-        rule1.execute(data);
+        ambienteNameDoesNotExistRule.execute(data);
     }
 }
 

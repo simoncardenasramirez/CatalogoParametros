@@ -9,18 +9,18 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoam
 
 @Service
 public final class ActualizarEstadoMetadatoAmbienteRuleValidatorImpl implements ActualizarEstadoMetadatoAmbienteRuleValidator {
-    private final ActualizarEstadoMetadatoAmbienteExistsRule rule1;
-    private final ActualizarEstadoMetadatoAmbienteNameDoesNotExistRule rule2;
+    private final ActualizarEstadoMetadatoAmbienteExistsRule estadoMetadatoAmbienteExistsRule;
+    private final ActualizarEstadoMetadatoAmbienteNameDoesNotExistRule estadoMetadatoAmbienteNameDoesNotExistRule;
 
-    public ActualizarEstadoMetadatoAmbienteRuleValidatorImpl(final ActualizarEstadoMetadatoAmbienteExistsRule rule1, final ActualizarEstadoMetadatoAmbienteNameDoesNotExistRule rule2) {
-        this.rule1 = rule1;
-        this.rule2 = rule2;
+    public ActualizarEstadoMetadatoAmbienteRuleValidatorImpl(final ActualizarEstadoMetadatoAmbienteExistsRule estadoMetadatoAmbienteExistsRule, final ActualizarEstadoMetadatoAmbienteNameDoesNotExistRule estadoMetadatoAmbienteNameDoesNotExistRule) {
+        this.estadoMetadatoAmbienteExistsRule = estadoMetadatoAmbienteExistsRule;
+        this.estadoMetadatoAmbienteNameDoesNotExistRule = estadoMetadatoAmbienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final ActualizarEstadoMetadatoAmbienteDomain data) {
-        rule1.execute(data);
-        rule2.execute(data);
+        estadoMetadatoAmbienteExistsRule.execute(data);
+        estadoMetadatoAmbienteNameDoesNotExistRule.execute(data);
     }
 }
 

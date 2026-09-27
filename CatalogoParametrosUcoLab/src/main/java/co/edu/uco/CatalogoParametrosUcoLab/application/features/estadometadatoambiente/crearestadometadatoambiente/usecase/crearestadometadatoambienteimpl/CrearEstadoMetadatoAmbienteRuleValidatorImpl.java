@@ -8,15 +8,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoam
 
 @Service
 public final class CrearEstadoMetadatoAmbienteRuleValidatorImpl implements CrearEstadoMetadatoAmbienteRuleValidator {
-    private final EstadoMetadatoAmbienteNameDoesNotExistRule rule1;
+    private final EstadoMetadatoAmbienteNameDoesNotExistRule estadoMetadatoAmbienteNameDoesNotExistRule;
 
-    public CrearEstadoMetadatoAmbienteRuleValidatorImpl(final EstadoMetadatoAmbienteNameDoesNotExistRule rule1) {
-        this.rule1 = rule1;
+    public CrearEstadoMetadatoAmbienteRuleValidatorImpl(final EstadoMetadatoAmbienteNameDoesNotExistRule estadoMetadatoAmbienteNameDoesNotExistRule) {
+        this.estadoMetadatoAmbienteNameDoesNotExistRule = estadoMetadatoAmbienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final CrearEstadoMetadatoAmbienteDomain data) {
-        rule1.execute(data);
+        estadoMetadatoAmbienteNameDoesNotExistRule.execute(data);
     }
 }
 

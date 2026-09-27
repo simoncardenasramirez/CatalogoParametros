@@ -8,15 +8,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.c
 
 @Service
 public final class CrearEstadoAmbienteRuleValidatorImpl implements CrearEstadoAmbienteRuleValidator {
-    private final EstadoAmbienteNameDoesNotExistRule rule1;
+    private final EstadoAmbienteNameDoesNotExistRule estadoAmbienteNameDoesNotExistRule;
 
-    public CrearEstadoAmbienteRuleValidatorImpl(final EstadoAmbienteNameDoesNotExistRule rule1) {
-        this.rule1 = rule1;
+    public CrearEstadoAmbienteRuleValidatorImpl(final EstadoAmbienteNameDoesNotExistRule estadoAmbienteNameDoesNotExistRule) {
+        this.estadoAmbienteNameDoesNotExistRule = estadoAmbienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final CrearEstadoAmbienteDomain data) {
-        rule1.execute(data);
+        estadoAmbienteNameDoesNotExistRule.execute(data);
     }
 }
 

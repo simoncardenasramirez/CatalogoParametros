@@ -11,24 +11,24 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente
 
 @Service
 public final class ActualizarMetadatoAmbienteRuleValidatorImpl implements ActualizarMetadatoAmbienteRuleValidator {
-    private final ActualizarMetadatoAmbienteExistsRule rule1;
-    private final ActualizarMetadatoAmbienteParametroExistsRule rule2;
-    private final ActualizarMetadatoAmbienteAmbienteExistsRule rule3;
-    private final ActualizarMetadatoAmbienteEstadoExistsRule rule4;
+    private final ActualizarMetadatoAmbienteExistsRule metadatoAmbienteExistsRule;
+    private final ActualizarMetadatoAmbienteParametroExistsRule parametroExistsRule;
+    private final ActualizarMetadatoAmbienteAmbienteExistsRule ambienteExistsRule;
+    private final ActualizarMetadatoAmbienteEstadoExistsRule estadoMetadatoAmbienteExistsRule;
 
-    public ActualizarMetadatoAmbienteRuleValidatorImpl(final ActualizarMetadatoAmbienteExistsRule rule1, final ActualizarMetadatoAmbienteParametroExistsRule rule2, final ActualizarMetadatoAmbienteAmbienteExistsRule rule3, final ActualizarMetadatoAmbienteEstadoExistsRule rule4) {
-        this.rule1 = rule1;
-        this.rule2 = rule2;
-        this.rule3 = rule3;
-        this.rule4 = rule4;
+    public ActualizarMetadatoAmbienteRuleValidatorImpl(final ActualizarMetadatoAmbienteExistsRule metadatoAmbienteExistsRule, final ActualizarMetadatoAmbienteParametroExistsRule parametroExistsRule, final ActualizarMetadatoAmbienteAmbienteExistsRule ambienteExistsRule, final ActualizarMetadatoAmbienteEstadoExistsRule estadoMetadatoAmbienteExistsRule) {
+        this.metadatoAmbienteExistsRule = metadatoAmbienteExistsRule;
+        this.parametroExistsRule = parametroExistsRule;
+        this.ambienteExistsRule = ambienteExistsRule;
+        this.estadoMetadatoAmbienteExistsRule = estadoMetadatoAmbienteExistsRule;
     }
 
     @Override
     public void validate(final ActualizarMetadatoAmbienteDomain data) {
-        rule1.execute(data);
-        rule2.execute(data);
-        rule3.execute(data);
-        rule4.execute(data);
+        metadatoAmbienteExistsRule.execute(data);
+        parametroExistsRule.execute(data);
+        ambienteExistsRule.execute(data);
+        estadoMetadatoAmbienteExistsRule.execute(data);
     }
 }
 

@@ -9,18 +9,18 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.actuali
 
 @Service
 public final class ActualizarAmbienteRuleValidatorImpl implements ActualizarAmbienteRuleValidator {
-    private final ActualizarAmbienteExistsRule rule1;
-    private final ActualizarAmbienteNameDoesNotExistRule rule2;
+    private final ActualizarAmbienteExistsRule ambienteExistsRule;
+    private final ActualizarAmbienteNameDoesNotExistRule ambienteNameDoesNotExistRule;
 
-    public ActualizarAmbienteRuleValidatorImpl(final ActualizarAmbienteExistsRule rule1, final ActualizarAmbienteNameDoesNotExistRule rule2) {
-        this.rule1 = rule1;
-        this.rule2 = rule2;
+    public ActualizarAmbienteRuleValidatorImpl(final ActualizarAmbienteExistsRule ambienteExistsRule, final ActualizarAmbienteNameDoesNotExistRule ambienteNameDoesNotExistRule) {
+        this.ambienteExistsRule = ambienteExistsRule;
+        this.ambienteNameDoesNotExistRule = ambienteNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final ActualizarAmbienteDomain data) {
-        rule1.execute(data);
-        rule2.execute(data);
+        ambienteExistsRule.execute(data);
+        ambienteNameDoesNotExistRule.execute(data);
     }
 }
 

@@ -10,21 +10,21 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente
 
 @Service
 public final class CrearMetadatoAmbienteRuleValidatorImpl implements CrearMetadatoAmbienteRuleValidator {
-    private final MetadatoAmbienteParametroExistsRule rule1;
-    private final MetadatoAmbienteAmbienteExistsRule rule2;
-    private final MetadatoAmbienteEstadoExistsRule rule3;
+    private final MetadatoAmbienteParametroExistsRule parametroExistsRule;
+    private final MetadatoAmbienteAmbienteExistsRule ambienteExistsRule;
+    private final MetadatoAmbienteEstadoExistsRule estadoMetadatoAmbienteExistsRule;
 
-    public CrearMetadatoAmbienteRuleValidatorImpl(final MetadatoAmbienteParametroExistsRule rule1, final MetadatoAmbienteAmbienteExistsRule rule2, final MetadatoAmbienteEstadoExistsRule rule3) {
-        this.rule1 = rule1;
-        this.rule2 = rule2;
-        this.rule3 = rule3;
+    public CrearMetadatoAmbienteRuleValidatorImpl(final MetadatoAmbienteParametroExistsRule parametroExistsRule, final MetadatoAmbienteAmbienteExistsRule ambienteExistsRule, final MetadatoAmbienteEstadoExistsRule estadoMetadatoAmbienteExistsRule) {
+        this.parametroExistsRule = parametroExistsRule;
+        this.ambienteExistsRule = ambienteExistsRule;
+        this.estadoMetadatoAmbienteExistsRule = estadoMetadatoAmbienteExistsRule;
     }
 
     @Override
     public void validate(final CrearMetadatoAmbienteDomain data) {
-        rule1.execute(data);
-        rule2.execute(data);
-        rule3.execute(data);
+        parametroExistsRule.execute(data);
+        ambienteExistsRule.execute(data);
+        estadoMetadatoAmbienteExistsRule.execute(data);
     }
 }
 
