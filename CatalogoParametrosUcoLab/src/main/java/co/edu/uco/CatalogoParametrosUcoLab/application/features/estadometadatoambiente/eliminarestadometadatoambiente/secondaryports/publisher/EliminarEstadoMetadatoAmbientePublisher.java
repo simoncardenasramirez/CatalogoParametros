@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.eliminarestadometadatoambiente.secondaryports.publisher;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.eliminarestadometadatoambiente.secondaryports.event.EliminarEstadoMetadatoAmbienteEvent;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.publisher.Publisher;
+
+public interface EliminarEstadoMetadatoAmbientePublisher extends Publisher<EliminarEstadoMetadatoAmbienteEvent> {
+}

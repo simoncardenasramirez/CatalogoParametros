@@ -1,0 +1,8 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.actualizarestadometadatoambiente;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.actualizarestadometadatoambiente.usecase.domain.ActualizarEstadoMetadatoAmbienteDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
+
+public interface ActualizarEstadoMetadatoAmbiente {
+    EstadoMetadatoAmbienteEntity execute(ActualizarEstadoMetadatoAmbienteDomain data);
+}
