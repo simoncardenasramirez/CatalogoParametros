@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -122,6 +123,12 @@ class NuevasFeaturesUseCaseTest {
                     if ("findById".equals(method)) return Optional.of(entity);
                     if ("findAllPaginado".equals(method)) return List.of(entity);
                     if ("save".equals(method) || "update".equals(method)) return invocation.getArgument(0);
+                    if ("recordBusinessOperation".equals(method)) {
+                        final var operation = invocation.getArgument(1);
+                        if (operation instanceof Supplier<?> supplier) return supplier.get();
+                        if (operation instanceof Runnable runnable) runnable.run();
+                        return null;
+                    }
                     if (invocation.getMethod().getReturnType() == boolean.class) return false;
                     return Answers.RETURNS_DEFAULTS.answer(invocation);
                 })).toArray();
