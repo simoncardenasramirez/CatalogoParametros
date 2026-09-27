@@ -9,7 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoam
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoMetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service

@@ -27,7 +27,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoam
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.eliminarestadometadatoambiente.secondaryports.publisher.EliminarEstadoMetadatoAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.secondaryports.event.EstadoMetadatoAmbienteEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.CatalogResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.estadometadatoambiente.EstadoMetadatoAmbienteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
@@ -75,7 +75,7 @@ public final class EstadoMetadatoAmbienteController {
 
     @PostMapping
     @Operation(summary = "Crear estado de metadato ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>>> crear(
+    public Mono<ResponseEntity<EstadoMetadatoAmbienteResponse>> crear(
             @RequestBody final CrearEstadoMetadatoAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(crearInteractor.execute(request),
                 "Estados de metadato ambiente creado.", HttpStatus.CREATED))
@@ -84,7 +84,7 @@ public final class EstadoMetadatoAmbienteController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar estado de metadato ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>>> actualizar(
+    public Mono<ResponseEntity<EstadoMetadatoAmbienteResponse>> actualizar(
             @PathVariable final UUID id, @RequestBody final ActualizarEstadoMetadatoAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(actualizarInteractor.execute(id, request),
                 "Estados de metadato ambiente actualizado.", HttpStatus.OK))
@@ -93,7 +93,7 @@ public final class EstadoMetadatoAmbienteController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar estado de metadato ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>>> eliminar(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<EstadoMetadatoAmbienteResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             eliminarInteractor.execute(id);
             return response(null, "Estados de metadato ambiente eliminado.", HttpStatus.OK);
@@ -102,28 +102,28 @@ public final class EstadoMetadatoAmbienteController {
 
     @GetMapping
     @Operation(summary = "Consultar estados de metadato ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>>> consultar(
+    public Mono<ResponseEntity<EstadoMetadatoAmbienteResponse>> consultar(
             @RequestParam(defaultValue = "1") final int page,
             @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
-            var body = new CatalogResponse<EstadoMetadatoAmbienteEntity>();
-            body.getDatos().addAll(consultarInteractor.execute(page, pageSize));
+            var body = new EstadoMetadatoAmbienteResponse();
+            body.getEstadosMetadatoAmbiente().addAll(consultarInteractor.execute(page, pageSize));
             return ResponseEntity.ok(body);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar por id")
-    public Mono<ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>>> consultarPorId(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<EstadoMetadatoAmbienteResponse>> consultarPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> response(consultarInteractor.execute(id), null, HttpStatus.OK))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private ResponseEntity<CatalogResponse<EstadoMetadatoAmbienteEntity>> response(final EstadoMetadatoAmbienteEntity entity,
+    private ResponseEntity<EstadoMetadatoAmbienteResponse> response(final EstadoMetadatoAmbienteEntity entity,
             final String message, final HttpStatus status) {
-        var body = new CatalogResponse<EstadoMetadatoAmbienteEntity>();
+        var body = new EstadoMetadatoAmbienteResponse();
         if (entity != null) {
-            body.getDatos().add(entity);
+            body.getEstadosMetadatoAmbiente().add(entity);
         }
         if (message != null) {
             body.getMensajes().add(message);

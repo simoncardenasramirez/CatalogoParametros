@@ -9,7 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.c
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoAmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service

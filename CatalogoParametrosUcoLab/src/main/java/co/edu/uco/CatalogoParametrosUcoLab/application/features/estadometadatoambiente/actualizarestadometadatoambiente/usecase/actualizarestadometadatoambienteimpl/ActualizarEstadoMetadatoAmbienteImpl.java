@@ -10,7 +10,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Est
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoMetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
 public final class ActualizarEstadoMetadatoAmbienteImpl implements ActualizarEstadoMetadatoAmbiente {

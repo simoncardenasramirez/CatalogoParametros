@@ -6,8 +6,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.e
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.eliminarestadoambiente.secondaryports.event.EliminarEstadoAmbienteEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.eliminarestadoambiente.secondaryports.publisher.EliminarEstadoAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoAmbienteRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
 @Service

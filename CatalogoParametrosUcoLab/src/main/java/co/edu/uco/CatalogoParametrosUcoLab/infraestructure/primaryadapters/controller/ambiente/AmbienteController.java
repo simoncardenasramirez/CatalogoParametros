@@ -27,7 +27,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.actuali
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.eliminarambiente.secondaryports.publisher.EliminarAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.secondaryports.event.AmbienteEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.CatalogResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.ambiente.AmbienteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
@@ -75,7 +75,7 @@ public final class AmbienteController {
 
     @PostMapping
     @Operation(summary = "Crear ambientes")
-    public Mono<ResponseEntity<CatalogResponse<AmbienteEntity>>> crear(
+    public Mono<ResponseEntity<AmbienteResponse>> crear(
             @RequestBody final CrearAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(crearInteractor.execute(request),
                 "Ambiente creado.", HttpStatus.CREATED))
@@ -84,7 +84,7 @@ public final class AmbienteController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar ambientes")
-    public Mono<ResponseEntity<CatalogResponse<AmbienteEntity>>> actualizar(
+    public Mono<ResponseEntity<AmbienteResponse>> actualizar(
             @PathVariable final UUID id, @RequestBody final ActualizarAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(actualizarInteractor.execute(id, request),
                 "Ambiente actualizado.", HttpStatus.OK))
@@ -93,7 +93,7 @@ public final class AmbienteController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar ambientes")
-    public Mono<ResponseEntity<CatalogResponse<AmbienteEntity>>> eliminar(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<AmbienteResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             eliminarInteractor.execute(id);
             return response(null, "Ambiente eliminado.", HttpStatus.OK);
@@ -102,28 +102,28 @@ public final class AmbienteController {
 
     @GetMapping
     @Operation(summary = "Consultar ambientes")
-    public Mono<ResponseEntity<CatalogResponse<AmbienteEntity>>> consultar(
+    public Mono<ResponseEntity<AmbienteResponse>> consultar(
             @RequestParam(defaultValue = "1") final int page,
             @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
-            var body = new CatalogResponse<AmbienteEntity>();
-            body.getDatos().addAll(consultarInteractor.execute(page, pageSize));
+            var body = new AmbienteResponse();
+            body.getAmbientes().addAll(consultarInteractor.execute(page, pageSize));
             return ResponseEntity.ok(body);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar por id")
-    public Mono<ResponseEntity<CatalogResponse<AmbienteEntity>>> consultarPorId(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<AmbienteResponse>> consultarPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> response(consultarInteractor.execute(id), null, HttpStatus.OK))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private ResponseEntity<CatalogResponse<AmbienteEntity>> response(final AmbienteEntity entity,
+    private ResponseEntity<AmbienteResponse> response(final AmbienteEntity entity,
             final String message, final HttpStatus status) {
-        var body = new CatalogResponse<AmbienteEntity>();
+        var body = new AmbienteResponse();
         if (entity != null) {
-            body.getDatos().add(entity);
+            body.getAmbientes().add(entity);
         }
         if (message != null) {
             body.getMensajes().add(message);

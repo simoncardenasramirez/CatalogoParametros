@@ -10,7 +10,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Amb
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
 public final class ActualizarAmbienteImpl implements ActualizarAmbiente {

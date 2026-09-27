@@ -12,7 +12,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
 public final class ActualizarMetadatoAmbienteImpl implements ActualizarMetadatoAmbiente {

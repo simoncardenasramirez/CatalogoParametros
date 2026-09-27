@@ -9,7 +9,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.crearam
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 @Service
