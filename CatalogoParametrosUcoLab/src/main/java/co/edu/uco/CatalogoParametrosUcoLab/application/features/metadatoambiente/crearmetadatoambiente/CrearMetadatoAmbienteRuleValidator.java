@@ -1,0 +1,4 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.crearmetadatoambiente;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.crearmetadatoambiente.usecase.domain.CrearMetadatoAmbienteDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+public interface CrearMetadatoAmbienteRuleValidator extends RuleValidator<CrearMetadatoAmbienteDomain> { }

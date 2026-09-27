@@ -5,30 +5,30 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.Rango
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.CrearOrganizacionRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameIsNotNullRule;
 
 @Service
 public class CrearOrganizacionRuleValidatorImpl implements CrearOrganizacionRuleValidator {
 
-    private final OrganizacionNombreIsNotNullRule organizacionNombreIsNotNullRule;
-    private final OrganizacionNombreIsNotEmptyRule organizacionNombreIsNotEmptyRule;
-    private final OrganizacionNombreDoesNotExistRule organizacionNombreDoesNotExistRule;
+    private final OrganizacionNameIsNotNullRule organizacionNameIsNotNullRule;
+    private final OrganizacionNameIsNotEmptyRule organizacionNameIsNotEmptyRule;
+    private final OrganizacionNameDoesNotExistRule organizacionNameDoesNotExistRule;
 
-    public CrearOrganizacionRuleValidatorImpl(final OrganizacionNombreIsNotNullRule organizacionNombreIsNotNullRule,
-                                               final OrganizacionNombreIsNotEmptyRule organizacionNombreIsNotEmptyRule,
-                                               final OrganizacionNombreDoesNotExistRule organizacionNombreDoesNotExistRule) {
-        this.organizacionNombreIsNotNullRule = organizacionNombreIsNotNullRule;
-        this.organizacionNombreIsNotEmptyRule = organizacionNombreIsNotEmptyRule;
-        this.organizacionNombreDoesNotExistRule = organizacionNombreDoesNotExistRule;
+    public CrearOrganizacionRuleValidatorImpl(final OrganizacionNameIsNotNullRule organizacionNameIsNotNullRule,
+                                               final OrganizacionNameIsNotEmptyRule organizacionNameIsNotEmptyRule,
+                                               final OrganizacionNameDoesNotExistRule organizacionNameDoesNotExistRule) {
+        this.organizacionNameIsNotNullRule = organizacionNameIsNotNullRule;
+        this.organizacionNameIsNotEmptyRule = organizacionNameIsNotEmptyRule;
+        this.organizacionNameDoesNotExistRule = organizacionNameDoesNotExistRule;
     }
 
     @Override
     public void validate(final CrearOrganizacionDomain data) {
-        organizacionNombreIsNotNullRule.execute(data);
-        organizacionNombreIsNotEmptyRule.execute(data);
-        organizacionNombreDoesNotExistRule.execute(data);
+        organizacionNameIsNotNullRule.execute(data);
+        organizacionNameIsNotEmptyRule.execute(data);
+        organizacionNameDoesNotExistRule.execute(data);
         RangoFechasIsValidRule.execute(data.getFechaInicio(), data.getFechaFinal());
     }
 }

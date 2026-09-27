@@ -14,18 +14,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.ActualizarParametroDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroFuncionalidadExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroFuncionalidadIsValidRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroNameIsNotNullRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.parametro.actualizarparametro.usecase.domain.rules.ActualizarParametroTipoParametroIsValidRule;
 
 @ExtendWith(MockitoExtension.class)
 class ActualizarParametroRuleValidatorImplTest {
 
     @Mock
-    private ActualizarParametroNombreIsNotNullRule parametroNombreIsNotNullRule;
+    private ActualizarParametroNameIsNotNullRule parametroNameIsNotNullRule;
     @Mock
-    private ActualizarParametroNombreIsNotEmptyRule parametroNombreIsNotEmptyRule;
+    private ActualizarParametroNameIsNotEmptyRule parametroNameIsNotEmptyRule;
     @Mock
     private ActualizarParametroFuncionalidadIsValidRule parametroFuncionalidadIsValidRule;
     @Mock
@@ -33,7 +33,7 @@ class ActualizarParametroRuleValidatorImplTest {
     @Mock
     private ActualizarParametroTipoParametroIsValidRule parametroTipoParametroIsValidRule;
     @Mock
-    private ActualizarParametroNombreDoesNotExistRule parametroNombreDoesNotExistRule;
+    private ActualizarParametroNameDoesNotExistRule parametroNameDoesNotExistRule;
 
     @InjectMocks
     private ActualizarParametroRuleValidatorImpl validator;
@@ -49,14 +49,14 @@ class ActualizarParametroRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(parametroNombreIsNotNullRule, parametroNombreIsNotEmptyRule,
+        InOrder inOrder = inOrder(parametroNameIsNotNullRule, parametroNameIsNotEmptyRule,
                 parametroFuncionalidadIsValidRule, parametroFuncionalidadExistsRule,
-                parametroTipoParametroIsValidRule, parametroNombreDoesNotExistRule);
-        inOrder.verify(parametroNombreIsNotNullRule).execute(domain);
-        inOrder.verify(parametroNombreIsNotEmptyRule).execute(domain);
+                parametroTipoParametroIsValidRule, parametroNameDoesNotExistRule);
+        inOrder.verify(parametroNameIsNotNullRule).execute(domain);
+        inOrder.verify(parametroNameIsNotEmptyRule).execute(domain);
         inOrder.verify(parametroFuncionalidadIsValidRule).execute(domain);
         inOrder.verify(parametroFuncionalidadExistsRule).execute(domain);
         inOrder.verify(parametroTipoParametroIsValidRule).execute(domain);
-        inOrder.verify(parametroNombreDoesNotExistRule).execute(domain);
+        inOrder.verify(parametroNameDoesNotExistRule).execute(domain);
     }
 }

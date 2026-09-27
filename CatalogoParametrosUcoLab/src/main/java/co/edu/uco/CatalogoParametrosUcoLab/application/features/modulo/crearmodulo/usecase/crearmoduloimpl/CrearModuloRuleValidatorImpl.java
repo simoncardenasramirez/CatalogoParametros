@@ -2,9 +2,9 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmod
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloAplicacionExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameIsNotNullRule;
 import org.springframework.stereotype.Service;
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.RangoFechasIsValidRule;
 
@@ -13,26 +13,26 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodu
 @Service
 public class CrearModuloRuleValidatorImpl implements CrearModuloRuleValidator {
 
-    private final ModuloNombreIsNotNullRule moduloNombreIsNotNullRule;
-    private final ModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule;
-    private final ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule;
+    private final ModuloNameIsNotNullRule moduloNameIsNotNullRule;
+    private final ModuloNameIsNotEmptyRule moduloNameIsNotEmptyRule;
+    private final ModuloNameDoesNotExistRule moduloNameDoesNotExistRule;
     private final ModuloAplicacionExistsRule moduloAplicacionExistsRule;
 
-    public CrearModuloRuleValidatorImpl(final ModuloNombreIsNotNullRule moduloNombreIsNotNullRule,
-            final ModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule,
-            final ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule,
+    public CrearModuloRuleValidatorImpl(final ModuloNameIsNotNullRule moduloNameIsNotNullRule,
+            final ModuloNameIsNotEmptyRule moduloNameIsNotEmptyRule,
+            final ModuloNameDoesNotExistRule moduloNameDoesNotExistRule,
             final ModuloAplicacionExistsRule moduloAplicacionExistsRule) {
-        this.moduloNombreIsNotNullRule = moduloNombreIsNotNullRule;
-        this.moduloNombreIsNotEmptyRule = moduloNombreIsNotEmptyRule;
-        this.moduloNombreDoesNotExistRule = moduloNombreDoesNotExistRule;
+        this.moduloNameIsNotNullRule = moduloNameIsNotNullRule;
+        this.moduloNameIsNotEmptyRule = moduloNameIsNotEmptyRule;
+        this.moduloNameDoesNotExistRule = moduloNameDoesNotExistRule;
         this.moduloAplicacionExistsRule = moduloAplicacionExistsRule;
     }
 
     @Override
     public void validate(final CrearModuloDomain data) {
-        moduloNombreIsNotNullRule.execute(data);
-        moduloNombreIsNotEmptyRule.execute(data);
-        moduloNombreDoesNotExistRule.execute(data);
+        moduloNameIsNotNullRule.execute(data);
+        moduloNameIsNotEmptyRule.execute(data);
+        moduloNameDoesNotExistRule.execute(data);
         moduloAplicacionExistsRule.execute(data);
         RangoFechasIsValidRule.execute(data.getFechaInicio(), data.getFechaFinal());
     }

@@ -1,0 +1,7 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.usecase.domain.rules;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadometadatoambiente.crearestadometadatoambiente.usecase.domain.CrearEstadoMetadatoAmbienteDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.DomainRule;
+
+public interface EstadoMetadatoAmbienteNameDoesNotExistRule extends DomainRule<CrearEstadoMetadatoAmbienteDomain> { }
+

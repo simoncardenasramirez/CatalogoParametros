@@ -14,19 +14,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.ActualizarFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadIdExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadModuloExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.actualizarfuncionalidad.usecase.domain.rules.ActualizarFuncionalidadNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class ActualizarFuncionalidadRuleValidatorImplTest {
 
     @Mock
-    private ActualizarFuncionalidadNombreIsNotNullRule funcionalidadNombreIsNotNullRule;
+    private ActualizarFuncionalidadNameIsNotNullRule funcionalidadNameIsNotNullRule;
     @Mock
-    private ActualizarFuncionalidadNombreIsNotEmptyRule funcionalidadNombreIsNotEmptyRule;
+    private ActualizarFuncionalidadNameIsNotEmptyRule funcionalidadNameIsNotEmptyRule;
     @Mock
-    private ActualizarFuncionalidadNombreDoesNotExistRule funcionalidadNombreDoesNotExistRule;
+    private ActualizarFuncionalidadNameDoesNotExistRule funcionalidadNameDoesNotExistRule;
     @Mock
     private ActualizarFuncionalidadModuloExistsRule funcionalidadModuloExistsRule;
     @Mock
@@ -46,11 +46,11 @@ class ActualizarFuncionalidadRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(funcionalidadNombreIsNotNullRule, funcionalidadNombreIsNotEmptyRule,
-                funcionalidadNombreDoesNotExistRule, funcionalidadModuloExistsRule, funcionalidadIdExistsRule);
-        inOrder.verify(funcionalidadNombreIsNotNullRule).execute(domain);
-        inOrder.verify(funcionalidadNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(funcionalidadNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(funcionalidadNameIsNotNullRule, funcionalidadNameIsNotEmptyRule,
+                funcionalidadNameDoesNotExistRule, funcionalidadModuloExistsRule, funcionalidadIdExistsRule);
+        inOrder.verify(funcionalidadNameIsNotNullRule).execute(domain);
+        inOrder.verify(funcionalidadNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(funcionalidadNameDoesNotExistRule).execute(domain);
         inOrder.verify(funcionalidadModuloExistsRule).execute(domain);
         inOrder.verify(funcionalidadIdExistsRule).execute(domain);
     }
