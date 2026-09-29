@@ -11,21 +11,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class CrearOrganizacionRuleValidatorImplTest {
 
     @Mock
-    private OrganizacionNombreIsNotNullRule organizacionNombreIsNotNullRule;
+    private OrganizacionNameIsNotNullRule organizacionNameIsNotNullRule;
 
     @Mock
-    private OrganizacionNombreIsNotEmptyRule organizacionNombreIsNotEmptyRule;
+    private OrganizacionNameIsNotEmptyRule organizacionNameIsNotEmptyRule;
 
     @Mock
-    private OrganizacionNombreDoesNotExistRule organizacionNombreDoesNotExistRule;
+    private OrganizacionNameDoesNotExistRule organizacionNameDoesNotExistRule;
 
     @InjectMocks
     private CrearOrganizacionRuleValidatorImpl validator;
@@ -36,10 +36,10 @@ class CrearOrganizacionRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        var inOrder = inOrder(organizacionNombreIsNotNullRule, organizacionNombreIsNotEmptyRule,
-                organizacionNombreDoesNotExistRule);
-        inOrder.verify(organizacionNombreIsNotNullRule).execute(domain);
-        inOrder.verify(organizacionNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(organizacionNombreDoesNotExistRule).execute(domain);
+        var inOrder = inOrder(organizacionNameIsNotNullRule, organizacionNameIsNotEmptyRule,
+                organizacionNameDoesNotExistRule);
+        inOrder.verify(organizacionNameIsNotNullRule).execute(domain);
+        inOrder.verify(organizacionNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(organizacionNameDoesNotExistRule).execute(domain);
     }
 }

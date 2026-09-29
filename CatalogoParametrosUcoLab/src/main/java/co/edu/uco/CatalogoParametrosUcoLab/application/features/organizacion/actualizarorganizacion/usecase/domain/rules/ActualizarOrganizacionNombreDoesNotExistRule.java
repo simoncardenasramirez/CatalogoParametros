@@ -1,8 +1,0 @@
-package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules;
-
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.DomainRuleWithRepository;
-
-public interface ActualizarOrganizacionNombreDoesNotExistRule extends DomainRuleWithRepository<ActualizarOrganizacionDomain, OrganizacionRepository> {
-}

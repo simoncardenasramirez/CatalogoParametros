@@ -1,0 +1,4 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.actualizarmetadatoambiente;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.actualizarmetadatoambiente.usecase.domain.ActualizarMetadatoAmbienteDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+public interface ActualizarMetadatoAmbienteRuleValidator extends RuleValidator<ActualizarMetadatoAmbienteDomain> { }

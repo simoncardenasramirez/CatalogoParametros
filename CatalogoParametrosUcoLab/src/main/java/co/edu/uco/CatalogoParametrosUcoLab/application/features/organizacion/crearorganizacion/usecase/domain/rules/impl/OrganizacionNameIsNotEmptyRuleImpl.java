@@ -1,0 +1,25 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+
+import org.springframework.stereotype.Service;
+
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.CrearOrganizacionDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.usecase.domain.rules.OrganizacionNameIsNotEmptyRule;
+
+@Service
+public final class OrganizacionNameIsNotEmptyRuleImpl implements OrganizacionNameIsNotEmptyRule {
+
+    @Autowired
+    private ConsultarMensajePort consultarMensajePort;
+
+    @Override
+    public void execute(final CrearOrganizacionDomain data) {
+        if (data == null || TextHelper.isBlank(data.getNombre())) {
+            throw ValidationException.build(consultarMensajePort.consultarMensaje("MSG-102"));
+        }
+    }
+}

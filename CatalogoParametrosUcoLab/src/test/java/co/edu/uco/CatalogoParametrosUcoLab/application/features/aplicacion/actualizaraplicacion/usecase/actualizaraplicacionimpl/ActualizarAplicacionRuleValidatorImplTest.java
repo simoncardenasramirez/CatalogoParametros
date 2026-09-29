@@ -13,20 +13,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.ActualizarAplicacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionIdExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionNameIsNotNullRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.actualizaraplicacion.usecase.domain.rules.ActualizarAplicacionOrganizacionExistsRule;
 
 @ExtendWith(MockitoExtension.class)
 class ActualizarAplicacionRuleValidatorImplTest {
 
     @Mock
-    private ActualizarAplicacionNombreIsNotNullRule aplicacionNombreIsNotNullRule;
+    private ActualizarAplicacionNameIsNotNullRule aplicacionNameIsNotNullRule;
     @Mock
-    private ActualizarAplicacionNombreIsNotEmptyRule aplicacionNombreIsNotEmptyRule;
+    private ActualizarAplicacionNameIsNotEmptyRule aplicacionNameIsNotEmptyRule;
     @Mock
-    private ActualizarAplicacionNombreDoesNotExistRule aplicacionNombreDoesNotExistRule;
+    private ActualizarAplicacionNameDoesNotExistRule aplicacionNameDoesNotExistRule;
     @Mock
     private ActualizarAplicacionOrganizacionExistsRule aplicacionOrganizacionExistsRule;
     @Mock
@@ -45,11 +45,11 @@ class ActualizarAplicacionRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(aplicacionNombreIsNotNullRule, aplicacionNombreIsNotEmptyRule,
-                aplicacionNombreDoesNotExistRule, aplicacionOrganizacionExistsRule, aplicacionIdExistsRule);
-        inOrder.verify(aplicacionNombreIsNotNullRule).execute(domain);
-        inOrder.verify(aplicacionNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(aplicacionNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(aplicacionNameIsNotNullRule, aplicacionNameIsNotEmptyRule,
+                aplicacionNameDoesNotExistRule, aplicacionOrganizacionExistsRule, aplicacionIdExistsRule);
+        inOrder.verify(aplicacionNameIsNotNullRule).execute(domain);
+        inOrder.verify(aplicacionNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(aplicacionNameDoesNotExistRule).execute(domain);
         inOrder.verify(aplicacionOrganizacionExistsRule).execute(domain);
         inOrder.verify(aplicacionIdExistsRule).execute(domain);
     }

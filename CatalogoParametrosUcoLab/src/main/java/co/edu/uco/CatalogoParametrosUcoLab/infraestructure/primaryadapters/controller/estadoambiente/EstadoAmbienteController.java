@@ -27,7 +27,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.a
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.eliminarestadoambiente.secondaryports.publisher.EliminarEstadoAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.estadoambiente.secondaryports.event.EstadoAmbienteEvent;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoAmbienteEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.CatalogResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.estadoambiente.EstadoAmbienteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
@@ -75,7 +75,7 @@ public final class EstadoAmbienteController {
 
     @PostMapping
     @Operation(summary = "Crear estado de ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoAmbienteEntity>>> crear(
+    public Mono<ResponseEntity<EstadoAmbienteResponse>> crear(
             @RequestBody final CrearEstadoAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(crearInteractor.execute(request),
                 "Estados de ambiente creado.", HttpStatus.CREATED))
@@ -84,7 +84,7 @@ public final class EstadoAmbienteController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar estado de ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoAmbienteEntity>>> actualizar(
+    public Mono<ResponseEntity<EstadoAmbienteResponse>> actualizar(
             @PathVariable final UUID id, @RequestBody final ActualizarEstadoAmbienteDtoRequest request) {
         return Mono.fromCallable(() -> response(actualizarInteractor.execute(id, request),
                 "Estados de ambiente actualizado.", HttpStatus.OK))
@@ -93,7 +93,7 @@ public final class EstadoAmbienteController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar estado de ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoAmbienteEntity>>> eliminar(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<EstadoAmbienteResponse>> eliminar(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> {
             eliminarInteractor.execute(id);
             return response(null, "Estados de ambiente eliminado.", HttpStatus.OK);
@@ -102,28 +102,28 @@ public final class EstadoAmbienteController {
 
     @GetMapping
     @Operation(summary = "Consultar estados de ambiente")
-    public Mono<ResponseEntity<CatalogResponse<EstadoAmbienteEntity>>> consultar(
+    public Mono<ResponseEntity<EstadoAmbienteResponse>> consultar(
             @RequestParam(defaultValue = "1") final int page,
             @RequestParam(defaultValue = "10") final int pageSize) {
         return Mono.fromCallable(() -> {
-            var body = new CatalogResponse<EstadoAmbienteEntity>();
-            body.getDatos().addAll(consultarInteractor.execute(page, pageSize));
+            var body = new EstadoAmbienteResponse();
+            body.getEstadosAmbiente().addAll(consultarInteractor.execute(page, pageSize));
             return ResponseEntity.ok(body);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar por id")
-    public Mono<ResponseEntity<CatalogResponse<EstadoAmbienteEntity>>> consultarPorId(@PathVariable final UUID id) {
+    public Mono<ResponseEntity<EstadoAmbienteResponse>> consultarPorId(@PathVariable final UUID id) {
         return Mono.fromCallable(() -> response(consultarInteractor.execute(id), null, HttpStatus.OK))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private ResponseEntity<CatalogResponse<EstadoAmbienteEntity>> response(final EstadoAmbienteEntity entity,
+    private ResponseEntity<EstadoAmbienteResponse> response(final EstadoAmbienteEntity entity,
             final String message, final HttpStatus status) {
-        var body = new CatalogResponse<EstadoAmbienteEntity>();
+        var body = new EstadoAmbienteResponse();
         if (entity != null) {
-            body.getDatos().add(entity);
+            body.getEstadosAmbiente().add(entity);
         }
         if (message != null) {
             body.getMensajes().add(message);
