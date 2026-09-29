@@ -13,21 +13,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.CrearModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloAplicacionExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.usecase.domain.rules.ModuloNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class CrearModuloRuleValidatorImplTest {
 
     @Mock
-    private ModuloNombreIsNotNullRule moduloNombreIsNotNullRule;
+    private ModuloNameIsNotNullRule moduloNameIsNotNullRule;
 
     @Mock
-    private ModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule;
+    private ModuloNameIsNotEmptyRule moduloNameIsNotEmptyRule;
 
     @Mock
-    private ModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule;
+    private ModuloNameDoesNotExistRule moduloNameDoesNotExistRule;
 
     @Mock
     private ModuloAplicacionExistsRule moduloAplicacionExistsRule;
@@ -45,11 +45,11 @@ class CrearModuloRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(moduloNombreIsNotNullRule, moduloNombreIsNotEmptyRule,
-                moduloNombreDoesNotExistRule, moduloAplicacionExistsRule);
-        inOrder.verify(moduloNombreIsNotNullRule).execute(domain);
-        inOrder.verify(moduloNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(moduloNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(moduloNameIsNotNullRule, moduloNameIsNotEmptyRule,
+                moduloNameDoesNotExistRule, moduloAplicacionExistsRule);
+        inOrder.verify(moduloNameIsNotNullRule).execute(domain);
+        inOrder.verify(moduloNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(moduloNameDoesNotExistRule).execute(domain);
         inOrder.verify(moduloAplicacionExistsRule).execute(domain);
     }
 }

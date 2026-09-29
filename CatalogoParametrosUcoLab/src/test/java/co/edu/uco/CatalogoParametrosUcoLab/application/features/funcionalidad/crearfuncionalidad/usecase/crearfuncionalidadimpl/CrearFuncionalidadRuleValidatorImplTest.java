@@ -13,19 +13,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.CrearFuncionalidadDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadModuloExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.funcionalidad.crearfuncionalidad.usecase.domain.rules.FuncionalidadNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class CrearFuncionalidadRuleValidatorImplTest {
 
     @Mock
-    private FuncionalidadNombreIsNotNullRule funcionalidadNombreIsNotNullRule;
+    private FuncionalidadNameIsNotNullRule funcionalidadNameIsNotNullRule;
     @Mock
-    private FuncionalidadNombreIsNotEmptyRule funcionalidadNombreIsNotEmptyRule;
+    private FuncionalidadNameIsNotEmptyRule funcionalidadNameIsNotEmptyRule;
     @Mock
-    private FuncionalidadNombreDoesNotExistRule funcionalidadNombreDoesNotExistRule;
+    private FuncionalidadNameDoesNotExistRule funcionalidadNameDoesNotExistRule;
     @Mock
     private FuncionalidadModuloExistsRule funcionalidadModuloExistsRule;
 
@@ -42,11 +42,11 @@ class CrearFuncionalidadRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(funcionalidadNombreIsNotNullRule, funcionalidadNombreIsNotEmptyRule,
-                funcionalidadNombreDoesNotExistRule, funcionalidadModuloExistsRule);
-        inOrder.verify(funcionalidadNombreIsNotNullRule).execute(domain);
-        inOrder.verify(funcionalidadNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(funcionalidadNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(funcionalidadNameIsNotNullRule, funcionalidadNameIsNotEmptyRule,
+                funcionalidadNameDoesNotExistRule, funcionalidadModuloExistsRule);
+        inOrder.verify(funcionalidadNameIsNotNullRule).execute(domain);
+        inOrder.verify(funcionalidadNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(funcionalidadNameDoesNotExistRule).execute(domain);
         inOrder.verify(funcionalidadModuloExistsRule).execute(domain);
     }
 }

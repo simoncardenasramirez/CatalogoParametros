@@ -12,20 +12,20 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.CrearAplicacionDomain;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionNameIsNotNullRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crearaplicacion.usecase.domain.rules.AplicacionOrganizacionExistsRule;
 
 @ExtendWith(MockitoExtension.class)
 class CrearAplicacionRuleValidatorImplTest {
 
     @Mock
-    private AplicacionNombreIsNotNullRule aplicacionNombreIsNotNullRule;
+    private AplicacionNameIsNotNullRule aplicacionNameIsNotNullRule;
     @Mock
-    private AplicacionNombreIsNotEmptyRule aplicacionNombreIsNotEmptyRule;
+    private AplicacionNameIsNotEmptyRule aplicacionNameIsNotEmptyRule;
     @Mock
-    private AplicacionNombreDoesNotExistRule aplicacionNombreDoesNotExistRule;
+    private AplicacionNameDoesNotExistRule aplicacionNameDoesNotExistRule;
     @Mock
     private AplicacionOrganizacionExistsRule aplicacionOrganizacionExistsRule;
 
@@ -42,11 +42,11 @@ class CrearAplicacionRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(aplicacionNombreIsNotNullRule, aplicacionNombreIsNotEmptyRule,
-                aplicacionNombreDoesNotExistRule, aplicacionOrganizacionExistsRule);
-        inOrder.verify(aplicacionNombreIsNotNullRule).execute(domain);
-        inOrder.verify(aplicacionNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(aplicacionNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(aplicacionNameIsNotNullRule, aplicacionNameIsNotEmptyRule,
+                aplicacionNameDoesNotExistRule, aplicacionOrganizacionExistsRule);
+        inOrder.verify(aplicacionNameIsNotNullRule).execute(domain);
+        inOrder.verify(aplicacionNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(aplicacionNameDoesNotExistRule).execute(domain);
         inOrder.verify(aplicacionOrganizacionExistsRule).execute(domain);
     }
 }

@@ -14,21 +14,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.ActualizarModuloDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloAplicacionExistsRule;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloIdExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.actualizarmodulo.usecase.domain.rules.ActualizarModuloNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class ActualizarModuloRuleValidatorImplTest {
 
     @Mock
-    private ActualizarModuloNombreIsNotNullRule moduloNombreIsNotNullRule;
+    private ActualizarModuloNameIsNotNullRule moduloNameIsNotNullRule;
 
     @Mock
-    private ActualizarModuloNombreIsNotEmptyRule moduloNombreIsNotEmptyRule;
+    private ActualizarModuloNameIsNotEmptyRule moduloNameIsNotEmptyRule;
 
     @Mock
-    private ActualizarModuloNombreDoesNotExistRule moduloNombreDoesNotExistRule;
+    private ActualizarModuloNameDoesNotExistRule moduloNameDoesNotExistRule;
 
     @Mock
     private ActualizarModuloAplicacionExistsRule moduloAplicacionExistsRule;
@@ -49,11 +49,11 @@ class ActualizarModuloRuleValidatorImplTest {
 
         validator.validate(domain);
 
-        InOrder inOrder = inOrder(moduloNombreIsNotNullRule, moduloNombreIsNotEmptyRule,
-                moduloNombreDoesNotExistRule, moduloAplicacionExistsRule, moduloIdExistsRule);
-        inOrder.verify(moduloNombreIsNotNullRule).execute(domain);
-        inOrder.verify(moduloNombreIsNotEmptyRule).execute(domain);
-        inOrder.verify(moduloNombreDoesNotExistRule).execute(domain);
+        InOrder inOrder = inOrder(moduloNameIsNotNullRule, moduloNameIsNotEmptyRule,
+                moduloNameDoesNotExistRule, moduloAplicacionExistsRule, moduloIdExistsRule);
+        inOrder.verify(moduloNameIsNotNullRule).execute(domain);
+        inOrder.verify(moduloNameIsNotEmptyRule).execute(domain);
+        inOrder.verify(moduloNameDoesNotExistRule).execute(domain);
         inOrder.verify(moduloAplicacionExistsRule).execute(domain);
         inOrder.verify(moduloIdExistsRule).execute(domain);
     }

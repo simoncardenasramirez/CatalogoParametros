@@ -3,8 +3,6 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.aplicacion.crea
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;

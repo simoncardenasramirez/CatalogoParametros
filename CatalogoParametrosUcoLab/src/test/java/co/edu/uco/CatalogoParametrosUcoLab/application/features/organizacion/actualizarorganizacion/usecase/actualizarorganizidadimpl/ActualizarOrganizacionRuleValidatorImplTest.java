@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionIdExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameIsNotNullRule;
 
 @ExtendWith(MockitoExtension.class)
 class ActualizarOrganizacionRuleValidatorImplTest {
@@ -23,13 +23,13 @@ class ActualizarOrganizacionRuleValidatorImplTest {
     private ActualizarOrganizacionIdExistsRule idExistsRule;
 
     @Mock
-    private ActualizarOrganizacionNombreIsNotNullRule nombreIsNotNullRule;
+    private ActualizarOrganizacionNameIsNotNullRule nombreIsNotNullRule;
 
     @Mock
-    private ActualizarOrganizacionNombreIsNotEmptyRule nombreIsNotEmptyRule;
+    private ActualizarOrganizacionNameIsNotEmptyRule nombreIsNotEmptyRule;
 
     @Mock
-    private ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule;
+    private ActualizarOrganizacionNameDoesNotExistRule nombreDoesNotExistRule;
 
     @InjectMocks
     private ActualizarOrganizacionRuleValidatorImpl validator;

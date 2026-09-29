@@ -9,23 +9,23 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.rule.Rango
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.ActualizarOrganizacionRuleValidator;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.ActualizarOrganizacionDomain;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionIdExistsRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreDoesNotExistRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreIsNotEmptyRule;
-import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNombreIsNotNullRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameDoesNotExistRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameIsNotEmptyRule;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain.rules.ActualizarOrganizacionNameIsNotNullRule;
 
 @Service
 public class ActualizarOrganizacionRuleValidatorImpl implements ActualizarOrganizacionRuleValidator {
 
     private final List<String> messages = new ArrayList<>();
     private final ActualizarOrganizacionIdExistsRule idExistsRule;
-    private final ActualizarOrganizacionNombreIsNotNullRule nombreIsNotNullRule;
-    private final ActualizarOrganizacionNombreIsNotEmptyRule nombreIsNotEmptyRule;
-    private final ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule;
+    private final ActualizarOrganizacionNameIsNotNullRule nombreIsNotNullRule;
+    private final ActualizarOrganizacionNameIsNotEmptyRule nombreIsNotEmptyRule;
+    private final ActualizarOrganizacionNameDoesNotExistRule nombreDoesNotExistRule;
 
     public ActualizarOrganizacionRuleValidatorImpl(final ActualizarOrganizacionIdExistsRule idExistsRule,
-                                                   final ActualizarOrganizacionNombreIsNotNullRule nombreIsNotNullRule,
-                                                   final ActualizarOrganizacionNombreIsNotEmptyRule nombreIsNotEmptyRule,
-                                                   final ActualizarOrganizacionNombreDoesNotExistRule nombreDoesNotExistRule) {
+                                                   final ActualizarOrganizacionNameIsNotNullRule nombreIsNotNullRule,
+                                                   final ActualizarOrganizacionNameIsNotEmptyRule nombreIsNotEmptyRule,
+                                                   final ActualizarOrganizacionNameDoesNotExistRule nombreDoesNotExistRule) {
         this.idExistsRule = idExistsRule;
         this.nombreIsNotNullRule = nombreIsNotNullRule;
         this.nombreIsNotEmptyRule = nombreIsNotEmptyRule;
