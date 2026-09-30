@@ -1,10 +1,16 @@
 openapi: 3.0.3
 info:
   title: Catálogo de Parámetros UcoLab
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Contrato público y versionado del módulo Catálogo de Parámetros.
-    Este archivo es la fuente de verdad para productores y consumidores.
+    Contrato revisado contra los 12 controladores actuales: 68 operaciones de negocio.
+    Incluye CRUD, consultas de catálogos, cambios de estado y 10 flujos SSE.
+    Las fechas son opcionales; cuando se envían deben incluir desplazamiento horario.
+    Los cambios de estado usan un booleano JSON; los DTO de alta/edición de los
+    recursos originales reciben activo/activa como cadena.
+    Las respuestas de errores contienen mensajes y pueden incluir la colección del recurso vacía.
+    Los endpoints técnicos de Actuator y springdoc se describen en README.md.
 servers:
   - url: http://localhost:8080
     description: Desarrollo local
@@ -17,6 +23,11 @@ tags:
   - name: Metadatos
   - name: Tipos de parámetro
   - name: Tipos de metadato
+
+  - name: Ambientes
+  - name: Estados de ambiente
+  - name: Estados de metadato de ambiente
+  - name: Metadatos de ambiente
 
 paths:
   /catalogo-parametros/api/v1/organizaciones:
@@ -38,7 +49,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/OrganizacionRequest'
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/OrganizacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
@@ -50,6 +61,7 @@ paths:
       operationId: consultarOrganizacionPorId
       responses:
         '200': { $ref: '#/components/responses/OrganizacionesOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
     put:
@@ -58,7 +70,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/OrganizacionRequest'
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/OrganizacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -67,7 +79,7 @@ paths:
       tags: [Organizaciones]
       operationId: eliminarOrganizacion
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/OrganizacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -78,7 +90,7 @@ paths:
       operationId: observarEventosOrganizacion
       summary: Flujo SSE de cambios de organizaciones
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/OrganizacionEventStream' }
 
   /catalogo-parametros/api/v1/aplicaciones:
     get:
@@ -96,8 +108,9 @@ paths:
       operationId: crearAplicacion
       requestBody: { $ref: '#/components/requestBodies/AplicacionRequest' }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/aplicaciones/{id}:
@@ -114,7 +127,7 @@ paths:
       operationId: actualizarAplicacion
       requestBody: { $ref: '#/components/requestBodies/AplicacionRequest' }
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -123,7 +136,7 @@ paths:
       tags: [Aplicaciones]
       operationId: eliminarAplicacion
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -133,7 +146,7 @@ paths:
       tags: [Aplicaciones]
       operationId: observarEventosAplicacion
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/AplicacionEventStream' }
   /catalogo-parametros/api/v1/aplicaciones/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
@@ -142,7 +155,7 @@ paths:
       summary: Cambia únicamente el estado activo de la aplicación
       requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -159,9 +172,11 @@ paths:
       tags: [Módulos]
       operationId: crearModulo
       requestBody: { $ref: '#/components/requestBodies/ModuloRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/modulos/{id}:
@@ -177,8 +192,9 @@ paths:
       tags: [Módulos]
       operationId: actualizarModulo
       requestBody: { $ref: '#/components/requestBodies/ModuloRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -186,8 +202,9 @@ paths:
     delete:
       tags: [Módulos]
       operationId: eliminarModulo
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -197,7 +214,7 @@ paths:
       tags: [Módulos]
       operationId: observarEventosModulo
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/ModuloEventStream' }
   /catalogo-parametros/api/v1/modulos/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
@@ -205,8 +222,9 @@ paths:
       operationId: cambiarEstadoModulo
       summary: Cambia únicamente el estado activo del módulo
       requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -223,9 +241,11 @@ paths:
       tags: [Funcionalidades]
       operationId: crearFuncionalidad
       requestBody: { $ref: '#/components/requestBodies/FuncionalidadRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/funcionalidades/{id}:
@@ -241,8 +261,9 @@ paths:
       tags: [Funcionalidades]
       operationId: actualizarFuncionalidad
       requestBody: { $ref: '#/components/requestBodies/FuncionalidadRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -250,8 +271,9 @@ paths:
     delete:
       tags: [Funcionalidades]
       operationId: eliminarFuncionalidad
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -261,7 +283,7 @@ paths:
       tags: [Funcionalidades]
       operationId: observarEventosFuncionalidad
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/FuncionalidadEventStream' }
   /catalogo-parametros/api/v1/funcionalidades/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
@@ -269,8 +291,9 @@ paths:
       operationId: cambiarEstadoFuncionalidad
       summary: Cambia únicamente el estado activo de la funcionalidad
       requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
+      description: El controlador actual devuelve ParametroResponse con parametros vacío en esta operación.
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -288,8 +311,9 @@ paths:
       operationId: crearParametro
       requestBody: { $ref: '#/components/requestBodies/ParametroRequest' }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/parametros/{id}:
@@ -306,7 +330,7 @@ paths:
       operationId: actualizarParametro
       requestBody: { $ref: '#/components/requestBodies/ParametroRequest' }
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -315,7 +339,7 @@ paths:
       tags: [Parámetros]
       operationId: eliminarParametro
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -325,7 +349,7 @@ paths:
       tags: [Parámetros]
       operationId: observarEventosParametro
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/ParametroEventStream' }
   /catalogo-parametros/api/v1/parametros/{id}/cambiarestado:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     post:
@@ -334,7 +358,7 @@ paths:
       summary: Cambia únicamente el estado activo del parámetro
       requestBody: { $ref: '#/components/requestBodies/CambiarEstadoRequest' }
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/ParametroResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -342,7 +366,8 @@ paths:
     get:
       tags: [Metadatos]
       operationId: consultarMetadatos
-      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      summary: Consulta todos los metadatos o filtra por parámetro
+      parameters: [{ $ref: '#/components/parameters/IdParametroFiltro' }]
       responses:
         '200': { $ref: '#/components/responses/MetadatosOk' }
         '400': { $ref: '#/components/responses/BadRequest' }
@@ -352,8 +377,9 @@ paths:
       operationId: crearMetadato
       requestBody: { $ref: '#/components/requestBodies/MetadatoRequest' }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        '201': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/metadatos/{id}:
@@ -370,7 +396,7 @@ paths:
       operationId: actualizarMetadato
       requestBody: { $ref: '#/components/requestBodies/MetadatoRequest' }
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409': { $ref: '#/components/responses/Conflict' }
@@ -379,7 +405,7 @@ paths:
       tags: [Metadatos]
       operationId: eliminarMetadato
       responses:
-        '200': { $ref: '#/components/responses/Success' }
+        '200': { description: Operación exitosa; la colección está vacía, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
@@ -388,7 +414,7 @@ paths:
       tags: [Metadatos]
       operationId: observarEventosMetadato
       responses:
-        '200': { $ref: '#/components/responses/EventStream' }
+        '200': { $ref: '#/components/responses/MetadatoEventStream' }
 
   /catalogo-parametros/api/v1/tipos-parametro:
     get:
@@ -423,6 +449,321 @@ paths:
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
 
+  /catalogo-parametros/api/v1/ambientes:
+    get:
+      tags: [Ambientes]
+      operationId: consultarAmbienteLista
+      summary: Consultar ambientes
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Ambientes]
+      operationId: crearAmbiente
+      summary: Crear ambientes
+      requestBody: { $ref: '#/components/requestBodies/AmbienteRequest' }
+      responses:
+        '201':
+          description: Recurso creado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/ambientes/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Ambientes]
+      operationId: consultarAmbientePorId
+      summary: Consultar ambientes
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Ambientes]
+      operationId: actualizarAmbiente
+      summary: Actualizar ambientes
+      requestBody: { $ref: '#/components/requestBodies/AmbienteRequest' }
+      responses:
+        '200':
+          description: Recurso actualizado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Ambientes]
+      operationId: eliminarAmbiente
+      summary: Eliminar ambientes
+      responses:
+        '200':
+          description: Recurso eliminado; la colección está vacía.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/ambientes/events:
+    get:
+      tags: [Ambientes]
+      operationId: observarEventosAmbiente
+      summary: Flujo SSE de ambientes
+      responses:
+        '200': { $ref: '#/components/responses/AmbienteEventStream' }
+
+  /catalogo-parametros/api/v1/estados-ambiente:
+    get:
+      tags: [Estados de ambiente]
+      operationId: consultarEstadoAmbienteLista
+      summary: Consultar estados de ambiente
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Estados de ambiente]
+      operationId: crearEstadoAmbiente
+      summary: Crear estados de ambiente
+      requestBody: { $ref: '#/components/requestBodies/EstadoAmbienteRequest' }
+      responses:
+        '201':
+          description: Recurso creado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/estados-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Estados de ambiente]
+      operationId: consultarEstadoAmbientePorId
+      summary: Consultar estados de ambiente
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Estados de ambiente]
+      operationId: actualizarEstadoAmbiente
+      summary: Actualizar estados de ambiente
+      requestBody: { $ref: '#/components/requestBodies/EstadoAmbienteRequest' }
+      responses:
+        '200':
+          description: Recurso actualizado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Estados de ambiente]
+      operationId: eliminarEstadoAmbiente
+      summary: Eliminar estados de ambiente
+      responses:
+        '200':
+          description: Recurso eliminado; la colección está vacía.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/estados-ambiente/events:
+    get:
+      tags: [Estados de ambiente]
+      operationId: observarEventosEstadoAmbiente
+      summary: Flujo SSE de estados de ambiente
+      responses:
+        '200': { $ref: '#/components/responses/EstadoAmbienteEventStream' }
+
+  /catalogo-parametros/api/v1/estados-metadato-ambiente:
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: consultarEstadoMetadatoAmbienteLista
+      summary: Consultar estados de metadato de ambiente
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Estados de metadato de ambiente]
+      operationId: crearEstadoMetadatoAmbiente
+      summary: Crear estados de metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/EstadoMetadatoAmbienteRequest' }
+      responses:
+        '201':
+          description: Recurso creado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/estados-metadato-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: consultarEstadoMetadatoAmbientePorId
+      summary: Consultar estados de metadato de ambiente
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Estados de metadato de ambiente]
+      operationId: actualizarEstadoMetadatoAmbiente
+      summary: Actualizar estados de metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/EstadoMetadatoAmbienteRequest' }
+      responses:
+        '200':
+          description: Recurso actualizado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Estados de metadato de ambiente]
+      operationId: eliminarEstadoMetadatoAmbiente
+      summary: Eliminar estados de metadato de ambiente
+      responses:
+        '200':
+          description: Recurso eliminado; la colección está vacía.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/estados-metadato-ambiente/events:
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: observarEventosEstadoMetadatoAmbiente
+      summary: Flujo SSE de estados de metadato de ambiente
+      responses:
+        '200': { $ref: '#/components/responses/EstadoMetadatoAmbienteEventStream' }
+
+  /catalogo-parametros/api/v1/metadatos-ambiente:
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: consultarMetadatoAmbienteLista
+      summary: Consultar metadatos de ambiente
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Metadatos de ambiente]
+      operationId: crearMetadatoAmbiente
+      summary: Crear metadatos de ambiente
+      requestBody: { $ref: '#/components/requestBodies/MetadatoAmbienteRequest' }
+      responses:
+        '201':
+          description: Recurso creado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/metadatos-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: consultarMetadatoAmbientePorId
+      summary: Consultar metadatos de ambiente
+      responses:
+        '200':
+          description: Consulta exitosa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Metadatos de ambiente]
+      operationId: actualizarMetadatoAmbiente
+      summary: Actualizar metadatos de ambiente
+      requestBody: { $ref: '#/components/requestBodies/MetadatoAmbienteRequest' }
+      responses:
+        '200':
+          description: Recurso actualizado; la colección contiene la entidad.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Metadatos de ambiente]
+      operationId: eliminarMetadatoAmbiente
+      summary: Eliminar metadatos de ambiente
+      responses:
+        '200':
+          description: Recurso eliminado; la colección está vacía.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/metadatos-ambiente/events:
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: observarEventosMetadatoAmbiente
+      summary: Flujo SSE de metadatos de ambiente
+      responses:
+        '200': { $ref: '#/components/responses/MetadatoAmbienteEventStream' }
+
 components:
   parameters:
     Id:
@@ -434,13 +775,19 @@ components:
     Page:
       name: page
       in: query
-      description: Página basada en uno
-      schema: { type: integer, minimum: 1, default: 1 }
+      description: Página basada en uno; valores menores que uno se normalizan a uno
+      schema: { type: integer, default: 1 }
     PageSize:
       name: pageSize
       in: query
-      description: Cantidad máxima de registros solicitados
-      schema: { type: integer, minimum: 1, default: 10 }
+      description: Cantidad de registros solicitados; valores menores que uno se normalizan a uno
+      schema: { type: integer, default: 10 }
+    IdParametroFiltro:
+      name: idParametro
+      in: query
+      required: false
+      description: Filtra metadatos por el UUID de un parámetro. Sin filtro devuelve todos, sin paginación.
+      schema: { type: string, format: uuid }
   requestBodies:
     CambiarEstadoRequest:
       required: true
@@ -477,13 +824,27 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/MetadatoRequest' }
+    AmbienteRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AmbienteRequest' }
+    EstadoAmbienteRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/EstadoAmbienteRequest' }
+    EstadoMetadatoAmbienteRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteRequest' }
+    MetadatoAmbienteRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/MetadatoAmbienteRequest' }
   responses:
-    Success:
-      description: Operación exitosa
-      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
-    Created:
-      description: Recurso creado
-      content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
     BadRequest:
       description: Petición inválida o regla de negocio incumplida
       content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
@@ -496,12 +857,6 @@ components:
     InternalError:
       description: Error técnico no esperado
       content: { application/json: { schema: { $ref: '#/components/schemas/MessageResponse' } } }
-    EventStream:
-      description: Conexión SSE. El campo `event` del JSON vale CREATED, UPDATED o DELETED.
-      content:
-        text/event-stream:
-          schema: { type: string }
-          example: "event: parametro\ndata: {\"parametro\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"idioma\",\"idFuncionalidad\":\"123e4567-e89b-12d3-a456-426614174001\",\"idTipoParametro\":\"123e4567-e89b-12d3-a456-426614174002\",\"activo\":true},\"event\":\"CREATED\"}\n\n"
     OrganizacionesOk: { description: Organizaciones encontradas, content: { application/json: { schema: { $ref: '#/components/schemas/OrganizacionResponse' } } } }
     AplicacionesOk: { description: Aplicaciones encontradas, content: { application/json: { schema: { $ref: '#/components/schemas/AplicacionResponse' } } } }
     ModulosOk: { description: Módulos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/ModuloResponse' } } } }
@@ -510,6 +865,136 @@ components:
     MetadatosOk: { description: Metadatos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
     TiposParametroOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoParametroResponse' } } } }
     TiposMetadatoOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoMetadatoResponse' } } } }
+    AmbienteEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento ambiente.
+        Cada campo data contiene un JSON conforme a AmbienteEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/AmbienteEvent' }
+          example: ":connected\n\nevent: ambiente\ndata: {\"ambiente\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\"},\"event\":\"CREATED\"}\n\n"
+    AplicacionEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento aplicacion.
+        Cada campo data contiene un JSON conforme a AplicacionEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/AplicacionEvent' }
+          example: ":connected\n\nevent: aplicacion\ndata: {\"aplicacion\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\",\"idOrganizacion\":\"123e4567-e89b-12d3-a456-426614174001\",\"activa\":true,\"fechaInicio\":null,\"fechaFinal\":null},\"event\":\"CREATED\"}\n\n"
+    EstadoAmbienteEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento estadoambiente.
+        Cada campo data contiene un JSON conforme a EstadoAmbienteEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/EstadoAmbienteEvent' }
+          example: ":connected\n\nevent: estadoambiente\ndata: {\"estadoAmbiente\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\"},\"event\":\"CREATED\"}\n\n"
+    EstadoMetadatoAmbienteEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento estadometadatoambiente.
+        Cada campo data contiene un JSON conforme a EstadoMetadatoAmbienteEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteEvent' }
+          example: ":connected\n\nevent: estadometadatoambiente\ndata: {\"estadoMetadatoAmbiente\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\"},\"event\":\"CREATED\"}\n\n"
+    FuncionalidadEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento funcionalidad.
+        Cada campo data contiene un JSON conforme a FuncionalidadEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/FuncionalidadEvent' }
+          example: ":connected\n\nevent: funcionalidad\ndata: {\"funcionalidad\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\",\"idModulo\":\"123e4567-e89b-12d3-a456-426614174001\",\"activo\":true,\"fechaInicio\":null,\"fechaFinal\":null},\"event\":\"CREATED\"}\n\n"
+    MetadatoAmbienteEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento metadatoambiente.
+        Cada campo data contiene un JSON conforme a MetadatoAmbienteEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/MetadatoAmbienteEvent' }
+          example: ":connected\n\nevent: metadatoambiente\ndata: {\"metadatoAmbiente\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"idParametro\":\"123e4567-e89b-12d3-a456-426614174001\",\"idAmbiente\":\"123e4567-e89b-12d3-a456-426614174001\",\"idEstadoMetadatoAmbiente\":\"123e4567-e89b-12d3-a456-426614174001\"},\"event\":\"CREATED\"}\n\n"
+    MetadatoEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento metadato.
+        Cada campo data contiene un JSON conforme a MetadatoEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/MetadatoEvent' }
+          example: "event: metadato\ndata: {\"metadato\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"idParametro\":\"123e4567-e89b-12d3-a456-426614174001\",\"idTipoMetadato\":\"123e4567-e89b-12d3-a456-426614174001\",\"valor\":\"Ejemplo\"},\"event\":\"CREATED\"}\n\n"
+    ModuloEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento modulo.
+        Cada campo data contiene un JSON conforme a ModuloEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/ModuloEvent' }
+          example: ":connected\n\nevent: modulo\ndata: {\"modulo\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\",\"idAplicacion\":\"123e4567-e89b-12d3-a456-426614174001\",\"activo\":true,\"fechaInicio\":null,\"fechaFinal\":null},\"event\":\"CREATED\"}\n\n"
+    OrganizacionEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento organizacion.
+        Cada campo data contiene un JSON conforme a OrganizacionEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/OrganizacionEvent' }
+          example: ":connected\n\nevent: organizacion\ndata: {\"organizacion\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\",\"fechaInicio\":null,\"fechaFinal\":null},\"event\":\"CREATED\"}\n\n"
+    ParametroEventStream:
+      description: |
+        Flujo SSE continuo. Escuchar el evento parametro.
+        Cada campo data contiene un JSON conforme a ParametroEvent.
+        event dentro del JSON indica CREATED, UPDATED o DELETED.
+        Cada publisher conserva los ?ltimos 100 eventos en memoria y los reproduce al suscribirse.
+        No hay id SSE ni soporte de Last-Event-ID; no se garantiza orden global entre publishers.
+        El historial se pierde al reiniciar la aplicaci?n.
+      content:
+        text/event-stream:
+          schema: { type: string }
+          x-event-data-schema: { $ref: '#/components/schemas/ParametroEvent' }
+          example: ":connected\n\nevent: parametro\ndata: {\"parametro\":{\"id\":\"123e4567-e89b-12d3-a456-426614174000\",\"nombre\":\"Ejemplo\",\"idFuncionalidad\":\"123e4567-e89b-12d3-a456-426614174001\",\"idTipoParametro\":\"123e4567-e89b-12d3-a456-426614174001\",\"activo\":true},\"event\":\"CREATED\"}\n\n"
   schemas:
     CambiarEstadoRequest:
       type: object
@@ -531,9 +1016,10 @@ components:
       default: 'true'
       description: Los DTO actuales reciben el booleano como cadena JSON.
     InputDateTime:
-      type: string
-      format: date-time
-      description: Fecha y hora ISO-8601 con desplazamiento obligatorio; se recomienda enviar la zona de Colombia como -05:00.
+      oneOf:
+        - { type: string, format: date-time }
+        - { type: string, enum: [""] }
+      description: Fecha opcional ISO-8601 con desplazamiento (por ejemplo -05:00 o Z). Puede omitirse. Una cadena vacía se interpreta como ausencia de fecha. Si ambas fechas existen, fechaFinal no puede ser anterior a fechaInicio.
       example: '2026-09-11T08:30:00-05:00'
     MessageResponse:
       type: object
@@ -543,17 +1029,17 @@ components:
     OrganizacionRequest:
       type: object
       additionalProperties: false
-      required: [nombre, fechaInicio, fechaFinal]
+      required: [nombre]
       properties:
-        nombre: { type: string, minLength: 1, example: UCO }
+        nombre: { type: string, minLength: 3, maxLength: 50, example: UCO }
         fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
         fechaFinal: { $ref: '#/components/schemas/InputDateTime' }
     AplicacionRequest:
       type: object
       additionalProperties: false
-      required: [nombre, idOrganizacion, activa, fechaInicio, fechaFinal]
+      required: [nombre, idOrganizacion, activa]
       properties:
-        nombre: { type: string, minLength: 1, example: UcoLab }
+        nombre: { type: string, minLength: 3, maxLength: 50, example: UcoLab }
         idOrganizacion: { $ref: '#/components/schemas/InputUuid' }
         activa: { $ref: '#/components/schemas/InputBoolean' }
         fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
@@ -561,9 +1047,9 @@ components:
     ModuloRequest:
       type: object
       additionalProperties: false
-      required: [nombre, idAplicacion, activo, fechaInicio, fechaFinal]
+      required: [nombre, idAplicacion, activo]
       properties:
-        nombre: { type: string, minLength: 1, example: Matrículas }
+        nombre: { type: string, minLength: 3, maxLength: 50, example: Matrículas }
         idAplicacion: { $ref: '#/components/schemas/InputUuid' }
         activo: { $ref: '#/components/schemas/InputBoolean' }
         fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
@@ -571,9 +1057,9 @@ components:
     FuncionalidadRequest:
       type: object
       additionalProperties: false
-      required: [nombre, idModulo, activo, fechaInicio, fechaFinal]
+      required: [nombre, idModulo, activo]
       properties:
-        nombre: { type: string, minLength: 1, example: Crear matrícula }
+        nombre: { type: string, minLength: 3, maxLength: 50, example: Crear matrícula }
         idModulo: { $ref: '#/components/schemas/InputUuid' }
         activo: { $ref: '#/components/schemas/InputBoolean' }
         fechaInicio: { $ref: '#/components/schemas/InputDateTime' }
@@ -583,7 +1069,7 @@ components:
       additionalProperties: false
       required: [nombre, idFuncionalidad, idTipoParametro, activo]
       properties:
-        nombre: { type: string, minLength: 1, example: idioma }
+        nombre: { type: string, minLength: 3, maxLength: 50, example: idioma }
         idFuncionalidad: { $ref: '#/components/schemas/InputUuid' }
         idTipoParametro: { $ref: '#/components/schemas/InputUuid' }
         activo: { $ref: '#/components/schemas/InputBoolean' }
@@ -672,3 +1158,149 @@ components:
     MetadatoResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [metadatos], properties: { metadatos: { type: array, items: { $ref: '#/components/schemas/Metadato' } } } }] }
     TipoParametroResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [tiposParametro], properties: { tiposParametro: { type: array, items: { $ref: '#/components/schemas/TipoParametro' } } } }] }
     TipoMetadatoResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [tiposMetadato], properties: { tiposMetadato: { type: array, items: { $ref: '#/components/schemas/TipoMetadato' } } } }] }
+
+    AmbienteRequest:
+      type: object
+      description: Nombre del catálogo. El backend recorta espacios y valida duplicados; actualmente no valida longitud ni obligatoriedad.
+      properties:
+        nombre: { type: string, nullable: true, example: Desarrollo }
+    Ambiente:
+      type: object
+      required: [id, nombre]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string, example: Desarrollo }
+    AmbienteResponse:
+      allOf:
+        - { $ref: '#/components/schemas/MessageResponse' }
+        - type: object
+          required: [ambientes]
+          properties:
+            ambientes:
+              type: array
+              items: { $ref: '#/components/schemas/Ambiente' }
+    EstadoAmbienteRequest:
+      type: object
+      description: Nombre del catálogo. El backend recorta espacios y valida duplicados; actualmente no valida longitud ni obligatoriedad.
+      properties:
+        nombre: { type: string, nullable: true, example: Activo }
+    EstadoAmbiente:
+      type: object
+      required: [id, nombre]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string, example: Activo }
+    EstadoAmbienteResponse:
+      allOf:
+        - { $ref: '#/components/schemas/MessageResponse' }
+        - type: object
+          required: [estadosAmbiente]
+          properties:
+            estadosAmbiente:
+              type: array
+              items: { $ref: '#/components/schemas/EstadoAmbiente' }
+    EstadoMetadatoAmbienteRequest:
+      type: object
+      description: Nombre del catálogo. El backend recorta espacios y valida duplicados; actualmente no valida longitud ni obligatoriedad.
+      properties:
+        nombre: { type: string, nullable: true, example: Aprobado }
+    EstadoMetadatoAmbiente:
+      type: object
+      required: [id, nombre]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        nombre: { type: string, example: Aprobado }
+    EstadoMetadatoAmbienteResponse:
+      allOf:
+        - { $ref: '#/components/schemas/MessageResponse' }
+        - type: object
+          required: [estadosMetadatoAmbiente]
+          properties:
+            estadosMetadatoAmbiente:
+              type: array
+              items: { $ref: '#/components/schemas/EstadoMetadatoAmbiente' }
+    MetadatoAmbienteRequest:
+      type: object
+      required: [idParametro, idAmbiente, idEstadoMetadatoAmbiente]
+      description: Los tres UUID deben referenciar registros existentes. Esta relación no contiene valor ni idTipoMetadato.
+      properties:
+        idParametro: { $ref: '#/components/schemas/InputUuid' }
+        idAmbiente: { $ref: '#/components/schemas/InputUuid' }
+        idEstadoMetadatoAmbiente: { $ref: '#/components/schemas/InputUuid' }
+    MetadatoAmbiente:
+      type: object
+      required: [id, idParametro, idAmbiente, idEstadoMetadatoAmbiente]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        idParametro: { $ref: '#/components/schemas/Uuid' }
+        idAmbiente: { $ref: '#/components/schemas/Uuid' }
+        idEstadoMetadatoAmbiente: { $ref: '#/components/schemas/Uuid' }
+    MetadatoAmbienteResponse:
+      allOf:
+        - { $ref: '#/components/schemas/MessageResponse' }
+        - type: object
+          required: [metadatosAmbiente]
+          properties:
+            metadatosAmbiente:
+              type: array
+              items: { $ref: '#/components/schemas/MetadatoAmbiente' }
+    AmbienteEvent:
+      type: object
+      required: [ambiente, event]
+      properties:
+        ambiente: { $ref: '#/components/schemas/Ambiente' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    AplicacionEvent:
+      type: object
+      required: [aplicacion, event]
+      properties:
+        aplicacion: { $ref: '#/components/schemas/Aplicacion' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    EstadoAmbienteEvent:
+      type: object
+      required: [estadoAmbiente, event]
+      properties:
+        estadoAmbiente: { $ref: '#/components/schemas/EstadoAmbiente' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    EstadoMetadatoAmbienteEvent:
+      type: object
+      required: [estadoMetadatoAmbiente, event]
+      properties:
+        estadoMetadatoAmbiente: { $ref: '#/components/schemas/EstadoMetadatoAmbiente' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    FuncionalidadEvent:
+      type: object
+      required: [funcionalidad, event]
+      properties:
+        funcionalidad: { $ref: '#/components/schemas/Funcionalidad' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    MetadatoAmbienteEvent:
+      type: object
+      required: [metadatoAmbiente, event]
+      properties:
+        metadatoAmbiente: { $ref: '#/components/schemas/MetadatoAmbiente' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    MetadatoEvent:
+      type: object
+      required: [metadato, event]
+      properties:
+        metadato: { $ref: '#/components/schemas/Metadato' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    ModuloEvent:
+      type: object
+      required: [modulo, event]
+      properties:
+        modulo: { $ref: '#/components/schemas/Modulo' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    OrganizacionEvent:
+      type: object
+      required: [organizacion, event]
+      properties:
+        organizacion: { $ref: '#/components/schemas/Organizacion' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
+    ParametroEvent:
+      type: object
+      required: [parametro, event]
+      properties:
+        parametro: { $ref: '#/components/schemas/Parametro' }
+        event: { type: string, enum: [CREATED, UPDATED, DELETED] }
