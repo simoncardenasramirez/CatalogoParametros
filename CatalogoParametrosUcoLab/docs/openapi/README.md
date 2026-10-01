@@ -2,6 +2,12 @@
 
 El archivo [catalogo-parametros-v1.yaml](catalogo-parametros-v1.yaml) documenta las **68 operaciones de negocio, 38 rutas y 12 recursos** implementados por los controladores actuales. Usa OpenAPI 3.0.3; la revisión del contrato es 1.1.0.
 
+
+## Guía para consumidores
+
+- [Guía de integración por endpoint](GUIA-INTEGRACION.md): campos, ejemplos cURL, respuestas, errores, relaciones y SSE para las 68 operaciones.
+- [Colección Postman](catalogo-parametros.postman_collection.json): solicitudes importables con host e IDs configurables.
+
 ## Inventario de operaciones
 
 Prefijo común: `/catalogo-parametros/api/v1`.
