@@ -182,6 +182,12 @@ target/site/jacoco/index.html
 
 ## Uso de la API
 
+La [guía de integración](docs/openapi/GUIA-INTEGRACION.md) explica cada endpoint con
+ejemplos de solicitudes, respuestas y eventos. Incluye una
+[colección Postman](docs/openapi/catalogo-parametros.postman_collection.json)
+para probar las 68 operaciones con host e IDs configurables.
+
+
 La URL base local es:
 
 ```text
