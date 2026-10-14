@@ -65,6 +65,17 @@ class RedisAmbienteRepositoryTest {
     }
 
     @Test
+    void debeLanzarExcepcionPropiaCuandoVersionSigueAusenteTrasInicializar() {
+        when(redis.opsForValue()).thenReturn(valores);
+        when(valores.get(PREFIJO + "version")).thenReturn(null);
+
+        var error = assertThrows(TechnicalException.class, repositorio::obtenerVersion);
+
+        assertEquals("No fue posible obtener la version de cache de ambiente.", error.getMessage());
+        verify(valores).setIfAbsent(eq(PREFIJO + "version"), anyString());
+    }
+
+    @Test
     void debeReutilizarVersionCuandoYaExiste() {
         when(redis.opsForValue()).thenReturn(valores);
         when(valores.get(PREFIJO + "version")).thenReturn("v1");
