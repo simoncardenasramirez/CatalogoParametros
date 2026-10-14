@@ -3,9 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.estrategia;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +11,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Met
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 
 /** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
 @Service
-public final class MetadatoCatalogoStrategy implements MetadatoRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadatoCatalogoStrategy.class);
-
-    private final CacheMetadatoRepository cache;
+public final class MetadatoCatalogoStrategy extends CatalogoCacheStrategy<MetadatoEntity> implements MetadatoRepository {
     private final BaseDatosMetadatoRepository baseDatos;
 
     public MetadatoCatalogoStrategy(final CacheMetadatoRepository cache,
             final BaseDatosMetadatoRepository baseDatos) {
-        this.cache = cache;
+        super(cache, LoggerFactory.getLogger(MetadatoCatalogoStrategy.class), "METADATO");
         this.baseDatos = baseDatos;
     }
 
@@ -64,36 +58,4 @@ public final class MetadatoCatalogoStrategy implements MetadatoRepository {
         return consultar("parametro:" + idParametro, () -> baseDatos.findByIdParametro(idParametro));
     }
 
-    private List<MetadatoEntity> consultar(final String clave, final Supplier<List<MetadatoEntity>> consulta) {
-        String version;
-        try {
-            version = cache.obtenerVersion();
-            var resultado = cache.consultar(version, clave);
-            if (resultado.isPresent()) {
-                LOGGER.debug("[CACHE-METADATO] Consulta resuelta desde cache: {}", clave);
-                return resultado.get();
-            }
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-METADATO] Cache no disponible; se consulta la base de datos", exception);
-            return consulta.get();
-        }
-
-        var resultado = consulta.get();
-        try {
-            // Una mutacion concurrente cambia la version: esta respuesta quedara inaccesible.
-            cache.guardar(version, clave, resultado);
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-METADATO] No fue posible poblar la cache", exception);
-        }
-        return resultado;
-    }
-
-    private void invalidar() {
-        try {
-            cache.invalidar();
-        } catch (final TechnicalException exception) {
-            // La transaccion ya fue confirmada; no se reporta como fallida al cliente.
-            LOGGER.warn("[CACHE-METADATO] No fue posible invalidar la cache; los datos expiran por TTL", exception);
-        }
-    }
 }

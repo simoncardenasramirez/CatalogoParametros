@@ -3,9 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.estrategia;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +11,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Par
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 
 /** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
 @Service
-public final class ParametroCatalogoStrategy implements ParametroRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCatalogoStrategy.class);
-
-    private final CacheParametroRepository cache;
+public final class ParametroCatalogoStrategy extends CatalogoCacheStrategy<ParametroEntity> implements ParametroRepository {
     private final BaseDatosParametroRepository baseDatos;
 
     public ParametroCatalogoStrategy(final CacheParametroRepository cache,
             final BaseDatosParametroRepository baseDatos) {
-        this.cache = cache;
+        super(cache, LoggerFactory.getLogger(ParametroCatalogoStrategy.class), "PARAMETRO");
         this.baseDatos = baseDatos;
     }
 
@@ -78,36 +72,4 @@ public final class ParametroCatalogoStrategy implements ParametroRepository {
         invalidar();
     }
 
-    private List<ParametroEntity> consultar(final String clave, final Supplier<List<ParametroEntity>> consulta) {
-        String version;
-        try {
-            version = cache.obtenerVersion();
-            var resultado = cache.consultar(version, clave);
-            if (resultado.isPresent()) {
-                LOGGER.debug("[CACHE-PARAMETRO] Consulta resuelta desde cache: {}", clave);
-                return resultado.get();
-            }
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-PARAMETRO] Cache no disponible; se consulta la base de datos", exception);
-            return consulta.get();
-        }
-
-        var resultado = consulta.get();
-        try {
-            // Una mutacion concurrente cambia la version: esta respuesta quedara inaccesible.
-            cache.guardar(version, clave, resultado);
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-PARAMETRO] No fue posible poblar la cache", exception);
-        }
-        return resultado;
-    }
-
-    private void invalidar() {
-        try {
-            cache.invalidar();
-        } catch (final TechnicalException exception) {
-            // La transaccion ya fue confirmada; no se reporta como fallida al cliente.
-            LOGGER.warn("[CACHE-PARAMETRO] No fue posible invalidar la cache; los datos expiran por TTL", exception);
-        }
-    }
 }

@@ -3,9 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.estrategia;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +11,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Met
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosMetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheMetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 
 /** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
 @Service
-public final class MetadatoAmbienteCatalogoStrategy implements MetadatoAmbienteRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadatoAmbienteCatalogoStrategy.class);
-
-    private final CacheMetadatoAmbienteRepository cache;
+public final class MetadatoAmbienteCatalogoStrategy extends CatalogoCacheStrategy<MetadatoAmbienteEntity> implements MetadatoAmbienteRepository {
     private final BaseDatosMetadatoAmbienteRepository baseDatos;
 
     public MetadatoAmbienteCatalogoStrategy(final CacheMetadatoAmbienteRepository cache,
             final BaseDatosMetadatoAmbienteRepository baseDatos) {
-        this.cache = cache;
+        super(cache, LoggerFactory.getLogger(MetadatoAmbienteCatalogoStrategy.class), "METADATOAMBIENTE");
         this.baseDatos = baseDatos;
     }
 
@@ -74,36 +68,4 @@ public final class MetadatoAmbienteCatalogoStrategy implements MetadatoAmbienteR
         return baseDatos.existsByIdEstadoMetadatoAmbiente(idEstadoMetadatoAmbiente);
     }
 
-    private List<MetadatoAmbienteEntity> consultar(final String clave, final Supplier<List<MetadatoAmbienteEntity>> consulta) {
-        String version;
-        try {
-            version = cache.obtenerVersion();
-            var resultado = cache.consultar(version, clave);
-            if (resultado.isPresent()) {
-                LOGGER.debug("[CACHE-METADATOAMBIENTE] Consulta resuelta desde cache: {}", clave);
-                return resultado.get();
-            }
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-METADATOAMBIENTE] Cache no disponible; se consulta la base de datos", exception);
-            return consulta.get();
-        }
-
-        var resultado = consulta.get();
-        try {
-            // Una mutacion concurrente cambia la version: esta respuesta quedara inaccesible.
-            cache.guardar(version, clave, resultado);
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-METADATOAMBIENTE] No fue posible poblar la cache", exception);
-        }
-        return resultado;
-    }
-
-    private void invalidar() {
-        try {
-            cache.invalidar();
-        } catch (final TechnicalException exception) {
-            // La transaccion ya fue confirmada; no se reporta como fallida al cliente.
-            LOGGER.warn("[CACHE-METADATOAMBIENTE] No fue posible invalidar la cache; los datos expiran por TTL", exception);
-        }
-    }
 }

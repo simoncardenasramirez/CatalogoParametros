@@ -3,9 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.estrategia;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +11,15 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Est
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosEstadoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheEstadoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoAmbienteRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 
 /** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
 @Service
-public final class EstadoAmbienteCatalogoStrategy implements EstadoAmbienteRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EstadoAmbienteCatalogoStrategy.class);
-
-    private final CacheEstadoAmbienteRepository cache;
+public final class EstadoAmbienteCatalogoStrategy extends CatalogoCacheStrategy<EstadoAmbienteEntity> implements EstadoAmbienteRepository {
     private final BaseDatosEstadoAmbienteRepository baseDatos;
 
     public EstadoAmbienteCatalogoStrategy(final CacheEstadoAmbienteRepository cache,
             final BaseDatosEstadoAmbienteRepository baseDatos) {
-        this.cache = cache;
+        super(cache, LoggerFactory.getLogger(EstadoAmbienteCatalogoStrategy.class), "ESTADOAMBIENTE");
         this.baseDatos = baseDatos;
     }
 
@@ -69,36 +63,4 @@ public final class EstadoAmbienteCatalogoStrategy implements EstadoAmbienteRepos
         return consultar("pagina:" + pagina + ":" + tamanoPagina, () -> baseDatos.findAllPaginado(pagina, tamanoPagina));
     }
 
-    private List<EstadoAmbienteEntity> consultar(final String clave, final Supplier<List<EstadoAmbienteEntity>> consulta) {
-        String version;
-        try {
-            version = cache.obtenerVersion();
-            var resultado = cache.consultar(version, clave);
-            if (resultado.isPresent()) {
-                LOGGER.debug("[CACHE-ESTADOAMBIENTE] Consulta resuelta desde cache: {}", clave);
-                return resultado.get();
-            }
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-ESTADOAMBIENTE] Cache no disponible; se consulta la base de datos", exception);
-            return consulta.get();
-        }
-
-        var resultado = consulta.get();
-        try {
-            // Una mutacion concurrente cambia la version: esta respuesta quedara inaccesible.
-            cache.guardar(version, clave, resultado);
-        } catch (final TechnicalException exception) {
-            LOGGER.warn("[CACHE-ESTADOAMBIENTE] No fue posible poblar la cache", exception);
-        }
-        return resultado;
-    }
-
-    private void invalidar() {
-        try {
-            cache.invalidar();
-        } catch (final TechnicalException exception) {
-            // La transaccion ya fue confirmada; no se reporta como fallida al cliente.
-            LOGGER.warn("[CACHE-ESTADOAMBIENTE] No fue posible invalidar la cache; los datos expiran por TTL", exception);
-        }
-    }
 }

@@ -98,6 +98,18 @@ class AmbienteCatalogoStrategyTest {
     }
 
     @Test
+    void debePropagarErrorDeBaseDatosCuandoCacheTambienFalla() {
+        when(cache.obtenerVersion()).thenThrow(new TechnicalException("Cache no disponible"));
+        var error = new TechnicalException("Base de datos no disponible");
+        when(baseDatos.findAll()).thenThrow(error);
+
+        assertSame(error, assertThrows(TechnicalException.class, estrategia::findAll));
+
+        verify(baseDatos).findAll();
+        verify(cache, never()).guardar(any(), any(), any());
+    }
+
+    @Test
     void debeInvalidarDespuesDeConfirmarCuandoCreaAmbiente() {
         when(baseDatos.save(dato)).thenReturn(dato);
         assertSame(dato, estrategia.save(dato));
