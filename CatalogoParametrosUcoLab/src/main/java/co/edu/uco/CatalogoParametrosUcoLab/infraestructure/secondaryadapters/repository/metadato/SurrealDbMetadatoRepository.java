@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public final class SurrealDbMetadatoRepository implements MetadatoRepository {
+public final class SurrealDbMetadatoRepository implements BaseDatosMetadatoRepository {
     private static final String TABLE = "metadatos";
     private final SurrealDbClient client;
     public SurrealDbMetadatoRepository(final SurrealDbClient client) { this.client = client; }

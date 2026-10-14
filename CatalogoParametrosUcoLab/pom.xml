@@ -38,6 +38,15 @@
         </sonar.cpd.exclusions>
     </properties>
 
+    <!-- Repositorio del starter de seguridad deshabilitado temporalmente.
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/seguridad-uco/securitybaseline</url>
+        </repository>
+    </repositories>
+    -->
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -53,10 +62,23 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
+
+        <!-- Starter de seguridad deshabilitado temporalmente para el build local y Docker.
+        <dependency>
+            <groupId>co.edu.uco</groupId>
+            <artifactId>security-pep-integration-spring-boot-starter</artifactId>
+            <version>0.1.3</version>
+        </dependency>
+        -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

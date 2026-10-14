@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoMetadatoEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoMetadatoRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosTipoMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public final class SurrealDbTipoMetadatoRepository implements TipoMetadatoRepository {
+public final class SurrealDbTipoMetadatoRepository implements BaseDatosTipoMetadatoRepository {
     private static final String TABLE_NAME = "tipos_metadato";
     public static final UUID JSON_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     public static final UUID ALFANUMERICO_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");

@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.EstadoMetadatoAmbienteRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosEstadoMetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
@@ -16,7 +16,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 
 @Repository
-public final class SurrealDbEstadoMetadatoAmbienteRepository implements EstadoMetadatoAmbienteRepository {
+public final class SurrealDbEstadoMetadatoAmbienteRepository implements BaseDatosEstadoMetadatoAmbienteRepository {
     private static final String TABLE_NAME = "estados_metadato_ambiente";
     private final SurrealDbClient surrealDbClient;
 
