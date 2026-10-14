@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosOrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -16,7 +16,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.sur
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbOrganizacionRepository implements OrganizacionRepository {
+public class SurrealDbOrganizacionRepository implements BaseDatosOrganizacionRepository {
 
     private static final String TABLE_NAME = "organizaciones";
 

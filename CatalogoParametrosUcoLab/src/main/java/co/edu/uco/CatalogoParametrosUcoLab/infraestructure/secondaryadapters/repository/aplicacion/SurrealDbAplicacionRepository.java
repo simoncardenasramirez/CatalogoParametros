@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AplicacionEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AplicacionRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosAplicacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -16,7 +16,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.sur
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbAplicacionRepository implements AplicacionRepository {
+public class SurrealDbAplicacionRepository implements BaseDatosAplicacionRepository {
 
     private static final String TABLE_NAME = "aplicaciones";
 

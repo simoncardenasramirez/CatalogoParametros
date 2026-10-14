@@ -1,0 +1,26 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AplicacionEntity;
+
+public interface BaseDatosAplicacionRepository {
+
+    AplicacionEntity save(AplicacionEntity aplicacion);
+
+    AplicacionEntity update(AplicacionEntity aplicacion);
+
+    boolean existsByNombre(String nombre);
+
+    Optional<AplicacionEntity> findById(UUID id);
+
+    List<AplicacionEntity> findAll();
+
+    List<AplicacionEntity> findAllPaginado(int pagina, int tamanoPagina);
+
+    boolean existsByIdOrganizacion(UUID idOrganizacion);
+
+    void deleteById(UUID id);
+}

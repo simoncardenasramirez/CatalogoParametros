@@ -8,14 +8,14 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoParametroEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoParametroRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosTipoParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.surrealdb.SurrealDbClient;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbTipoParametroRepository implements TipoParametroRepository {
+public class SurrealDbTipoParametroRepository implements BaseDatosTipoParametroRepository {
 
     private static final String TABLE_NAME = "tipos_parametro";
 

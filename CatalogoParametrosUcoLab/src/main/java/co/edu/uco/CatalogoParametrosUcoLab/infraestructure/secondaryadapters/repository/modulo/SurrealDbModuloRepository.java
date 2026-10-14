@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
-import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosModuloRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -16,7 +16,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.sur
 import tools.jackson.databind.JsonNode;
 
 @Repository
-public class SurrealDbModuloRepository implements ModuloRepository {
+public class SurrealDbModuloRepository implements BaseDatosModuloRepository {
 
     private static final String TABLE_NAME = "modulos";
 

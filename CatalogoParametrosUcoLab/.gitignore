@@ -42,8 +42,7 @@ data/
 # Variables de entorno
 .env
 
-# Docker Compose
-/docker-compose.yml
+# Docker Compose se versiona; los secretos permanecen en .env.
 
 # SurrealDB
 surrealdb-data/
