@@ -47,6 +47,12 @@ public final class ParametroCatalogoStrategy extends CatalogoCacheStrategy<Param
     }
 
     @Override
+    public List<ParametroEntity> findByAplicacionAndAmbiente(final UUID aplicacionId, final UUID ambienteId) {
+        return consultar("aplicacion:" + aplicacionId + ":ambiente:" + ambienteId,
+                () -> baseDatos.findByAplicacionAndAmbiente(aplicacionId, ambienteId));
+    }
+
+    @Override
     public boolean existsByNombre(final String nombre) {
         // Las validaciones de unicidad siempre consultan la fuente de verdad.
         return baseDatos.existsByNombre(nombre);

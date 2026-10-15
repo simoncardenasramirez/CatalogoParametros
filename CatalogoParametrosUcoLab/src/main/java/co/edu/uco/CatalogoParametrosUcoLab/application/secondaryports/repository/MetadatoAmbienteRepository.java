@@ -13,6 +13,7 @@ public interface MetadatoAmbienteRepository {
     Optional<MetadatoAmbienteEntity> findById(UUID id);
     List<MetadatoAmbienteEntity> findAll();
     List<MetadatoAmbienteEntity> findAllPaginado(int pagina, int tamanoPagina);
+    List<MetadatoAmbienteEntity> findByIdParametroAndIdAmbiente(UUID idParametro, UUID idAmbiente);
     boolean existsByIdAmbiente(UUID idAmbiente);
     boolean existsByIdEstadoMetadatoAmbiente(UUID idEstadoMetadatoAmbiente);
 }

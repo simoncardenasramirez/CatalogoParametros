@@ -38,14 +38,13 @@
         </sonar.cpd.exclusions>
     </properties>
 
-    <!-- Repositorio del starter de seguridad deshabilitado temporalmente.
     <repositories>
         <repository>
             <id>github</id>
             <url>https://maven.pkg.github.com/seguridad-uco/securitybaseline</url>
         </repository>
     </repositories>
-    -->
+
 
     <dependencyManagement>
         <dependencies>
@@ -83,6 +82,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
         <!-- Habilita AOP para interceptar las capas y crear spans anidados. -->

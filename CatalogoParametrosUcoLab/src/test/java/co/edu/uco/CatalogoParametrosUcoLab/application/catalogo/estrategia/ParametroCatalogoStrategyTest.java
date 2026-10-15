@@ -75,6 +75,18 @@ class ParametroCatalogoStrategyTest {
     }
 
     @Test
+    void debeSepararCachePorAplicacionYAmbiente() {
+        var aplicacionId = UUID.randomUUID();
+        var ambienteId = UUID.randomUUID();
+        when(cache.obtenerVersion()).thenReturn("v1");
+        when(baseDatos.findByAplicacionAndAmbiente(aplicacionId, ambienteId)).thenReturn(List.of(parametro));
+
+        assertEquals(List.of(parametro), estrategia.findByAplicacionAndAmbiente(aplicacionId, ambienteId));
+        verify(cache).guardar("v1", "aplicacion:" + aplicacionId + ":ambiente:" + ambienteId,
+                List.of(parametro));
+    }
+
+    @Test
     void debeConsultarBaseDatosCuandoRedisNoEstaDisponible() {
         when(cache.obtenerVersion()).thenThrow(new TechnicalException("Redis no disponible"));
         when(baseDatos.findAll()).thenReturn(List.of(parametro));

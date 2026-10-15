@@ -109,6 +109,28 @@ public class SurrealDbParametroRepository implements BaseDatosParametroRepositor
     }
 
     @Override
+    public List<ParametroEntity> findByAplicacionAndAmbiente(final UUID aplicacionId, final UUID ambienteId) {
+        var query = """
+                LET $modulos = SELECT VALUE <string>record::id(id)
+                    FROM modulos WHERE idAplicacion = '%s';
+                LET $funcionalidades = SELECT VALUE <string>record::id(id)
+                    FROM funcionalidades WHERE idModulo IN $modulos;
+                LET $parametrosAmbiente = SELECT VALUE idParametro
+                    FROM metadatos_ambiente WHERE idAmbiente = '%s';
+                SELECT * FROM %s
+                    WHERE idFuncionalidad IN $funcionalidades
+                    AND <string>record::id(id) IN $parametrosAmbiente
+                    ORDER BY nombre;
+                """.formatted(aplicacionId, ambienteId, TABLE_NAME);
+        var result = firstStatementResult(surrealDbClient.execute(query));
+        var parametros = new ArrayList<ParametroEntity>();
+        if (result.isArray()) {
+            result.forEach(item -> parametros.add(toEntity(item)));
+        }
+        return parametros;
+    }
+
+    @Override
     public List<ParametroEntity> findAll() {
         var result = firstStatementResult(surrealDbClient.execute("SELECT * FROM " + TABLE_NAME + ";"));
         var parametros = new ArrayList<ParametroEntity>();

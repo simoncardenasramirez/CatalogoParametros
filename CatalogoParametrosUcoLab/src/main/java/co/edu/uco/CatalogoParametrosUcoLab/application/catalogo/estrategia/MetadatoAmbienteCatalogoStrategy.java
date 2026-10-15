@@ -59,6 +59,13 @@ public final class MetadatoAmbienteCatalogoStrategy extends CatalogoCacheStrateg
     }
 
     @Override
+    public List<MetadatoAmbienteEntity> findByIdParametroAndIdAmbiente(final UUID idParametro,
+            final UUID idAmbiente) {
+        return consultar("parametro:" + idParametro + ":ambiente:" + idAmbiente,
+                () -> baseDatos.findByIdParametroAndIdAmbiente(idParametro, idAmbiente));
+    }
+
+    @Override
     public boolean existsByIdAmbiente(final UUID idAmbiente) {
         return baseDatos.existsByIdAmbiente(idAmbiente);
     }

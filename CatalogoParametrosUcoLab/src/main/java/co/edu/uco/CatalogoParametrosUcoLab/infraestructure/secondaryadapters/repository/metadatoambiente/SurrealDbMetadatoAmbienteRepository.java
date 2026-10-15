@@ -57,6 +57,13 @@ public final class SurrealDbMetadatoAmbienteRepository implements BaseDatosMetad
         return query("SELECT * FROM %s LIMIT %d START %d;".formatted(TABLE_NAME, tamanoPagina, offset));
     }
 
+    @Override
+    public List<MetadatoAmbienteEntity> findByIdParametroAndIdAmbiente(final UUID idParametro,
+            final UUID idAmbiente) {
+        return query("SELECT * FROM %s WHERE idParametro = '%s' AND idAmbiente = '%s';"
+                .formatted(TABLE_NAME, idParametro, idAmbiente));
+    }
+
     @Override public boolean existsByIdAmbiente(final UUID idAmbiente) {
         return exists("idAmbiente", idAmbiente);
     }
