@@ -29,7 +29,7 @@ class WebConfigTest {
         var config = registry.getConfiguraciones().get("/**");
         assertNotNull(config);
         assertEquals(List.of("http://localhost:4200"), config.getAllowedOrigins());
-        assertEquals(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"), config.getAllowedMethods());
+        assertEquals(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"), config.getAllowedMethods());
         assertEquals(List.of("*"), config.getAllowedHeaders());
         assertTrue(config.getAllowCredentials());
         assertEquals(3600L, config.getMaxAge());
