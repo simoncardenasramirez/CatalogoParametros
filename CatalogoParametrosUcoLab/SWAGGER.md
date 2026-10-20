@@ -9,7 +9,7 @@ El documento generado por Springdoc es una vista **code-first** útil para compa
 implementación con el contrato. No debe utilizarse como fuente de verdad para diseñar
 integraciones nuevas.
 
-Inicia la aplicación con Java 21 y la configuración habitual de Azure Key Vault y SurrealDB:
+Inicia la aplicación con Java 25 y la configuración habitual de Azure Key Vault y SurrealDB:
 
 ```sh
 ./mvnw spring-boot:run
