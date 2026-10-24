@@ -5,6 +5,11 @@ funcionalidades, parámetros y metadatos. Está construido con Java 25, Spring B
 Spring WebFlux, usa SurrealDB para persistencia y publica eventos en tiempo real mediante
 Server-Sent Events (SSE).
 
+El tratamiento automatico de estados y vencimientos, la cascada y el contrato
+UTC estan documentados en [Vigencias y estados](docs/vigencias-y-estados.md).
+
+Para integrar el catálogo en otra aplicación, consultar la [Guía de adopción del Catálogo de Parámetros y su microfrontend](docs/guia-adopcion-parametros.md).
+
 ## Contenido
 
 - [Tecnologías](#tecnologías)

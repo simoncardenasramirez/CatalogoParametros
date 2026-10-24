@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.config;
 
 import org.junit.jupiter.api.Test;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -28,6 +29,7 @@ class RedisCacheWiringTest {
                 .thenReturn(JsonMapper.builder().build().readTree("[{\"result\": []}]"));
 
         try (var contexto = new AnnotationConfigApplicationContext()) {
+            contexto.registerBean(ControlEstadoCatalogo.class, () -> mock(ControlEstadoCatalogo.class));
             contexto.registerBean(StringRedisTemplate.class, () -> redis);
             contexto.registerBean(SurrealDbClient.class, () -> surreal);
             contexto.registerBean(RedisCacheProperties.class, () -> properties);

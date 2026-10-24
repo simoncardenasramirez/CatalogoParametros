@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.token.creartoken.usecase.domain;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.domain.Domain;
@@ -12,20 +13,20 @@ public final class CrearTokenDomain extends Domain {
     private final UUID estadoToken;
     private final UUID aplicacionId;
     private final UUID ambienteId;
-    private final LocalDateTime fechaExpiracion;
+    private final OffsetDateTime fechaExpiracion;
 
     private CrearTokenDomain(final UUID id, final String token, final UUID estadoToken, final UUID aplicacionId,
-            final UUID ambienteId, final LocalDateTime fechaExpiracion) {
+            final UUID ambienteId, final OffsetDateTime fechaExpiracion) {
         super(id);
         this.token = TextHelper.applyTrim(token);
         this.estadoToken = UUIDHelper.getDefault(estadoToken);
         this.aplicacionId = UUIDHelper.getDefault(aplicacionId);
         this.ambienteId = UUIDHelper.getDefault(ambienteId);
-        this.fechaExpiracion = fechaExpiracion;
+        this.fechaExpiracion = DateTimeHelper.toUtc(fechaExpiracion);
     }
 
     public static CrearTokenDomain create(final UUID id, final String token, final UUID estadoToken,
-            final UUID aplicacionId, final UUID ambienteId, final LocalDateTime fechaExpiracion) {
+            final UUID aplicacionId, final UUID ambienteId, final OffsetDateTime fechaExpiracion) {
         return new CrearTokenDomain(id, token, estadoToken, aplicacionId, ambienteId, fechaExpiracion);
     }
 
@@ -33,5 +34,5 @@ public final class CrearTokenDomain extends Domain {
     public UUID getEstadoToken() { return estadoToken; }
     public UUID getAplicacionId() { return aplicacionId; }
     public UUID getAmbienteId() { return ambienteId; }
-    public LocalDateTime getFechaExpiracion() { return fechaExpiracion; }
+    public OffsetDateTime getFechaExpiracion() { return fechaExpiracion; }
 }

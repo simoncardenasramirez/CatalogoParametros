@@ -46,7 +46,7 @@ class ActualizarModuloInteractorImplTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(UUID.fromString(idAplicacion), domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(OffsetDateTime.parse("2026-01-01T00:00:00-05:00", DATE_FORMATTER), domain.getFechaInicio());
-        assertEquals(OffsetDateTime.parse("2026-12-31T23:59:59-05:00", DATE_FORMATTER), domain.getFechaFinal());
+        assertEquals((OffsetDateTime.parse("2026-01-01T00:00:00-05:00", DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaInicio());
+        assertEquals((OffsetDateTime.parse("2026-12-31T23:59:59-05:00", DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaFinal());
     }
 }

@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.primaryports.dto;
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 
 public final class ActualizarOrganizacionDtoInput {
 
@@ -17,7 +18,7 @@ public final class ActualizarOrganizacionDtoInput {
     }
 
     public ActualizarOrganizacionDtoInput(final String nombre, final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
-        setNombre(nombre); this.fechaInicio = fechaInicio; this.fechaFinal = fechaFinal;
+        setNombre(nombre); this.fechaInicio = DateTimeHelper.toUtc(fechaInicio); this.fechaFinal = DateTimeHelper.toUtc(fechaFinal);
     }
 
     public static ActualizarOrganizacionDtoInput create(final String nombre) {

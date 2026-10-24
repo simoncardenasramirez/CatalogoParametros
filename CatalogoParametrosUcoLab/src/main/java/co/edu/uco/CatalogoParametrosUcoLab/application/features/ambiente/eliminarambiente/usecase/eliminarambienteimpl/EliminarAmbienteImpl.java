@@ -10,6 +10,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.elimina
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.ambiente.eliminarambiente.secondaryports.publisher.EliminarAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 
@@ -21,13 +22,16 @@ public final class EliminarAmbienteImpl implements EliminarAmbiente {
     private final EliminarAmbientePublisher publisher;
     private final MetadatoAmbienteRepository metadatoRepository;
     private final TelemetryService telemetryService;
+    private final MetadatoRepository valores;
 
     public EliminarAmbienteImpl(final AmbienteRepository repository, final EliminarAmbientePublisher publisher,
-            final MetadatoAmbienteRepository metadatoRepository, final TelemetryService telemetryService) {
+            final MetadatoAmbienteRepository metadatoRepository, final TelemetryService telemetryService,
+            final MetadatoRepository valores) {
         this.repository = repository;
         this.publisher = publisher;
         this.metadatoRepository = metadatoRepository;
         this.telemetryService = telemetryService;
+        this.valores = valores;
     }
 
     @Override public void execute(final UUID id) {
@@ -35,7 +39,7 @@ public final class EliminarAmbienteImpl implements EliminarAmbiente {
             LOGGER.info("[ELIMINAR-AMBIENTE] Iniciando eliminacion de ambiente con id: {}", id);
             final var entity = repository.findById(id)
                     .orElseThrow(() -> NotFoundException.build("No se encontro ambiente."));
-            if (metadatoRepository.existsByIdAmbiente(id)) {
+            if (metadatoRepository.existsByIdAmbiente(id) || valores.findAll().stream().anyMatch(m -> id.equals(m.getIdAmbiente()))) {
                 throw ConflictException.build("No se puede eliminar el ambiente porque tiene metadatos asociados.");
             }
             repository.deleteById(id);

@@ -2,6 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.features.token.consultar
 
 import java.util.List;
 import java.util.UUID;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
 
 import org.springframework.stereotype.Service;
 
@@ -66,11 +67,12 @@ public final class ConsultarParametrosPorTokenImpl implements ConsultarParametro
         }
         return tokens.findById(tokenId).map(token -> {
             var detalles = parametros.findByAplicacionAndAmbiente(token.getAplicacionId(), token.getAmbienteId())
-                    .stream().map(parametro -> {
+                    .stream().filter(ParametroEntity::isActivo).map(parametro -> {
                         var funcionalidad = funcionalidades.findById(parametro.getIdFuncionalidad()).orElse(null);
                         var modulo = funcionalidad == null ? null
                                 : modulos.findById(funcionalidad.getIdModulo()).orElse(null);
                         var metadata = metadatos.findByIdParametro(parametro.getId()).stream()
+                                .filter(metadato -> token.getAmbienteId().equals(metadato.getIdAmbiente()))
                                 .map(metadato -> new MetadatoDetalle(metadato,
                                         tiposMetadato.findById(metadato.getIdTipoMetadato()).orElse(null)))
                                 .toList();

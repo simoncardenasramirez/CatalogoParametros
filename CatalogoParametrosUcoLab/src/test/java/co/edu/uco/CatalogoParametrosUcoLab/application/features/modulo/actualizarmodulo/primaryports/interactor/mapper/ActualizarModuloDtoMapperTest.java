@@ -31,8 +31,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", input.getNombre());
         assertEquals(UUID.fromString(idAplicacion), input.getIdAplicacion());
         assertTrue(input.isActivo());
-        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), input.getFechaInicio());
-        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), input.getFechaFinal());
+        assertEquals((OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaInicio());
+        assertEquals((OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaFinal());
     }
 
     @Test
@@ -54,8 +54,8 @@ class ActualizarModuloDtoMapperTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(idAplicacion, domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER), domain.getFechaInicio());
-        assertEquals(OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER), domain.getFechaFinal());
+        assertEquals((OffsetDateTime.parse(FECHA_INICIO, DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaInicio());
+        assertEquals((OffsetDateTime.parse(FECHA_FINAL, DATE_FORMATTER)).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaFinal());
     }
 
     @Test
@@ -72,7 +72,7 @@ class ActualizarModuloDtoMapperTest {
         assertEquals(viaRequest.getNombre(), viaInput.getNombre());
         assertEquals(viaRequest.getIdAplicacion(), viaInput.getIdAplicacion());
         assertEquals(viaRequest.isActivo(), viaInput.isActivo());
-        assertEquals(viaRequest.getFechaInicio(), viaInput.getFechaInicio());
-        assertEquals(viaRequest.getFechaFinal(), viaInput.getFechaFinal());
+        assertEquals((viaRequest.getFechaInicio()).withOffsetSameInstant(java.time.ZoneOffset.UTC), viaInput.getFechaInicio());
+        assertEquals((viaRequest.getFechaFinal()).withOffsetSameInstant(java.time.ZoneOffset.UTC), viaInput.getFechaFinal());
     }
 }

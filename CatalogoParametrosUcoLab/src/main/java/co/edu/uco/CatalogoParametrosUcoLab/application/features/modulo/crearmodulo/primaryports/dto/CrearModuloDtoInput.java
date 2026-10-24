@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.modulo.crearmodulo.primaryports.dto;
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
@@ -60,7 +61,7 @@ public final class CrearModuloDtoInput {
     }
 
     public void setFechaInicio(final OffsetDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
+        this.fechaInicio = DateTimeHelper.toUtc(fechaInicio);
     }
 
     public OffsetDateTime getFechaFinal() {
@@ -68,6 +69,6 @@ public final class CrearModuloDtoInput {
     }
 
     public void setFechaFinal(final OffsetDateTime fechaFinal) {
-        this.fechaFinal = fechaFinal;
+        this.fechaFinal = DateTimeHelper.toUtc(fechaFinal);
     }
 }

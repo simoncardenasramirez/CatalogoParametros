@@ -25,8 +25,8 @@ class ModuloEntityTest {
         assertEquals("modulo", entity.getNombre());
         assertEquals(idAplicacion, entity.getIdAplicacion());
         assertTrue(entity.isActivo());
-        assertEquals(fechaInicio, entity.getFechaInicio());
-        assertEquals(fechaFinal, entity.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaFinal());
     }
 
     @Test

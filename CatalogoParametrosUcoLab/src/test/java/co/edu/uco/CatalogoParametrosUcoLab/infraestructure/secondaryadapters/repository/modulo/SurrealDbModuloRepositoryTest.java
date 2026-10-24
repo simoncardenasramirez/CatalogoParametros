@@ -37,7 +37,7 @@ class SurrealDbModuloRepositoryTest {
                 () -> assertTrue(consulta.getValue().contains("O\\'Reilly\\\\UCO")),
                 () -> assertTrue(consulta.getValue().contains("idAplicacion: '" + PADRE + "'")),
                 () -> assertTrue(consulta.getValue().contains("activo: true")),
-                () -> assertTrue(consulta.getValue().contains("fechaInicio: '2026-01-02T10:30-05:00'")),
+                () -> assertTrue(consulta.getValue().contains("fechaInicio: '2026-01-02T15:30:00Z'")),
                 () -> assertTrue(consulta.getValue().contains("fechaFinal: null")),
                 () -> assertTrue(consulta.getValue().stripTrailing().endsWith("COMMIT TRANSACTION;")));
     }
@@ -53,7 +53,7 @@ class SurrealDbModuloRepositoryTest {
                 () -> assertTrue(consulta.getValue().contains("nombre: 'Actualizado'")),
                 () -> assertTrue(consulta.getValue().contains("activo: false")),
                 () -> assertTrue(consulta.getValue().contains("fechaInicio: null")),
-                () -> assertTrue(consulta.getValue().contains("fechaFinal: '2026-01-02T10:30-05:00'")),
+                () -> assertTrue(consulta.getValue().contains("fechaFinal: '2026-01-02T15:30:00Z'")),
                 () -> assertTrue(consulta.getValue().contains("COMMIT TRANSACTION;")));
     }
 
@@ -74,7 +74,7 @@ class SurrealDbModuloRepositoryTest {
                 () -> assertEquals("Catalogo", entidad.getNombre()),
                 () -> assertEquals(PADRE, entidad.getIdAplicacion()),
                 () -> assertTrue(entidad.isActivo()),
-                () -> assertEquals(FECHA, entidad.getFechaInicio()),
+                () -> assertEquals((FECHA).withOffsetSameInstant(java.time.ZoneOffset.UTC), entidad.getFechaInicio()),
                 () -> assertNull(entidad.getFechaFinal()));
         verify(cliente).execute("SELECT * FROM modulos:`" + ID + "`;");
     }
@@ -139,8 +139,8 @@ class SurrealDbModuloRepositoryTest {
     void debeNormalizarFechaCuandoSurrealDevuelveFormatosSoportados(final String fecha) {
         responder(registro().put("fechaInicio", fecha).put("fechaFinal", fecha));
         var entidad = repositorio.findById(ID).orElseThrow();
-        assertEquals(FECHA, entidad.getFechaInicio());
-        assertEquals(FECHA, entidad.getFechaFinal());
+        assertEquals((FECHA).withOffsetSameInstant(java.time.ZoneOffset.UTC), entidad.getFechaInicio());
+        assertEquals((FECHA).withOffsetSameInstant(java.time.ZoneOffset.UTC), entidad.getFechaFinal());
     }
 
     @Test

@@ -37,8 +37,8 @@ class CrearModuloDtoInputTest {
         assertEquals("modulo", dto.getNombre());
         assertEquals(idAplicacion, dto.getIdAplicacion());
         assertTrue(dto.isActivo());
-        assertEquals(fechaInicio, dto.getFechaInicio());
-        assertEquals(fechaFinal, dto.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaFinal());
     }
 
     @Test

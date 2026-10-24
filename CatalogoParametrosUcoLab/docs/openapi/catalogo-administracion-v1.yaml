@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: Administracion embebida del catalogo
+  version: 1.0.0
+  description: |
+    Complementa catalogo-parametros-v1.yaml. Requiere sesion de Seguridad y
+    autorizacion para cada metodo/ruta. El alcance procede del UUID de la ruta;
+    se valida la pertenencia actual y la del padre propuesto antes de mutar.
+    No acepta secretos de consulta como autorizacion administrativa.
+servers:
+  - url: http://localhost:8080/catalogo-parametros/api/v1
+security:
+  - Sesion: []
+paths:
+  /aplicaciones/{idAplicacion}/administracion/events:
+    parameters:
+      - $ref: '#/components/parameters/Aplicacion'
+    get:
+      operationId: escucharCambiosCatalogoAplicacion
+      description: SSE de cambios de su rama y ambientes auxiliares, sin valores ni credenciales. Evento catalogo-aplicacion; latidos cada 15 segundos. Requiere permiso GET propio.
+      responses:
+        '200':
+          description: Flujo vivo con notificaciones de invalidacion para refrescar su catalogo
+          content:
+            text/event-stream:
+              schema: { type: string }
+        '401': { description: Sesion requerida }
+        '403': { description: Sin permiso }
+        '404': { description: Aplicacion inexistente }
+  /aplicaciones/{idAplicacion}/administracion:
+    parameters:
+      - $ref: '#/components/parameters/Aplicacion'
+    get:
+      operationId: consultarAdministracionAplicacion
+      summary: Consulta la rama administrativa de una aplicacion, incluidos inactivos
+      responses:
+        '200':
+          description: Aplicacion y listas de su rama; auxiliares globales solo para selects
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [mensajes, catalogo]
+                properties:
+                  mensajes: { type: array, items: { type: string } }
+                  catalogo:
+                    type: object
+                    required: [aplicacion, modulos, funcionalidades, parametros, metadatos, metadatosAmbiente, ambientes, tiposParametro, tiposMetadato, estadosMetadatoAmbiente]
+                    properties:
+                      aplicacion: { type: object }
+                      modulos: { type: array, items: { type: object } }
+                      funcionalidades: { type: array, items: { type: object } }
+                      parametros: { type: array, items: { type: object } }
+                      metadatos: { type: array, items: { type: object } }
+                      metadatosAmbiente: { type: array, items: { type: object } }
+                      ambientes: { type: array, items: { type: object } }
+                      tiposParametro: { type: array, items: { type: object } }
+                      tiposMetadato: { type: array, items: { type: object } }
+                      estadosMetadatoAmbiente: { type: array, items: { type: object } }
+        '401': { description: Sesion requerida }
+        '403': { description: Sin permiso }
+        '404': { description: Aplicacion inexistente }
+  /aplicaciones/{idAplicacion}/administracion/{recurso}:
+    parameters:
+      - $ref: '#/components/parameters/Aplicacion'
+      - $ref: '#/components/parameters/Recurso'
+    post:
+      operationId: crearRecursoAplicacion
+      requestBody: { $ref: '#/components/requestBodies/Datos' }
+      responses:
+        '201': { $ref: '#/components/responses/Confirmacion' }
+        '400': { description: Datos, vigencia o relaciones invalidas }
+        '401': { description: Sesion requerida }
+        '403': { description: Sin permiso }
+        '404': { description: Aplicacion o padre inexistente en este alcance }
+        '409': { description: Conflicto de negocio }
+  /aplicaciones/{idAplicacion}/administracion/{recurso}/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Aplicacion'
+      - $ref: '#/components/parameters/Recurso'
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    put:
+      operationId: actualizarRecursoAplicacion
+      requestBody: { $ref: '#/components/requestBodies/Datos' }
+      responses:
+        '200': { $ref: '#/components/responses/Confirmacion' }
+        '400': { description: Datos, vigencia o relaciones invalidas }
+        '401': { description: Sesion requerida }
+        '403': { description: Sin permiso }
+        '404': { description: Recurso o padre inexistente en este alcance }
+        '409': { description: Conflicto de negocio }
+    delete:
+      operationId: eliminarRecursoAplicacion
+      responses:
+        '200': { $ref: '#/components/responses/Confirmacion' }
+        '400': { description: Recurso invalido }
+        '401': { description: Sesion requerida }
+        '403': { description: Sin permiso }
+        '404': { description: Recurso inexistente en este alcance }
+        '409': { description: Relaciones dependientes impiden eliminar }
+components:
+  securitySchemes:
+    Sesion:
+      type: apiKey
+      in: cookie
+      name: SECURITY_BASELINE_SESSION
+      description: Sesion de usuario administrada por Seguridad; usar su contrato de autenticacion.
+  parameters:
+    Aplicacion:
+      name: idAplicacion
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Recurso:
+      name: recurso
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [modulos, funcionalidades, parametros, metadatos, metadatos-ambiente]
+  requestBodies:
+    Datos:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: |
+              Modulos requieren nombre y fechas. Funcionalidades ademas idModulo.
+              Parametros requieren nombre, idFuncionalidad e idTipoParametro.
+              Metadatos requieren idParametro, idTipoMetadato, idAmbiente y valor JSON.
+              Asociaciones requieren idParametro, idAmbiente e idEstadoMetadatoAmbiente.
+              activo solo aplica a modulos, funcionalidades y parametros (defecto true).
+              No se asigna estado a metadatos ni ambientes. Fechas ISO con zona, UTC al persistir.
+            properties:
+              nombre: { type: string }
+              idModulo: { type: string, format: uuid }
+              idFuncionalidad: { type: string, format: uuid }
+              idTipoParametro: { type: string, format: uuid }
+              idParametro: { type: string, format: uuid }
+              idTipoMetadato: { type: string, format: uuid }
+              idAmbiente: { type: string, format: uuid }
+              idEstadoMetadatoAmbiente: { type: string, format: uuid }
+              activo: { type: boolean, default: true }
+              fechaInicio: { type: string, format: date-time }
+              fechaFinal: { type: string, format: date-time }
+              valor: { description: Cualquier valor JSON }
+  responses:
+    Confirmacion:
+      description: Mutacion confirmada mediante los casos de uso existentes
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [mensajes]
+            properties:
+              mensajes: { type: array, items: { type: string } }

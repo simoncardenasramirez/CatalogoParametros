@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AplicacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosAplicacionRepository;
@@ -16,25 +18,31 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class AplicacionCatalogoStrategy extends CatalogoCacheStrategy<AplicacionEntity> implements AplicacionRepository {
     private final BaseDatosAplicacionRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public AplicacionCatalogoStrategy(final CacheAplicacionRepository cache,
-            final BaseDatosAplicacionRepository baseDatos) {
+            final BaseDatosAplicacionRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(AplicacionCatalogoStrategy.class), "APLICACION");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
     public AplicacionEntity save(final AplicacionEntity aplicacion) {
-        var resultado = baseDatos.save(aplicacion);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(aplicacion), true, () -> {
+            var resultado = baseDatos.save(aplicacion);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public AplicacionEntity update(final AplicacionEntity aplicacion) {
-        var resultado = baseDatos.update(aplicacion);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(aplicacion), false, () -> {
+            var resultado = baseDatos.update(aplicacion);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

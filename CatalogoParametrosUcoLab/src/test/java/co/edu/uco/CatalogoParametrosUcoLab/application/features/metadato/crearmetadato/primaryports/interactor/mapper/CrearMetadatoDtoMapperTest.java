@@ -22,7 +22,7 @@ class CrearMetadatoDtoMapperTest {
         var valor = JsonNodeFactory.instance.objectNode();
         valor.put("contenido", "valor");
         var request = CrearMetadatoDtoRequest.create(
-                idParametro.toString(), idTipoMetadato.toString(), valor);
+                idParametro.toString(), idTipoMetadato.toString(), UUID.randomUUID().toString(), valor);
 
         CrearMetadatoDtoInput input = CrearMetadatoDtoMapper.INSTANCE.toDtoInput(request);
 

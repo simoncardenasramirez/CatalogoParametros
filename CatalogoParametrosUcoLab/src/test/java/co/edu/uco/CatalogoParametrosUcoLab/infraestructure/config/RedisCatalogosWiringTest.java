@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.config;
 
 import org.junit.jupiter.api.Test;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -18,6 +19,7 @@ class RedisCatalogosWiringTest {
     @Test
     void debeResolverTodosLosPuertosSinAmbiguedadCuandoRegistraCatalogosCompletos() throws ClassNotFoundException {
         try (var contexto = new AnnotationConfigApplicationContext()) {
+            contexto.registerBean(ControlEstadoCatalogo.class, () -> mock(ControlEstadoCatalogo.class));
             contexto.registerBean(StringRedisTemplate.class, () -> mock(StringRedisTemplate.class));
             contexto.registerBean(SurrealDbClient.class, () -> mock(SurrealDbClient.class));
             contexto.registerBean(RedisCacheProperties.class, RedisCacheProperties::new);

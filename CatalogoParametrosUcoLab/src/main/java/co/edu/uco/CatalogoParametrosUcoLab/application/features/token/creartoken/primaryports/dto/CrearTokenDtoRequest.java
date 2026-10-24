@@ -1,13 +1,14 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.token.creartoken.primaryports.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 
 public final class CrearTokenDtoRequest {
     private String token;
     private String estadoToken;
     private String aplicacionId;
     private String ambienteId;
-    private LocalDateTime fechaExpiracion;
+    private OffsetDateTime fechaExpiracion;
 
     public CrearTokenDtoRequest() { }
 
@@ -19,6 +20,6 @@ public final class CrearTokenDtoRequest {
     public void setAplicacionId(final String value) { aplicacionId = value; }
     public String getAmbienteId() { return ambienteId; }
     public void setAmbienteId(final String value) { ambienteId = value; }
-    public LocalDateTime getFechaExpiracion() { return fechaExpiracion; }
-    public void setFechaExpiracion(final LocalDateTime value) { fechaExpiracion = value; }
+    public OffsetDateTime getFechaExpiracion() { return fechaExpiracion; }
+    public void setFechaExpiracion(final OffsetDateTime value) { fechaExpiracion = DateTimeHelper.toUtc(value); }
 }

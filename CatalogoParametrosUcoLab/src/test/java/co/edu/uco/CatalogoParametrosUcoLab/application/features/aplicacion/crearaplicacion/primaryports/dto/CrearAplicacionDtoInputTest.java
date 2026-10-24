@@ -53,7 +53,7 @@ class CrearAplicacionDtoInputTest {
         assertEquals("aplicacion", dto.getNombre());
         assertEquals(idOrganizacion, dto.getIdOrganizacion());
         assertTrue(dto.isActiva());
-        assertEquals(fechaInicio, dto.getFechaInicio());
-        assertEquals(fechaFinal, dto.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaFinal());
     }
 }

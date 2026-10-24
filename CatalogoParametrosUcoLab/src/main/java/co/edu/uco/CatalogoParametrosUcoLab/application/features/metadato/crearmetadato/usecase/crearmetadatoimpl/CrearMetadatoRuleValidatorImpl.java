@@ -11,11 +11,15 @@ public final class CrearMetadatoRuleValidatorImpl implements CrearMetadatoRuleVa
     private final MetadatoValorIsNotEmptyRule valorRule;
     private final MetadatoParametroExistsRule parametroRule;
     private final MetadatoTipoMetadatoExistsRule tipoRule;
+    private final MetadatoAmbienteExistsRule ambienteRule;
     public CrearMetadatoRuleValidatorImpl(final MetadatoValorIsNotEmptyRule valorRule,
-            final MetadatoParametroExistsRule parametroRule, final MetadatoTipoMetadatoExistsRule tipoRule) {
+            final MetadatoParametroExistsRule parametroRule, final MetadatoTipoMetadatoExistsRule tipoRule,
+            final MetadatoAmbienteExistsRule ambienteRule) {
         this.valorRule = valorRule; this.parametroRule = parametroRule; this.tipoRule = tipoRule;
+        this.ambienteRule = ambienteRule;
     }
     @Override public void validate(final CrearMetadatoDomain data) {
+        ambienteRule.execute(data.getIdAmbiente());
         valorRule.execute(data); parametroRule.execute(data); tipoRule.execute(data);
     }
 }

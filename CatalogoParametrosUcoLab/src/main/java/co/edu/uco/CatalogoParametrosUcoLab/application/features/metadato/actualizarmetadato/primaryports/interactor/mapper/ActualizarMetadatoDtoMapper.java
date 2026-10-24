@@ -5,10 +5,14 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.actuali
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.actualizarmetadato.usecase.domain.ActualizarMetadatoDomain;
 public enum ActualizarMetadatoDtoMapper {
     INSTANCE;
+    private UUID ambiente(final String valor) {
+        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateId(valor, "identificador del ambiente");
+        return UUID.fromString(valor);
+    }
     public ActualizarMetadatoDtoInput toDtoInput(final ActualizarMetadatoDtoRequest dto) {
-        return new ActualizarMetadatoDtoInput(UUID.fromString(dto.getIdParametro()), UUID.fromString(dto.getIdTipoMetadato()), dto.getValor());
+        return new ActualizarMetadatoDtoInput(UUID.fromString(dto.getIdParametro()), UUID.fromString(dto.getIdTipoMetadato()), ambiente(dto.getIdAmbiente()), dto.getValor());
     }
     public ActualizarMetadatoDomain toDomain(final UUID id, final ActualizarMetadatoDtoInput input) {
-        return ActualizarMetadatoDomain.create(id, input.idParametro(), input.idTipoMetadato(), input.valor());
+        return ActualizarMetadatoDomain.create(id, input.idParametro(), input.idTipoMetadato(), input.idAmbiente(), input.valor());
     }
 }

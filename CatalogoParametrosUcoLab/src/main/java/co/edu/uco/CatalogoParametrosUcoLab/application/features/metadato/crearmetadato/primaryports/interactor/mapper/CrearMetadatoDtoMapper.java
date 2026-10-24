@@ -9,12 +9,16 @@ import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.UUIDHelper;
 
 public enum CrearMetadatoDtoMapper {
     INSTANCE;
+    private UUID ambiente(final String valor) {
+        co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.ValidateHelper.validateId(valor, "identificador del ambiente");
+        return UUID.fromString(valor);
+    }
     public CrearMetadatoDtoInput toDtoInput(final CrearMetadatoDtoRequest dto) {
         return CrearMetadatoDtoInput.create(UUID.fromString(dto.getIdParametro()),
-                UUID.fromString(dto.getIdTipoMetadato()), dto.getValor());
+                UUID.fromString(dto.getIdTipoMetadato()), ambiente(dto.getIdAmbiente()), dto.getValor());
     }
     public CrearMetadatoDomain toDomain(final CrearMetadatoDtoInput input) {
-        return CrearMetadatoDomain.create(UUIDHelper.getDefault(), input.getIdParametro(), input.getIdTipoMetadato(),
+        return CrearMetadatoDomain.create(UUIDHelper.getDefault(), input.getIdParametro(), input.getIdTipoMetadato(), input.getIdAmbiente(),
                 input.getValor());
     }
 }

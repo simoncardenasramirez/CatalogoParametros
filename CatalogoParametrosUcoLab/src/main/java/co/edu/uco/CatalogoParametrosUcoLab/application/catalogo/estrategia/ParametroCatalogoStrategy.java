@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosParametroRepository;
@@ -16,11 +18,13 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class ParametroCatalogoStrategy extends CatalogoCacheStrategy<ParametroEntity> implements ParametroRepository {
     private final BaseDatosParametroRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public ParametroCatalogoStrategy(final CacheParametroRepository cache,
-            final BaseDatosParametroRepository baseDatos) {
+            final BaseDatosParametroRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(ParametroCatalogoStrategy.class), "PARAMETRO");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
@@ -48,8 +52,10 @@ public final class ParametroCatalogoStrategy extends CatalogoCacheStrategy<Param
 
     @Override
     public List<ParametroEntity> findByAplicacionAndAmbiente(final UUID aplicacionId, final UUID ambienteId) {
+        var disponibles = controlEstado.parametrosDisponibles(aplicacionId, ambienteId);
         return consultar("aplicacion:" + aplicacionId + ":ambiente:" + ambienteId,
-                () -> baseDatos.findByAplicacionAndAmbiente(aplicacionId, ambienteId));
+                () -> baseDatos.findByAplicacionAndAmbiente(aplicacionId, ambienteId)).stream()
+                .filter(parametro -> disponibles.contains(parametro.getId())).toList();
     }
 
     @Override
@@ -60,16 +66,20 @@ public final class ParametroCatalogoStrategy extends CatalogoCacheStrategy<Param
 
     @Override
     public ParametroEntity save(final ParametroEntity parametro) {
-        var resultado = baseDatos.save(parametro);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(parametro), true, () -> {
+            var resultado = baseDatos.save(parametro);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public ParametroEntity update(final ParametroEntity parametro) {
-        var resultado = baseDatos.update(parametro);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(parametro), false, () -> {
+            var resultado = baseDatos.update(parametro);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

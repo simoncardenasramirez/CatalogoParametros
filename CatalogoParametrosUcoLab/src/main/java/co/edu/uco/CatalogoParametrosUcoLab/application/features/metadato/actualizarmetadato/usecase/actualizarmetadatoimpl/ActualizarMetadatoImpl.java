@@ -19,7 +19,7 @@ public final class ActualizarMetadatoImpl implements ActualizarMetadato {
     @Override public void execute(final ActualizarMetadatoDomain data) {
         telemetry.recordBusinessOperation("actualizar-metadato", () -> {
             validator.validate(data);
-            var updated = repository.update(MetadatoEntity.create(data.getId(), data.getIdParametro(), data.getIdTipoMetadato(), data.getValor()));
+            var updated = repository.update(MetadatoEntity.create(data.getId(), data.getIdParametro(), data.getIdTipoMetadato(), data.getIdAmbiente(), data.getValor()));
             publisher.sendEvent(ActualizarMetadatoEvent.updated(updated));
         });
     }

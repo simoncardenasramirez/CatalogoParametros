@@ -1,6 +1,8 @@
 package co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers;
 
 import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 
 import tools.jackson.databind.JsonNode;
@@ -23,15 +25,18 @@ public final class DateTimeHelper {
             text += ":00";
         }
         try {
-            return OffsetDateTime.parse(text);
+            return toUtc(OffsetDateTime.parse(text));
         } catch (final DateTimeParseException exception) {
-            // Los registros históricos pueden contener fechas vacías o con formatos
-            // anteriores. Una fecha inválida no debe impedir consultar todo el catálogo.
-            return null;
+            // Compatibilidad de lectura: los tokens historicos sin zona se guardaban en UTC.
+            try { return LocalDateTime.parse(text).atOffset(ZoneOffset.UTC); }
+            catch (final DateTimeParseException invalid) { return null; }
         }
     }
 
     public static String format(final OffsetDateTime dateTime) {
-        return dateTime == null ? "null" : "'" + dateTime + "'";
+        return dateTime == null ? "null" : "'" + java.time.format.DateTimeFormatter.ISO_INSTANT.format(dateTime.toInstant()) + "'";
+    }
+    public static OffsetDateTime toUtc(final OffsetDateTime fecha) {
+        return fecha == null ? null : fecha.withOffsetSameInstant(ZoneOffset.UTC);
     }
 }

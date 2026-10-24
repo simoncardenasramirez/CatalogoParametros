@@ -48,8 +48,8 @@ class AplicacionEntityTest {
         assertEquals("aplicacion", entity.getNombre());
         assertEquals(idOrganizacion, entity.getIdOrganizacion());
         assertFalse(entity.isActiva());
-        assertEquals(fechaInicio, entity.getFechaInicio());
-        assertEquals(fechaFinal, entity.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaFinal());
     }
 
     @Test

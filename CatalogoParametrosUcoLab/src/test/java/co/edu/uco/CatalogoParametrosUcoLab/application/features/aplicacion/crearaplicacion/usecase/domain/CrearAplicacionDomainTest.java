@@ -49,8 +49,8 @@ class CrearAplicacionDomainTest {
         assertEquals("aplicacion", domain.getNombre());
         assertEquals(idOrganizacion, domain.getIdOrganizacion());
         assertFalse(domain.isActiva());
-        assertEquals(fechaInicio, domain.getFechaInicio());
-        assertEquals(fechaFinal, domain.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaFinal());
     }
 
     @Test

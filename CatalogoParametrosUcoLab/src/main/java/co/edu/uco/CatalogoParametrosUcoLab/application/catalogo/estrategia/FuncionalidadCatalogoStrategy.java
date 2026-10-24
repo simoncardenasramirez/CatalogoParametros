@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosFuncionalidadRepository;
@@ -16,25 +18,31 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class FuncionalidadCatalogoStrategy extends CatalogoCacheStrategy<FuncionalidadEntity> implements FuncionalidadRepository {
     private final BaseDatosFuncionalidadRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public FuncionalidadCatalogoStrategy(final CacheFuncionalidadRepository cache,
-            final BaseDatosFuncionalidadRepository baseDatos) {
+            final BaseDatosFuncionalidadRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(FuncionalidadCatalogoStrategy.class), "FUNCIONALIDAD");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
     public FuncionalidadEntity save(final FuncionalidadEntity funcionalidad) {
-        var resultado = baseDatos.save(funcionalidad);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(funcionalidad), true, () -> {
+            var resultado = baseDatos.save(funcionalidad);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public FuncionalidadEntity update(final FuncionalidadEntity funcionalidad) {
-        var resultado = baseDatos.update(funcionalidad);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(funcionalidad), false, () -> {
+            var resultado = baseDatos.update(funcionalidad);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

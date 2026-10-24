@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoAmbienteEntity;
@@ -22,12 +23,15 @@ import static org.mockito.Mockito.*;
 class MetadatoAmbienteCatalogoStrategyTest {
     @Mock private CacheMetadatoAmbienteRepository cache;
     @Mock private BaseDatosMetadatoAmbienteRepository baseDatos;
+    @Mock private ControlEstadoCatalogo controlEstado;
     private MetadatoAmbienteCatalogoStrategy estrategia;
     private MetadatoAmbienteEntity dato;
 
     @BeforeEach
     void preparar() {
-        estrategia = new MetadatoAmbienteCatalogoStrategy(cache, baseDatos);
+        lenient().when(controlEstado.guardar(any(), anyBoolean(), any())).thenAnswer(invocacion ->
+                ((java.util.function.Supplier<?>) invocacion.getArgument(2)).get());
+        estrategia = new MetadatoAmbienteCatalogoStrategy(cache, baseDatos, controlEstado);
         dato = MetadatoAmbienteEntity.create(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
     }
 

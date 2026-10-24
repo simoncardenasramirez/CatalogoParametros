@@ -10,13 +10,14 @@ public enum MetadatoCacheMapper {
     INSTANCE;
 
     public MetadatoCacheData toData(final MetadatoEntity entity) {
-        return new MetadatoCacheData(entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), entity.getValor());
+        return new MetadatoCacheData(entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), entity.getIdAmbiente(), entity.getValor());
     }
 
     public MetadatoEntity toEntity(final MetadatoCacheData data) {
-        return MetadatoEntity.create(data.id(), data.idParametro(), data.idTipoMetadato(), data.valor());
+        return MetadatoEntity.create(data.id(), data.idParametro(), data.idTipoMetadato(), data.idAmbiente(), data.valor());
     }
 
-    public record MetadatoCacheData(UUID id, UUID idParametro, UUID idTipoMetadato, JsonNode valor) {
+    public record MetadatoCacheData(UUID id, UUID idParametro, UUID idTipoMetadato, UUID idAmbiente, JsonNode valor) {
+        public MetadatoCacheData(UUID id, UUID p, UUID t, JsonNode v) { this(id, p, t, null, v); }
     }
 }

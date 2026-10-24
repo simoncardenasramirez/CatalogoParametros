@@ -50,8 +50,8 @@ class CrearFuncionalidadDomainTest {
         assertEquals("funcionalidad", domain.getNombre());
         assertEquals(idModulo, domain.getIdModulo());
         assertFalse(domain.isActivo());
-        assertEquals(fechaInicio, domain.getFechaInicio());
-        assertEquals(fechaFinal, domain.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaFinal());
     }
 
     @Test

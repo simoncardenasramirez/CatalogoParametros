@@ -11,19 +11,23 @@ public final class CrearMetadatoDomain extends Domain {
 
     private UUID idParametro;
     private UUID idTipoMetadato;
+    private UUID idAmbiente;
     private JsonNode valor;
 
-    private CrearMetadatoDomain(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final JsonNode valor) {
+    private CrearMetadatoDomain(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final UUID idAmbiente, final JsonNode valor) {
         super(id);
         setIdParametro(idParametro);
         setIdTipoMetadato(idTipoMetadato);
+        this.idAmbiente = idAmbiente;
         setValor(valor);
     }
 
-    public static CrearMetadatoDomain create(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final JsonNode valor) {
-        return new CrearMetadatoDomain(id, idParametro, idTipoMetadato, valor);
+    public static CrearMetadatoDomain create(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final UUID idAmbiente, final JsonNode valor) {
+        return new CrearMetadatoDomain(id, idParametro, idTipoMetadato, idAmbiente, valor);
     }
 
+    public static CrearMetadatoDomain create(final UUID id, final UUID p, final UUID t, final JsonNode v) { return create(id, p, t, null, v); }
+    public UUID getIdAmbiente() { return idAmbiente; }
     public UUID getIdParametro() {
         return idParametro;
     }

@@ -20,19 +20,23 @@ public final class SurrealDbMetadatoRepository implements BaseDatosMetadatoRepos
 
     @Override public MetadatoEntity save(final MetadatoEntity entity) {
         client.execute("""
+                BEGIN TRANSACTION;
                 CREATE type::record('%s', '%s') CONTENT {
-                    idParametro: '%s', idTipoMetadato: '%s', valor: %s
+                    idParametro: '%s', idTipoMetadato: '%s', idAmbiente: '%s', valor: %s
                 };
-                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(),
+                COMMIT TRANSACTION;
+                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), entity.getIdAmbiente(),
                 serialize(entity.getValor())));
         return entity;
     }
     @Override public MetadatoEntity update(final MetadatoEntity entity) {
         client.execute("""
+                BEGIN TRANSACTION;
                 UPDATE type::record('%s', '%s') CONTENT {
-                    idParametro: '%s', idTipoMetadato: '%s', valor: %s
+                    idParametro: '%s', idTipoMetadato: '%s', idAmbiente: '%s', valor: %s
                 };
-                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(),
+                COMMIT TRANSACTION;
+                """.formatted(TABLE, entity.getId(), entity.getIdParametro(), entity.getIdTipoMetadato(), entity.getIdAmbiente(),
                 serialize(entity.getValor())));
         return entity;
     }
@@ -59,7 +63,11 @@ public final class SurrealDbMetadatoRepository implements BaseDatosMetadatoRepos
     }
     private MetadatoEntity toEntity(final JsonNode node) {
         return MetadatoEntity.create(uuid(node.path("id").asString()), UUID.fromString(node.path("idParametro").asString()),
-                UUID.fromString(node.path("idTipoMetadato").asString()), node.path("valor").deepCopy());
+                UUID.fromString(node.path("idTipoMetadato").asString()), ambiente(node), node.path("valor").deepCopy());
+    }
+    private UUID ambiente(final JsonNode node) {
+        var valor = node.path("idAmbiente").asString("");
+        try { return UUID.fromString(valor); } catch (IllegalArgumentException exception) { return null; }
     }
     private UUID uuid(final String recordId) {
         var value = recordId.replace("`", "").replace("u'", "").replace("'", "");

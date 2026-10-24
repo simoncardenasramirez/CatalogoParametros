@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +41,25 @@ class ConsultarParametrosPorTokenImplTest {
     private ConsultarParametrosPorTokenImpl useCase;
     private UUID tokenId;
 
+    @Test
+    void debeAislarValoresPorAmbienteYExcluirHistoricosSinAmbienteCuandoConsultaToken() {
+        var app = UUID.randomUUID(); var dev = UUID.randomUUID(); var prod = UUID.randomUUID();
+        var token = TokenEntity.create(tokenId, "hash", UUID.randomUUID(), app, dev,
+                OffsetDateTime.now(java.time.ZoneOffset.UTC), OffsetDateTime.now(java.time.ZoneOffset.UTC).plusDays(1));
+        var parametro = ParametroEntity.create(UUID.randomUUID(), "Endpoint", UUID.randomUUID(), UUID.randomUUID(), true);
+        var tipo = UUID.randomUUID();
+        var fabrica = tools.jackson.databind.node.JsonNodeFactory.instance;
+        var desarrollo = co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity.create(UUID.randomUUID(), parametro.getId(), tipo, dev, fabrica.stringNode("solo-dev"));
+        var produccion = co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity.create(UUID.randomUUID(), parametro.getId(), tipo, prod, fabrica.stringNode("solo-prod"));
+        var historico = co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity.create(UUID.randomUUID(), parametro.getId(), tipo, fabrica.stringNode("sin-ambiente"));
+        when(validarToken.execute(org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        when(tokens.findById(tokenId)).thenReturn(Optional.of(token));
+        when(parametros.findByAplicacionAndAmbiente(app, dev)).thenReturn(List.of(parametro));
+        when(metadatos.findByIdParametro(parametro.getId())).thenReturn(List.of(produccion, historico, desarrollo));
+        var resultado = useCase.execute(tokenId, "secreto");
+        assertEquals(List.of(desarrollo), resultado.parametros().get(0).metadatos().stream().map(detalle -> detalle.metadato()).toList());
+    }
+
     @BeforeEach
     void preparar() {
         useCase = new ConsultarParametrosPorTokenImpl(tokens, parametros, validarToken, aplicaciones, ambientes,
@@ -54,7 +73,7 @@ class ConsultarParametrosPorTokenImplTest {
         var aplicacionId = UUID.randomUUID();
         var ambienteId = UUID.randomUUID();
         var token = TokenEntity.create(tokenId, "hash", UUID.randomUUID(), aplicacionId, ambienteId,
-                LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+                OffsetDateTime.now(java.time.ZoneOffset.UTC), OffsetDateTime.now(java.time.ZoneOffset.UTC).plusDays(1));
         var parametro = ParametroEntity.create(UUID.randomUUID(), "SMMLV", UUID.randomUUID(), UUID.randomUUID(), true);
         when(validarToken.execute(org.mockito.ArgumentMatchers.any())).thenReturn(true);
         when(tokens.findById(tokenId)).thenReturn(Optional.of(token));
@@ -80,5 +99,39 @@ class ConsultarParametrosPorTokenImplTest {
         assertFalse(resultado.autorizado());
         assertTrue(resultado.parametros().isEmpty());
         verifyNoInteractions(tokens, parametros);
+    }
+    @Test
+    void debeExcluirInactivosCuandoConsultaParametrosConTokenValido() {
+        var aplicacionId = UUID.randomUUID();
+        var ambienteId = UUID.randomUUID();
+        var token = TokenEntity.create(tokenId, "hash", UUID.randomUUID(), aplicacionId, ambienteId,
+                OffsetDateTime.now(java.time.ZoneOffset.UTC), OffsetDateTime.now(java.time.ZoneOffset.UTC).plusDays(1));
+        var activo = ParametroEntity.create(UUID.randomUUID(), "Activo", UUID.randomUUID(), UUID.randomUUID(), true);
+        var inactivo = ParametroEntity.create(UUID.randomUUID(), "Inactivo", UUID.randomUUID(), UUID.randomUUID(), false);
+        when(validarToken.execute(org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        when(tokens.findById(tokenId)).thenReturn(Optional.of(token));
+        when(parametros.findByAplicacionAndAmbiente(aplicacionId, ambienteId)).thenReturn(List.of(inactivo, activo));
+
+        var resultado = useCase.execute(tokenId, "secreto");
+
+        assertTrue(resultado.autorizado());
+        assertEquals(List.of(activo), resultado.parametros().stream().map(detalle -> detalle.parametro()).toList());
+        verify(metadatos, org.mockito.Mockito.never()).findByIdParametro(inactivo.getId());
+        verify(metadatosAmbiente, org.mockito.Mockito.never())
+                .findByIdParametroAndIdAmbiente(inactivo.getId(), ambienteId);
+    }
+    @Test
+    void debeRetornarListaVaciaCuandoTodosLosParametrosEstanInactivos() {
+        var app = UUID.randomUUID(); var ambiente = UUID.randomUUID();
+        var token = TokenEntity.create(tokenId, "hash", UUID.randomUUID(), app, ambiente,
+                OffsetDateTime.now(java.time.ZoneOffset.UTC), OffsetDateTime.now(java.time.ZoneOffset.UTC).plusDays(1));
+        when(validarToken.execute(org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        when(tokens.findById(tokenId)).thenReturn(Optional.of(token));
+        when(parametros.findByAplicacionAndAmbiente(app, ambiente)).thenReturn(List.of(
+                ParametroEntity.create(UUID.randomUUID(), "Inactivo", UUID.randomUUID(), UUID.randomUUID(), false)));
+        var resultado = useCase.execute(tokenId, "secreto");
+        assertTrue(resultado.autorizado());
+        assertTrue(resultado.parametros().isEmpty());
+        verifyNoInteractions(funcionalidades, modulos, tiposParametro, metadatos, metadatosAmbiente);
     }
 }
