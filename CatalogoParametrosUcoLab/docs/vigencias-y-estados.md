@@ -17,8 +17,9 @@ No se agregan estados a organizaciones, ambientes compartidos ni metadatos.
 - Se pueden consultar los inactivos y corregir su informacion/vigencia para
   reactivarlos individualmente. Para activar se necesitan padres disponibles.
   No se pueden crear nuevas relaciones hacia padres inactivos o fuera de vigencia.
-- La consulta por token rechaza tokens expirados o de aplicaciones no disponibles
-  y excluye parametros y asociaciones inactivos, incluso ante una cache anterior.
+- La consulta por token rechaza tokens expirados o de aplicaciones no disponibles,
+  limita los parametros al ambiente presente en sus metadatos y excluye ramas no
+  disponibles, incluso ante una cache anterior.
 
 La vigencia es un intervalo [inicio, fin). Inicio es inclusivo y fin exclusivo.
 Los limites nulos son abiertos en las entidades que ya los admitian. Un inicio

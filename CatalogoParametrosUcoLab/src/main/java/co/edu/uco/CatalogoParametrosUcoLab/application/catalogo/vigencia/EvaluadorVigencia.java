@@ -99,7 +99,7 @@ public final class EvaluadorVigencia {
 
     public Set<UUID> parametrosDisponibles(final UUID aplicacion, final UUID ambiente) {
         if (!disponible(TipoRegistroVigencia.APLICACION, aplicacion)) return Set.of();
-        return indice.get(TipoRegistroVigencia.METADATO_AMBIENTE).values().stream()
+        return indice.get(TipoRegistroVigencia.METADATO).values().stream()
                 .filter(r -> ambiente.equals(r.idAmbiente()) && disponible(r.tipo(), r.id()))
                 .map(r -> buscar(TipoRegistroVigencia.PARAMETRO, r.idPadre()))
                 .filter(p -> perteneceAplicacion(p, aplicacion))

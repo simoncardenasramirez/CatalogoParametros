@@ -70,7 +70,7 @@ Organización → Aplicación → Módulo → Funcionalidad → Parámetro
                                                        └─ Asociación → Ambiente + estado
 ```
 
-Un mismo parámetro puede tener valores diferentes por ambiente. El metadato describe el valor de un ambiente; la asociación indica la disponibilidad del parámetro en ese ambiente. Son relaciones distintas y ambas deben configurarse cuando corresponda.
+Un mismo parámetro puede tener valores diferentes por ambiente. Cada metadato vincula el parámetro y el valor con su ambiente mediante `idParametro` e `idAmbiente`; esa relación determina en qué consulta por token aparece el parámetro. La asociación parámetro–ambiente conserva su estado y configuración administrativa, pero no reemplaza el ambiente del metadato.
 
 Los tipos de metadato actuales incluyen JSON, alfanumérico y fecha. El valor debe respetar su tipo. En el editor del microfrontend se escribe JSON: para un texto usar `"mi valor"`; para un objeto, `{"clave":"valor"}`. El catálogo valida el contenido en el servidor.
 
@@ -332,7 +332,7 @@ El laboratorio ejecutó la consulta real desde Spring, aislamiento por ambiente 
 | 401 administrativo | Sesión y cookies disponibles para el API; ejecutar el flujo de inicio de sesión del host |
 | 403 administrativo | Origen permitido y recursos, rol/perfil, usuario y ambiente autorizados en Seguridad |
 | Funciona consultar, pero no crear o editar | Permisos POST/PUT/DELETE correspondientes; sesión/XSRF y ambiente obligatorio del metadato |
-| Consulta vacía | Aplicación y ambiente del token, asociación activa del parámetro al ambiente, estados y vigencias de padres |
+| Consulta vacía | Aplicación y ambiente del token, metadatos asignados a ese ambiente, estados y vigencias de padres |
 | Parámetro sin valores | Metadatos asignados al ambiente del token; los históricos sin ambiente se excluyen |
 | No actualiza en tiempo real | GET `/events` autorizado, respuesta SSE, proxy sin buffering/caché y tiempo de espera superior a los latidos |
 | Error de contenido mixto | Host y API publicados con HTTPS; no usar un API HTTP desde una página HTTPS |

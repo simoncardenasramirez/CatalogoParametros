@@ -116,7 +116,7 @@ public class SurrealDbParametroRepository implements BaseDatosParametroRepositor
                 LET $funcionalidades = SELECT VALUE <string>record::id(id)
                     FROM funcionalidades WHERE idModulo IN $modulos;
                 LET $parametrosAmbiente = SELECT VALUE idParametro
-                    FROM metadatos_ambiente WHERE idAmbiente = '%s';
+                    FROM metadatos WHERE idAmbiente = '%s';
                 SELECT * FROM %s
                     WHERE idFuncionalidad IN $funcionalidades
                     AND <string>record::id(id) IN $parametrosAmbiente

@@ -30,7 +30,7 @@ public enum RegistroVigenciaMapper {
         return new RegistroVigencia(PARAMETRO, e.getId(), e.getIdFuncionalidad(), null, null, e.isActivo(), null, null);
     }
     public RegistroVigencia toRegistro(final MetadatoEntity e) {
-        return new RegistroVigencia(METADATO, e.getId(), e.getIdParametro(), null, null, true, null, null);
+        return new RegistroVigencia(METADATO, e.getId(), e.getIdParametro(), e.getIdAmbiente(), null, true, null, null);
     }
     public RegistroVigencia toRegistro(final MetadatoAmbienteEntity e) {
         return new RegistroVigencia(METADATO_AMBIENTE, e.getId(), e.getIdParametro(), e.getIdAmbiente(),

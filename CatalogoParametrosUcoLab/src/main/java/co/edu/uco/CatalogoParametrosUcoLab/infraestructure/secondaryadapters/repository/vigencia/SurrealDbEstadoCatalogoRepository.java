@@ -25,24 +25,26 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 SELECT id, idAplicacion, activo, fechaInicio, fechaFinal FROM modulos;
                 SELECT id, idModulo, activo, fechaInicio, fechaFinal FROM funcionalidades;
                 SELECT id, idFuncionalidad, activo FROM parametros;
+                SELECT id, idParametro, idAmbiente FROM metadatos;
                 SELECT id, idParametro, idAmbiente, idEstadoMetadatoAmbiente FROM metadatos_ambiente;
                 SELECT id, aplicacionId, ambienteId, estadoToken, fechaExpiracion FROM tokens;
                 SELECT id, nombre FROM estados_metadato_ambiente;
                 SELECT id, estado FROM estados_token;
                 """);
-        if (respuesta.size() < 9) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
+        if (respuesta.size() < 10) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
                 .build("SurrealDB no devolvio la proyeccion completa de vigencias.");
-        var primero = respuesta.size() - 9;
+        var primero = respuesta.size() - 10;
         var registros = new ArrayList<RegistroVigencia>();
         agregar(registros, respuesta.get(primero).path("result"), TipoRegistroVigencia.ORGANIZACION, null, null, null, null, null, null);
         agregar(registros, respuesta.get(primero + 1).path("result"), TipoRegistroVigencia.APLICACION, "idOrganizacion", "activa", "fechaInicio", "fechaFinal", null, null);
         agregar(registros, respuesta.get(primero + 2).path("result"), TipoRegistroVigencia.MODULO, "idAplicacion", "activo", "fechaInicio", "fechaFinal", null, null);
         agregar(registros, respuesta.get(primero + 3).path("result"), TipoRegistroVigencia.FUNCIONALIDAD, "idModulo", "activo", "fechaInicio", "fechaFinal", null, null);
         agregar(registros, respuesta.get(primero + 4).path("result"), TipoRegistroVigencia.PARAMETRO, "idFuncionalidad", "activo", null, null, null, null);
-        agregar(registros, respuesta.get(primero + 5).path("result"), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
-        agregar(registros, respuesta.get(primero + 6).path("result"), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
-        return new CatalogoVigencia(registros, estados(respuesta.get(primero + 7).path("result"), "nombre"),
-                estados(respuesta.get(primero + 8).path("result"), "estado"));
+        agregar(registros, respuesta.get(primero + 5).path("result"), TipoRegistroVigencia.METADATO, "idParametro", null, null, null, "idAmbiente", null);
+        agregar(registros, respuesta.get(primero + 6).path("result"), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
+        agregar(registros, respuesta.get(primero + 7).path("result"), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
+        return new CatalogoVigencia(registros, estados(respuesta.get(primero + 8).path("result"), "nombre"),
+                estados(respuesta.get(primero + 9).path("result"), "estado"));
     }
 
     private void agregar(final List<RegistroVigencia> destino, final tools.jackson.databind.JsonNode filas,

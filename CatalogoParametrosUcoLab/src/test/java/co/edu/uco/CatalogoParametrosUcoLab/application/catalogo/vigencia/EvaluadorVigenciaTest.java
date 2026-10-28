@@ -13,7 +13,7 @@ class EvaluadorVigenciaTest {
     private final Instant ahora = Instant.parse("2026-10-23T17:00:00Z");
     private final UUID org = UUID.randomUUID(), app = UUID.randomUUID(), modulo = UUID.randomUUID(),
             funcion = UUID.randomUUID(), parametro = UUID.randomUUID(), ambiente = UUID.randomUUID(),
-            asociacion = UUID.randomUUID(), token = UUID.randomUUID(), activo = UUID.randomUUID(),
+            metadato = UUID.randomUUID(), asociacion = UUID.randomUUID(), token = UUID.randomUUID(), activo = UUID.randomUUID(),
             inactivo = UUID.randomUUID(), revocado = UUID.randomUUID();
 
     private RegistroVigencia registro(TipoRegistroVigencia tipo, UUID id, UUID padre, boolean habilitado, Instant fin) {
@@ -25,6 +25,7 @@ class EvaluadorVigenciaTest {
                 registro(APLICACION, app, org, true, ahora.plusSeconds(600)),
                 registro(MODULO, modulo, app, true, null), registro(FUNCIONALIDAD, funcion, modulo, true, null),
                 registro(PARAMETRO, parametro, funcion, true, null),
+                registro(METADATO, metadato, parametro, true, null),
                 registro(METADATO_AMBIENTE, asociacion, parametro, true, null),
                 registro(TOKEN, token, app, true, ahora.plusSeconds(100))));
     }
@@ -115,9 +116,11 @@ class EvaluadorVigenciaTest {
         assertFalse(evaluar(registros).disponible(TOKEN,token));
         assertTrue(cambios(registros).containsAll(Set.of(modulo,funcion,parametro,asociacion,token)));
     }
-    @Test void debeExcluirAsociacionesInactivasCuandoConsultaParametros() {
+    @Test void elAmbienteDelMetadatoDeterminaLaPertenenciaDelParametro() {
         var registros=cadena();
         sustituir(registros,new RegistroVigencia(METADATO_AMBIENTE,asociacion,parametro,ambiente,inactivo,true,null,null));
+        assertEquals(Set.of(parametro), evaluar(registros).parametrosDisponibles(app,ambiente));
+        registros.removeIf(r -> r.id().equals(metadato));
         assertTrue(evaluar(registros).parametrosDisponibles(app,ambiente).isEmpty());
     }
     @Test void debeRespetarZonaHorariaCuandoComparaFechaFinal() {
