@@ -31,9 +31,9 @@ steps:
     fetchDepth: 0
 
   - task: JavaToolInstaller@0
-    displayName: Configurar Java 21
+    displayName: Configurar Java 25
     inputs:
-      versionSpec: '21'
+      versionSpec: '25'
       jdkArchitectureOption: x64
       jdkSourceOption: PreInstalled
 
