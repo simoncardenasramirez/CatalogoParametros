@@ -8,8 +8,8 @@ Esta guía explica cómo consumir las 68 operaciones de los 12 recursos de la AP
 - URL base de negocio: `http://localhost:8080/catalogo-parametros/api/v1`.
 - Solicitudes con cuerpo: `Content-Type: application/json`.
 - Consultas y escrituras: `Accept: application/json`. Eventos: `Accept: text/event-stream`.
-- Los controladores actuales no declaran autenticación ni cabeceras de API key. Si el despliegue añade un gateway, aplicar también sus requisitos de acceso.
-- El CORS actual permite el origen `http://localhost:4200`. Otro frontend en navegador requiere configurar su origen en el backend; los clientes entre servidores no dependen de CORS.
+- Las rutas de negocio están protegidas por el starter PEP de Security Baseline antes de ejecutar los controladores. Enviar una sesión BFF válida (cookie con credenciales) o el Bearer admitido por la plataforma. La credencial de aplicación solo la usa el backend. Ver [integración de seguridad](../SEGURIDAD-INTEGRACION.md).
+- CORS permite por defecto `http://localhost:4200` con credenciales; configurar otros orígenes exactos mediante `FRONTEND_ALLOWED_ORIGINS`. Los clientes entre servidores no dependen de CORS.
 
 Los ejemplos de cURL usan sintaxis de Bash. En Windows puede usarse la colección Postman o `curl.exe` adaptando el entrecomillado. Los UUID de ejemplo son marcadores: reemplazarlos por IDs reales, distintos para cada recurso cuando corresponda. No enviar `{id}` literalmente.
 
@@ -55,6 +55,9 @@ Las consultas devuelven un objeto con `mensajes` y una colección, incluso al co
 | --- | --- | --- |
 | 200 | Consulta, actualización, eliminación o cambio de estado exitoso | Leer colección y/o mensajes |
 | 201 | Creación exitosa | Obtener ID de la entidad devuelta o consultar colección |
+| 401 | Sesión ausente o inválida | Iniciar sesión central |
+| 403 | Acceso denegado | Revisar recursos y asignaciones |
+| 503 | Seguridad no disponible | Reintentar cuando PEP/PDP esté disponible |
 | 400 | Formato inválido o validación | Corregir datos antes de reenviar |
 | 404 | Recurso o referencia inexistente | Revisar IDs y existencia de relaciones |
 | 409 | Conflicto de negocio | Revisar duplicados o dependencias |
@@ -1638,7 +1641,8 @@ Ejemplo para un componente web (sustituir el host por el de su ambiente):
 
 ```javascript
 const stream = new EventSource(
-  'http://localhost:8080/catalogo-parametros/api/v1/parametros/events'
+  'http://localhost:8080/catalogo-parametros/api/v1/parametros/events',
+  { withCredentials: true }
 );
 stream.addEventListener('parametro', (message) => {
   const cambio = JSON.parse(message.data);
@@ -1660,7 +1664,7 @@ Usar `addEventListener` con el nombre del evento; `onmessage` no recibe los even
 async function consultarParametro(baseUrl, idParametro) {
   const response = await fetch(
     `${baseUrl}/catalogo-parametros/api/v1/parametros/${encodeURIComponent(idParametro)}`,
-    { headers: { Accept: 'application/json' } }
+    { credentials: 'include', headers: { Accept: 'application/json' } }
   );
   const body = await response.json();
   if (!response.ok) {

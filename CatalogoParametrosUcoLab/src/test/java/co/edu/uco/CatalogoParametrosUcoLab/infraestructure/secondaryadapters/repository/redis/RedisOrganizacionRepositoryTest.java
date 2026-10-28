@@ -46,8 +46,8 @@ class RedisOrganizacionRepositoryTest {
         var recuperado = repositorio.consultar("v1", "todos").orElseThrow().getFirst();
         assertEquals(dato.getId(), recuperado.getId());
         assertEquals(dato.getNombre(), recuperado.getNombre());
-        assertEquals(dato.getFechaInicio(), recuperado.getFechaInicio());
-        assertEquals(dato.getFechaFinal(), recuperado.getFechaFinal());
+        assertEquals((dato.getFechaInicio()).withOffsetSameInstant(java.time.ZoneOffset.UTC), recuperado.getFechaInicio());
+        assertEquals((dato.getFechaFinal()).withOffsetSameInstant(java.time.ZoneOffset.UTC), recuperado.getFechaFinal());
     }
 
     @Test

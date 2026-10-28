@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.actualizarorganizacion.usecase.domain;
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -20,7 +21,7 @@ public final class ActualizarOrganizacionDomain extends Domain {
             final OffsetDateTime fechaFinal) {
         super(id);
         setNombre(nombre);
-        this.fechaInicio = fechaInicio; this.fechaFinal = fechaFinal;
+        this.fechaInicio = DateTimeHelper.toUtc(fechaInicio); this.fechaFinal = DateTimeHelper.toUtc(fechaFinal);
     }
 
     public static ActualizarOrganizacionDomain create(final UUID id, final String nombre) {

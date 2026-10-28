@@ -26,7 +26,7 @@ public final class CrearMetadatoImpl implements CrearMetadato {
             validator.validate(data);
             data.generateId();
             var saved = repository.save(MetadatoEntity.create(data.getId(), data.getIdParametro(),
-                    data.getIdTipoMetadato(), data.getValor()));
+                    data.getIdTipoMetadato(), data.getIdAmbiente(), data.getValor()));
             publisher.sendEvent(CrearMetadatoEvent.created(saved));
         });
     }

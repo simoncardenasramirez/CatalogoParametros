@@ -48,7 +48,7 @@ class FuncionalidadEntityTest {
         assertEquals("funcionalidad", entity.getNombre());
         assertEquals(idModulo, entity.getIdModulo());
         assertTrue(entity.isActivo());
-        assertEquals(fechaInicio, entity.getFechaInicio());
-        assertEquals(fechaFinal, entity.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), entity.getFechaFinal());
     }
 }

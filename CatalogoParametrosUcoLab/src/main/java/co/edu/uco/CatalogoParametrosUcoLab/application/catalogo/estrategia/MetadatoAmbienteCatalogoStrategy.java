@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoAmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosMetadatoAmbienteRepository;
@@ -16,25 +18,31 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class MetadatoAmbienteCatalogoStrategy extends CatalogoCacheStrategy<MetadatoAmbienteEntity> implements MetadatoAmbienteRepository {
     private final BaseDatosMetadatoAmbienteRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public MetadatoAmbienteCatalogoStrategy(final CacheMetadatoAmbienteRepository cache,
-            final BaseDatosMetadatoAmbienteRepository baseDatos) {
+            final BaseDatosMetadatoAmbienteRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(MetadatoAmbienteCatalogoStrategy.class), "METADATOAMBIENTE");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
     public MetadatoAmbienteEntity save(final MetadatoAmbienteEntity entity) {
-        var resultado = baseDatos.save(entity);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(entity), true, () -> {
+            var resultado = baseDatos.save(entity);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public MetadatoAmbienteEntity update(final MetadatoAmbienteEntity entity) {
-        var resultado = baseDatos.update(entity);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(entity), false, () -> {
+            var resultado = baseDatos.update(entity);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

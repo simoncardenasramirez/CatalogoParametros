@@ -33,10 +33,10 @@ class CrearAplicacionDtoMapperTest {
         assertEquals("aplicacion", input.getNombre());
         assertEquals(UUID.fromString(idOrganizacion), input.getIdOrganizacion());
         assertTrue(input.isActiva());
-        assertEquals(OffsetDateTime.parse(FECHA_INICIO,
-                java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME), input.getFechaInicio());
-        assertEquals(OffsetDateTime.parse(FECHA_FINAL,
-                java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME), input.getFechaFinal());
+        assertEquals((OffsetDateTime.parse(FECHA_INICIO,
+                java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaInicio());
+        assertEquals((OffsetDateTime.parse(FECHA_FINAL,
+                java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaFinal());
     }
 
     @Test
@@ -67,8 +67,8 @@ class CrearAplicacionDtoMapperTest {
         assertEquals(viaRequest.getNombre(), viaInput.getNombre());
         assertEquals(viaRequest.getIdOrganizacion(), viaInput.getIdOrganizacion());
         assertEquals(viaRequest.isActiva(), viaInput.isActiva());
-        assertEquals(viaRequest.getFechaInicio(), viaInput.getFechaInicio());
-        assertEquals(viaRequest.getFechaFinal(), viaInput.getFechaFinal());
+        assertEquals((viaRequest.getFechaInicio()).withOffsetSameInstant(java.time.ZoneOffset.UTC), viaInput.getFechaInicio());
+        assertEquals((viaRequest.getFechaFinal()).withOffsetSameInstant(java.time.ZoneOffset.UTC), viaInput.getFechaFinal());
     }
 
     @Test
@@ -80,11 +80,11 @@ class CrearAplicacionDtoMapperTest {
     }
 
     @Test
-    void debeConservarHoraYDesfaseCuandoRecibeOtraZona() {
+    void debeNormalizarUtcCuandoRecibeOtraZona() {
         var fecha = "2026-07-15T18:35:42+05:30";
         var request = CrearAplicacionDtoRequest.create("aplicacion", UUID.randomUUID().toString(), "true", fecha, fecha);
         var input = CrearAplicacionDtoMapper.INSTANCE.toDtoInput(request);
-        assertEquals(OffsetDateTime.parse(fecha), input.getFechaInicio());
-        assertEquals(OffsetDateTime.parse(fecha), input.getFechaFinal());
+        assertEquals((OffsetDateTime.parse(fecha)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaInicio());
+        assertEquals((OffsetDateTime.parse(fecha)).withOffsetSameInstant(java.time.ZoneOffset.UTC), input.getFechaFinal());
     }
 }

@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosModuloRepository;
@@ -16,25 +18,31 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class ModuloCatalogoStrategy extends CatalogoCacheStrategy<ModuloEntity> implements ModuloRepository {
     private final BaseDatosModuloRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public ModuloCatalogoStrategy(final CacheModuloRepository cache,
-            final BaseDatosModuloRepository baseDatos) {
+            final BaseDatosModuloRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(ModuloCatalogoStrategy.class), "MODULO");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
     public ModuloEntity save(final ModuloEntity modulo) {
-        var resultado = baseDatos.save(modulo);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(modulo), true, () -> {
+            var resultado = baseDatos.save(modulo);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public ModuloEntity update(final ModuloEntity modulo) {
-        var resultado = baseDatos.update(modulo);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(modulo), false, () -> {
+            var resultado = baseDatos.update(modulo);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

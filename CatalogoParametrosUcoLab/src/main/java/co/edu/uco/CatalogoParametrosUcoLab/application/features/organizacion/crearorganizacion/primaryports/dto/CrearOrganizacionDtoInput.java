@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.organizacion.crearorganizacion.primaryports.dto;
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
 
@@ -19,7 +20,7 @@ public final class CrearOrganizacionDtoInput {
     }
 
     public CrearOrganizacionDtoInput(final String nombre, final OffsetDateTime fechaInicio, final OffsetDateTime fechaFinal) {
-        setNombre(nombre); this.fechaInicio = fechaInicio; this.fechaFinal = fechaFinal;
+        setNombre(nombre); this.fechaInicio = DateTimeHelper.toUtc(fechaInicio); this.fechaFinal = DateTimeHelper.toUtc(fechaFinal);
     }
 
     public static CrearOrganizacionDtoInput create(final String nombre) {

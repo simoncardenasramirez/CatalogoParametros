@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
+import co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.vigencia.RegistroVigenciaMapper;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosMetadatoRepository;
@@ -16,25 +18,31 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 @Service
 public final class MetadatoCatalogoStrategy extends CatalogoCacheStrategy<MetadatoEntity> implements MetadatoRepository {
     private final BaseDatosMetadatoRepository baseDatos;
+    private final ControlEstadoCatalogo controlEstado;
 
     public MetadatoCatalogoStrategy(final CacheMetadatoRepository cache,
-            final BaseDatosMetadatoRepository baseDatos) {
+            final BaseDatosMetadatoRepository baseDatos, final ControlEstadoCatalogo controlEstado) {
         super(cache, LoggerFactory.getLogger(MetadatoCatalogoStrategy.class), "METADATO");
         this.baseDatos = baseDatos;
+        this.controlEstado = controlEstado;
     }
 
     @Override
     public MetadatoEntity save(final MetadatoEntity metadato) {
-        var resultado = baseDatos.save(metadato);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(metadato), true, () -> {
+            var resultado = baseDatos.save(metadato);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override
     public MetadatoEntity update(final MetadatoEntity metadato) {
-        var resultado = baseDatos.update(metadato);
-        invalidar();
-        return resultado;
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(metadato), false, () -> {
+            var resultado = baseDatos.update(metadato);
+            invalidar();
+            return resultado;
+        });
     }
 
     @Override

@@ -30,8 +30,8 @@ class ActualizarModuloDomainTest {
         assertEquals("modulo", domain.getNombre());
         assertEquals(idAplicacion, domain.getIdAplicacion());
         assertTrue(domain.isActivo());
-        assertEquals(fechaInicio, domain.getFechaInicio());
-        assertEquals(fechaFinal, domain.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), domain.getFechaFinal());
     }
 
     @Test

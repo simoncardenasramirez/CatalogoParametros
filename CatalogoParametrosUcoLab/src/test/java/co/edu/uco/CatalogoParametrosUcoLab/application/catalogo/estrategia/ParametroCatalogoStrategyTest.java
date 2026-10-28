@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
@@ -22,12 +23,15 @@ import static org.mockito.Mockito.*;
 class ParametroCatalogoStrategyTest {
     @Mock private CacheParametroRepository cache;
     @Mock private BaseDatosParametroRepository baseDatos;
+    @Mock private ControlEstadoCatalogo controlEstado;
     private ParametroCatalogoStrategy estrategia;
     private ParametroEntity parametro;
 
     @BeforeEach
     void preparar() {
-        estrategia = new ParametroCatalogoStrategy(cache, baseDatos);
+        lenient().when(controlEstado.guardar(any(), anyBoolean(), any())).thenAnswer(invocacion ->
+                ((java.util.function.Supplier<?>) invocacion.getArgument(2)).get());
+        estrategia = new ParametroCatalogoStrategy(cache, baseDatos, controlEstado);
         parametro = ParametroEntity.create(UUID.randomUUID(), "Limite", UUID.randomUUID(), UUID.randomUUID(), true);
     }
 
@@ -79,11 +83,24 @@ class ParametroCatalogoStrategyTest {
         var aplicacionId = UUID.randomUUID();
         var ambienteId = UUID.randomUUID();
         when(cache.obtenerVersion()).thenReturn("v1");
+        when(controlEstado.parametrosDisponibles(aplicacionId, ambienteId)).thenReturn(java.util.Set.of(parametro.getId()));
         when(baseDatos.findByAplicacionAndAmbiente(aplicacionId, ambienteId)).thenReturn(List.of(parametro));
 
         assertEquals(List.of(parametro), estrategia.findByAplicacionAndAmbiente(aplicacionId, ambienteId));
         verify(cache).guardar("v1", "aplicacion:" + aplicacionId + ":ambiente:" + ambienteId,
                 List.of(parametro));
+    }
+    @Test
+    void debeExcluirInactivoCuandoCacheConservaSuVersionActivaAnterior() {
+        var app = UUID.randomUUID(); var ambiente = UUID.randomUUID();
+        var desactivado = ParametroEntity.create(UUID.randomUUID(), "Anteriormente activo",
+                UUID.randomUUID(), UUID.randomUUID(), true);
+        when(controlEstado.parametrosDisponibles(app, ambiente)).thenReturn(java.util.Set.of(parametro.getId()));
+        when(cache.obtenerVersion()).thenReturn("v1");
+        when(cache.consultar("v1", "aplicacion:" + app + ":ambiente:" + ambiente))
+                .thenReturn(Optional.of(List.of(parametro, desactivado)));
+        assertEquals(List.of(parametro), estrategia.findByAplicacionAndAmbiente(app, ambiente));
+        verifyNoInteractions(baseDatos);
     }
 
     @Test

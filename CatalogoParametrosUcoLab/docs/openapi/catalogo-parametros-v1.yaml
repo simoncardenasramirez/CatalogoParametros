@@ -5,6 +5,14 @@ info:
   description: |
     Contrato público y versionado del módulo Catálogo de Parámetros.
     Este archivo es la fuente de verdad para productores y consumidores.
+    Todas las fechas y horas se normalizan a UTC (sufijo Z), conservando el instante.
+    La vigencia es [fechaInicio, fechaFinal): el instante final ya no permite uso.
+    Aplicaciones, modulos, funcionalidades, parametros, tokens y asociaciones por
+    ambiente conservan sus estados existentes. La desactivacion se propaga a
+    dependientes; no se agregan estados a organizaciones, ambientes ni metadatos.
+    Las consultas administrativas conservan los inactivos. Crear relaciones o
+    activar registros con padres inactivos o fuera de vigencia devuelve 400.
+    La reactivacion es individual y exige padres disponibles y vigencia valida.
 servers:
   - url: http://localhost:8080
     description: Desarrollo local
@@ -590,10 +598,11 @@ components:
     MetadatoRequest:
       type: object
       additionalProperties: false
-      required: [idParametro, idTipoMetadato, valor]
+      required: [idParametro, idTipoMetadato, idAmbiente, valor]
       properties:
         idParametro: { $ref: '#/components/schemas/InputUuid' }
         idTipoMetadato: { $ref: '#/components/schemas/InputUuid' }
+        idAmbiente: { $ref: '#/components/schemas/InputUuid' }
         valor:
           description: JSON cuyo tipo debe coincidir con el tipo de metadato asociado.
     Organizacion:
@@ -645,11 +654,16 @@ components:
         activo: { type: boolean }
     Metadato:
       type: object
-      required: [id, idParametro, idTipoMetadato, valor]
+      required: [id, idParametro, idTipoMetadato, idAmbiente, valor]
       properties:
         id: { $ref: '#/components/schemas/Uuid' }
         idParametro: { $ref: '#/components/schemas/Uuid' }
         idTipoMetadato: { $ref: '#/components/schemas/Uuid' }
+        idAmbiente:
+          type: string
+          format: uuid
+          nullable: true
+          description: Obligatorio al escribir. Historicos sin ambiente requieren asignacion y no se entregan por token.
         valor: { description: Valor JSON tipado por idTipoMetadato }
     TipoParametro:
       type: object

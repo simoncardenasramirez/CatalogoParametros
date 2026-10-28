@@ -1,0 +1,6 @@
+package co.edu.uco.CatalogoParametrosUcoLab.application.features.catalogoaplicacion.administrarcatalogoaplicacion;
+
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.catalogoaplicacion.administrarcatalogoaplicacion.usecase.domain.AdministrarCatalogoAplicacionDomain;
+import co.edu.uco.CatalogoParametrosUcoLab.application.usecase.validator.RuleValidator;
+
+public interface AdministrarCatalogoAplicacionRuleValidator extends RuleValidator<AdministrarCatalogoAplicacionDomain> { }

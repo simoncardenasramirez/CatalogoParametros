@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import co.edu.uco.CatalogoParametrosUcoLab.application.primaryports.ControlEstadoCatalogo;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity;
@@ -22,12 +23,15 @@ import static org.mockito.Mockito.*;
 class FuncionalidadCatalogoStrategyTest {
     @Mock private CacheFuncionalidadRepository cache;
     @Mock private BaseDatosFuncionalidadRepository baseDatos;
+    @Mock private ControlEstadoCatalogo controlEstado;
     private FuncionalidadCatalogoStrategy estrategia;
     private FuncionalidadEntity dato;
 
     @BeforeEach
     void preparar() {
-        estrategia = new FuncionalidadCatalogoStrategy(cache, baseDatos);
+        lenient().when(controlEstado.guardar(any(), anyBoolean(), any())).thenAnswer(invocacion ->
+                ((java.util.function.Supplier<?>) invocacion.getArgument(2)).get());
+        estrategia = new FuncionalidadCatalogoStrategy(cache, baseDatos, controlEstado);
         dato = FuncionalidadEntity.create(UUID.randomUUID(), "Ejemplo", UUID.randomUUID(), false, java.time.OffsetDateTime.parse("2026-10-14T09:30:00-05:00"), java.time.OffsetDateTime.parse("2026-10-14T09:30:00-05:00"));
     }
 

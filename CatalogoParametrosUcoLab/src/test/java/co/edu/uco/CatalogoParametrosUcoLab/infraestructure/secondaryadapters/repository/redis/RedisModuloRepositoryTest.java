@@ -48,8 +48,8 @@ class RedisModuloRepositoryTest {
         assertEquals(dato.getNombre(), recuperado.getNombre());
         assertEquals(dato.getIdAplicacion(), recuperado.getIdAplicacion());
         assertEquals(dato.isActivo(), recuperado.isActivo());
-        assertEquals(dato.getFechaInicio(), recuperado.getFechaInicio());
-        assertEquals(dato.getFechaFinal(), recuperado.getFechaFinal());
+        assertEquals((dato.getFechaInicio()).withOffsetSameInstant(java.time.ZoneOffset.UTC), recuperado.getFechaInicio());
+        assertEquals((dato.getFechaFinal()).withOffsetSameInstant(java.time.ZoneOffset.UTC), recuperado.getFechaFinal());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -12,11 +13,11 @@ public final class TokenEntity {
     private UUID estadoToken;
     private UUID aplicacionId;
     private UUID ambienteId;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaExpiracion;
+    private OffsetDateTime fechaCreacion;
+    private OffsetDateTime fechaExpiracion;
 
     private TokenEntity(final UUID id, final String tokenHash, final UUID estadoToken, final UUID aplicacionId,
-            final UUID ambienteId, final LocalDateTime fechaCreacion, final LocalDateTime fechaExpiracion) {
+            final UUID ambienteId, final OffsetDateTime fechaCreacion, final OffsetDateTime fechaExpiracion) {
         setId(id);
         setTokenHash(tokenHash);
         setEstadoToken(estadoToken);
@@ -27,8 +28,8 @@ public final class TokenEntity {
     }
 
     public static TokenEntity create(final UUID id, final String tokenHash, final UUID estadoToken,
-            final UUID aplicacionId, final UUID ambienteId, final LocalDateTime fechaCreacion,
-            final LocalDateTime fechaExpiracion) {
+            final UUID aplicacionId, final UUID ambienteId, final OffsetDateTime fechaCreacion,
+            final OffsetDateTime fechaExpiracion) {
         return new TokenEntity(id, tokenHash, estadoToken, aplicacionId, ambienteId, fechaCreacion, fechaExpiracion);
     }
 
@@ -42,8 +43,8 @@ public final class TokenEntity {
     public void setAplicacionId(final UUID value) { aplicacionId = UUIDHelper.getDefault(value); }
     public UUID getAmbienteId() { return ambienteId; }
     public void setAmbienteId(final UUID value) { ambienteId = UUIDHelper.getDefault(value); }
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(final LocalDateTime value) { fechaCreacion = value; }
-    public LocalDateTime getFechaExpiracion() { return fechaExpiracion; }
-    public void setFechaExpiracion(final LocalDateTime value) { fechaExpiracion = value; }
+    public OffsetDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(final OffsetDateTime value) { fechaCreacion = DateTimeHelper.toUtc(value); }
+    public OffsetDateTime getFechaExpiracion() { return fechaExpiracion; }
+    public void setFechaExpiracion(final OffsetDateTime value) { fechaExpiracion = DateTimeHelper.toUtc(value); }
 }

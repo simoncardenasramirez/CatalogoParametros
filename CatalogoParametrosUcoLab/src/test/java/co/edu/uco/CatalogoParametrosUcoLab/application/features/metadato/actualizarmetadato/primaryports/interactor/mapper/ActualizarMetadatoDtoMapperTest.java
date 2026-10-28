@@ -21,7 +21,7 @@ class ActualizarMetadatoDtoMapperTest {
         var valor = JsonNodeFactory.instance.objectNode();
         valor.put("contenido", "valor actualizado");
         var request = ActualizarMetadatoDtoRequest.create(
-                idParametro.toString(), idTipoMetadato.toString(), valor);
+                idParametro.toString(), idTipoMetadato.toString(), UUID.randomUUID().toString(), valor);
 
         ActualizarMetadatoDtoInput input = ActualizarMetadatoDtoMapper.INSTANCE.toDtoInput(request);
 

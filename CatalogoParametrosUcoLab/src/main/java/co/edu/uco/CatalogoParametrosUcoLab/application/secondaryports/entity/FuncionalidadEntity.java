@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity;
 
 import java.time.OffsetDateTime;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.TextHelper;
@@ -76,7 +77,7 @@ public final class FuncionalidadEntity {
     }
 
     public void setFechaInicio(final OffsetDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
+        this.fechaInicio = DateTimeHelper.toUtc(fechaInicio);
     }
 
     public OffsetDateTime getFechaFinal() {
@@ -84,6 +85,6 @@ public final class FuncionalidadEntity {
     }
 
     public void setFechaFinal(final OffsetDateTime fechaFinal) {
-        this.fechaFinal = fechaFinal;
+        this.fechaFinal = DateTimeHelper.toUtc(fechaFinal);
     }
 }

@@ -10,20 +10,25 @@ public final class MetadatoEntity {
     private UUID id;
     private UUID idParametro;
     private UUID idTipoMetadato;
+    private UUID idAmbiente;
     private JsonNode valor;
 
-    private MetadatoEntity(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final JsonNode valor) {
+    private MetadatoEntity(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final UUID idAmbiente, final JsonNode valor) {
         setId(id);
         setIdParametro(idParametro);
         setIdTipoMetadato(idTipoMetadato);
+        this.idAmbiente = idAmbiente;
         setValor(valor);
     }
 
-    public static MetadatoEntity create(final UUID id, final UUID idParametro, final UUID idTipoMetadato,
+    public static MetadatoEntity create(final UUID id, final UUID idParametro, final UUID idTipoMetadato, final UUID idAmbiente,
             final JsonNode valor) {
-        return new MetadatoEntity(id, idParametro, idTipoMetadato, valor);
+        return new MetadatoEntity(id, idParametro, idTipoMetadato, idAmbiente, valor);
     }
 
+    /** Lectura compatible de registros historicos sin ambiente: nunca se exportan por token. */
+    public static MetadatoEntity create(final UUID id, final UUID p, final UUID t, final JsonNode v) { return create(id, p, t, null, v); }
+    public UUID getIdAmbiente() { return idAmbiente; }
     public UUID getId() { return id; }
     public void setId(final UUID id) { this.id = UUIDHelper.getDefault(id); }
     public UUID getIdParametro() { return idParametro; }

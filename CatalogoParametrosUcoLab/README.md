@@ -1,9 +1,14 @@
 # Catálogo de Parámetros UCO Lab
 
 Backend reactivo para administrar el catálogo de organizaciones, aplicaciones, módulos,
-funcionalidades, parámetros y metadatos. Está construido con Java 21, Spring Boot y
+funcionalidades, parámetros y metadatos. Está construido con Java 25, Spring Boot y
 Spring WebFlux, usa SurrealDB para persistencia y publica eventos en tiempo real mediante
 Server-Sent Events (SSE).
+
+El tratamiento automatico de estados y vencimientos, la cascada y el contrato
+UTC estan documentados en [Vigencias y estados](docs/vigencias-y-estados.md).
+
+Para integrar el catálogo en otra aplicación, consultar la [Guía de adopción del Catálogo de Parámetros y su microfrontend](docs/guia-adopcion-parametros.md).
 
 ## Contenido
 
@@ -22,7 +27,7 @@ Server-Sent Events (SSE).
 
 ## Tecnologías
 
-- Java 21
+- Java 25
 - Spring Boot 4
 - Spring WebFlux
 - SurrealDB
@@ -59,7 +64,7 @@ implementan en adaptadores de infraestructura.
 
 Para ejecutar el backend directamente:
 
-- JDK 21
+- JDK 25
 - Una instancia accesible de SurrealDB
 - Acceso al Azure Key Vault configurado por el proyecto
 
@@ -235,7 +240,7 @@ La configuración y las métricas personalizadas se describen en
 
 `azure-pipelines.yml` define el pipeline para:
 
-1. configurar Java 21;
+1. configurar Java 25;
 2. restaurar las cachés de Maven y Sonar;
 3. compilar y ejecutar las pruebas;
 4. exigir al menos 80 % de cobertura;
@@ -268,7 +273,7 @@ contexto de construcción localmente.
 
 Algunas distribuciones de JDK restringen la conexión dinámica de agentes. Si aparece
 `Could not initialize inline Byte Buddy mock maker`, utiliza una distribución compatible
-de JDK 21 o configura Mockito como agente de Java en Maven antes de interpretar el error
+de JDK 25 o configura Mockito como agente de Java en Maven antes de interpretar el error
 como un fallo funcional de las pruebas.
 
 ### No aparecen trazas en Jaeger
@@ -281,3 +286,9 @@ backend y busca el servicio `catalogo-parametros` en Jaeger.
 - [Swagger y contrato OpenAPI](SWAGGER.md)
 - [Consumo de servicios](docs/CONSUMO-SERVICIOS.md)
 - [Telemetría y observabilidad](TELEMETRY.md)
+
+## Security Baseline
+
+La integración de sesión BFF, PEP y Security UI está descrita en
+[docs/SEGURIDAD-INTEGRACION.md](docs/SEGURIDAD-INTEGRACION.md), con las variables
+locales, el arranque y las pruebas de autorización.

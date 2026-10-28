@@ -53,7 +53,7 @@ class CrearFuncionalidadDtoInputTest {
         assertEquals("funcionalidad", dto.getNombre());
         assertEquals(idModulo, dto.getIdModulo());
         assertTrue(dto.isActivo());
-        assertEquals(fechaInicio, dto.getFechaInicio());
-        assertEquals(fechaFinal, dto.getFechaFinal());
+        assertEquals((fechaInicio).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaInicio());
+        assertEquals((fechaFinal).withOffsetSameInstant(java.time.ZoneOffset.UTC), dto.getFechaFinal());
     }
 }

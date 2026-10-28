@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.application.features.token.creartoken.usecase.impl;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.Clock;
 
 import org.springframework.stereotype.Service;
 
@@ -23,21 +24,23 @@ public final class CrearTokenImpl implements CrearToken {
     private final AplicacionRepository aplicaciones;
     private final AmbienteRepository ambientes;
     private final TokenHashService hashService;
+    private final Clock reloj;
 
     public CrearTokenImpl(final TokenRepository repository, final EstadoTokenRepository estados,
             final AplicacionRepository aplicaciones, final AmbienteRepository ambientes,
-            final TokenHashService hashService) {
+            final TokenHashService hashService, final Clock reloj) {
         this.repository = repository;
         this.estados = estados;
         this.aplicaciones = aplicaciones;
         this.ambientes = ambientes;
         this.hashService = hashService;
+        this.reloj = reloj;
     }
 
     @Override
     public TokenEntity execute(final CrearTokenDomain data) {
         if (TextHelper.isBlank(data.getToken())) throw ValidationException.build("El token es obligatorio.");
-        if (data.getFechaExpiracion() == null || !data.getFechaExpiracion().isAfter(LocalDateTime.now())) {
+        if (data.getFechaExpiracion() == null || !data.getFechaExpiracion().toInstant().isAfter(reloj.instant())) {
             throw ValidationException.build("La fecha de expiracion debe ser posterior a la fecha actual.");
         }
         if (estados.findById(data.getEstadoToken()).isEmpty()) throw NotFoundException.build("El estado de token no existe.");
@@ -45,7 +48,7 @@ public final class CrearTokenImpl implements CrearToken {
         if (ambientes.findById(data.getAmbienteId()).isEmpty()) throw NotFoundException.build("El ambiente no existe.");
         data.generateId();
         return repository.save(TokenEntity.create(data.getId(), hashService.hash(data.getToken()),
-                data.getEstadoToken(), data.getAplicacionId(), data.getAmbienteId(), LocalDateTime.now(),
+                data.getEstadoToken(), data.getAplicacionId(), data.getAmbienteId(), OffsetDateTime.now(reloj),
                 data.getFechaExpiracion()));
     }
 }
