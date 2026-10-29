@@ -25,6 +25,12 @@ tags:
   - name: Metadatos
   - name: Tipos de parámetro
   - name: Tipos de metadato
+  - name: Ambientes
+  - name: Estados de ambiente
+  - name: Estados de metadato de ambiente
+  - name: Metadatos de ambiente
+  - name: Tokens
+  - name: Estados de token
 
 paths:
   /catalogo-parametros/api/v1/organizaciones:
@@ -350,7 +356,7 @@ paths:
     get:
       tags: [Metadatos]
       operationId: consultarMetadatos
-      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      parameters: [{ $ref: '#/components/parameters/IdParametro' }]
       responses:
         '200': { $ref: '#/components/responses/MetadatosOk' }
         '400': { $ref: '#/components/responses/BadRequest' }
@@ -431,6 +437,215 @@ paths:
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
 
+  /catalogo-parametros/api/v1/ambientes/events:
+    get:
+      tags: [Ambientes]
+      operationId: consultarEventosAmbientes
+      summary: Suscribirse a eventos de ambientes
+      responses: { '200': { $ref: '#/components/responses/EventStream' } }
+  /catalogo-parametros/api/v1/ambientes:
+    get:
+      tags: [Ambientes]
+      operationId: consultarAmbientes
+      summary: Consulta ambientes paginados
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses: { '200': { $ref: '#/components/responses/AmbientesOk' } }
+    post:
+      tags: [Ambientes]
+      operationId: crearAmbiente
+      summary: Crea un ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '201': { $ref: '#/components/responses/Created' }, '400': { $ref: '#/components/responses/BadRequest' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /catalogo-parametros/api/v1/ambientes/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Ambientes]
+      operationId: consultarAmbientePorId
+      summary: Consulta un ambiente por UUID
+      responses: { '200': { $ref: '#/components/responses/AmbientesOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+    put:
+      tags: [Ambientes]
+      operationId: actualizarAmbiente
+      summary: Actualiza un ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+    delete:
+      tags: [Ambientes]
+      operationId: eliminarAmbiente
+      summary: Elimina un ambiente
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' }, '409': { $ref: '#/components/responses/Conflict' } }
+
+  /catalogo-parametros/api/v1/estados-ambiente/events:
+    get:
+      tags: [Estados de ambiente]
+      operationId: consultarEventosEstadosAmbiente
+      summary: Suscribirse a eventos de estados de ambiente
+      responses: { '200': { $ref: '#/components/responses/EventStream' } }
+  /catalogo-parametros/api/v1/estados-ambiente:
+    get:
+      tags: [Estados de ambiente]
+      operationId: consultarEstadosAmbiente
+      summary: Consulta estados de ambiente paginados
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses: { '200': { $ref: '#/components/responses/EstadosAmbienteOk' } }
+    post:
+      tags: [Estados de ambiente]
+      operationId: crearEstadoAmbiente
+      summary: Crea un estado de ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '201': { $ref: '#/components/responses/Created' }, '400': { $ref: '#/components/responses/BadRequest' } }
+  /catalogo-parametros/api/v1/estados-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Estados de ambiente]
+      operationId: consultarEstadoAmbientePorId
+      summary: Consulta un estado de ambiente por UUID
+      responses: { '200': { $ref: '#/components/responses/EstadosAmbienteOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+    put:
+      tags: [Estados de ambiente]
+      operationId: actualizarEstadoAmbiente
+      summary: Actualiza un estado de ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+    delete:
+      tags: [Estados de ambiente]
+      operationId: eliminarEstadoAmbiente
+      summary: Elimina un estado de ambiente
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+
+  /catalogo-parametros/api/v1/estados-metadato-ambiente/events:
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: consultarEventosEstadosMetadatoAmbiente
+      summary: Suscribirse a eventos de estados de metadato de ambiente
+      responses: { '200': { $ref: '#/components/responses/EventStream' } }
+  /catalogo-parametros/api/v1/estados-metadato-ambiente:
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: consultarEstadosMetadatoAmbiente
+      summary: Consulta estados de metadato de ambiente paginados
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses: { '200': { $ref: '#/components/responses/EstadosMetadatoAmbienteOk' } }
+    post:
+      tags: [Estados de metadato de ambiente]
+      operationId: crearEstadoMetadatoAmbiente
+      summary: Crea un estado de metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '201': { $ref: '#/components/responses/Created' }, '400': { $ref: '#/components/responses/BadRequest' } }
+  /catalogo-parametros/api/v1/estados-metadato-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Estados de metadato de ambiente]
+      operationId: consultarEstadoMetadatoAmbientePorId
+      summary: Consulta un estado de metadato de ambiente por UUID
+      responses: { '200': { $ref: '#/components/responses/EstadosMetadatoAmbienteOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+    put:
+      tags: [Estados de metadato de ambiente]
+      operationId: actualizarEstadoMetadatoAmbiente
+      summary: Actualiza un estado de metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/NombreRequest' }
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+    delete:
+      tags: [Estados de metadato de ambiente]
+      operationId: eliminarEstadoMetadatoAmbiente
+      summary: Elimina un estado de metadato de ambiente
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+
+  /catalogo-parametros/api/v1/metadatos-ambiente/events:
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: consultarEventosMetadatosAmbiente
+      summary: Suscribirse a eventos de metadatos de ambiente
+      responses: { '200': { $ref: '#/components/responses/EventStream' } }
+  /catalogo-parametros/api/v1/metadatos-ambiente:
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: consultarMetadatosAmbiente
+      summary: Consulta metadatos de ambiente paginados
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses: { '200': { $ref: '#/components/responses/MetadatosAmbienteOk' } }
+    post:
+      tags: [Metadatos de ambiente]
+      operationId: crearMetadatoAmbiente
+      summary: Crea un metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/MetadatoAmbienteRequest' }
+      responses: { '201': { $ref: '#/components/responses/Created' }, '400': { $ref: '#/components/responses/BadRequest' } }
+  /catalogo-parametros/api/v1/metadatos-ambiente/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Metadatos de ambiente]
+      operationId: consultarMetadatoAmbientePorId
+      summary: Consulta un metadato de ambiente por UUID
+      responses: { '200': { $ref: '#/components/responses/MetadatosAmbienteOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+    put:
+      tags: [Metadatos de ambiente]
+      operationId: actualizarMetadatoAmbiente
+      summary: Actualiza un metadato de ambiente
+      requestBody: { $ref: '#/components/requestBodies/MetadatoAmbienteRequest' }
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+    delete:
+      tags: [Metadatos de ambiente]
+      operationId: eliminarMetadatoAmbiente
+      summary: Elimina un metadato de ambiente
+      responses: { '200': { $ref: '#/components/responses/Success' }, '404': { $ref: '#/components/responses/NotFound' } }
+
+  /catalogo-parametros/api/v1/tokens:
+    get:
+      tags: [Tokens]
+      operationId: consultarTokens
+      summary: Consulta tokens registrados
+      responses: { '200': { $ref: '#/components/responses/TokensOk' } }
+    post:
+      tags: [Tokens]
+      operationId: crearToken
+      summary: Crea un token y almacena únicamente su hash
+      requestBody: { $ref: '#/components/requestBodies/TokenRequest' }
+      responses: { '201': { $ref: '#/components/responses/TokensOk' }, '400': { $ref: '#/components/responses/BadRequest' } }
+  /catalogo-parametros/api/v1/tokens/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Tokens]
+      operationId: consultarTokenPorId
+      summary: Consulta un token por UUID
+      responses: { '200': { $ref: '#/components/responses/TokensOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+  /catalogo-parametros/api/v1/tokens/{id}/estado:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    patch:
+      tags: [Tokens]
+      operationId: actualizarEstadoToken
+      summary: Actualiza el estado de un token
+      requestBody: { $ref: '#/components/requestBodies/EstadoTokenRequest' }
+      responses: { '200': { $ref: '#/components/responses/TokensOk' }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' } }
+  /catalogo-parametros/api/v1/tokens/{id}/validar:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    post:
+      tags: [Tokens]
+      operationId: validarToken
+      summary: Valida el secreto, estado y expiración de un token
+      requestBody: { $ref: '#/components/requestBodies/ValidarTokenRequest' }
+      responses: { '200': { $ref: '#/components/responses/ValidarTokenOk' }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' } }
+  /catalogo-parametros/api/v1/tokens/{id}/parametros:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Tokens]
+      operationId: consultarParametrosPorToken
+      summary: Consulta los parámetros autorizados por un token
+      responses: { '200': { $ref: '#/components/responses/ParametrosTokenOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+
+  /catalogo-parametros/api/v1/estados-token:
+    get:
+      tags: [Estados de token]
+      operationId: consultarEstadosToken
+      summary: Consulta estados de token
+      responses: { '200': { $ref: '#/components/responses/EstadosTokenOk' } }
+  /catalogo-parametros/api/v1/estados-token/{id}:
+    get:
+      tags: [Estados de token]
+      operationId: consultarEstadoTokenPorId
+      summary: Consulta un estado de token por UUID
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses: { '200': { $ref: '#/components/responses/EstadosTokenOk' }, '404': { $ref: '#/components/responses/NotFound' } }
+
 components:
   parameters:
     Id:
@@ -449,6 +664,12 @@ components:
       in: query
       description: Cantidad máxima de registros solicitados
       schema: { type: integer, minimum: 1, default: 10 }
+    IdParametro:
+      name: idParametro
+      in: query
+      required: false
+      description: Filtra metadatos por el UUID del parametro
+      schema: { type: string, format: uuid }
   requestBodies:
     CambiarEstadoRequest:
       required: true
@@ -485,6 +706,34 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/MetadatoRequest' }
+    NombreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [nombre]
+            properties: { nombre: { type: string, minLength: 1 } }
+    MetadatoAmbienteRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/MetadatoAmbienteRequest' }
+    TokenRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/TokenRequest' }
+    EstadoTokenRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/EstadoTokenRequest' }
+    ValidarTokenRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ValidarTokenRequest' }
   responses:
     Success:
       description: Operación exitosa
@@ -518,6 +767,14 @@ components:
     MetadatosOk: { description: Metadatos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoResponse' } } } }
     TiposParametroOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoParametroResponse' } } } }
     TiposMetadatoOk: { description: Tipos encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TipoMetadatoResponse' } } } }
+    AmbientesOk: { description: Ambientes encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/AmbienteResponse' } } } }
+    EstadosAmbienteOk: { description: Estados de ambiente encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/EstadoAmbienteResponse' } } } }
+    EstadosMetadatoAmbienteOk: { description: Estados de metadato de ambiente encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/EstadoMetadatoAmbienteResponse' } } } }
+    MetadatosAmbienteOk: { description: Metadatos de ambiente encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' } } } }
+    TokensOk: { description: Tokens encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TokenResponse' } } } }
+    EstadosTokenOk: { description: Estados de token encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/EstadoTokenResponse' } } } }
+    ValidarTokenOk: { description: Resultado de validacion, content: { application/json: { schema: { $ref: '#/components/schemas/ValidarTokenResponse' } } } }
+    ParametrosTokenOk: { description: Parametros autorizados, content: { application/json: { schema: { $ref: '#/components/schemas/ParametrosTokenResponse' } } } }
   schemas:
     CambiarEstadoRequest:
       type: object
@@ -548,6 +805,68 @@ components:
       required: [mensajes]
       properties:
         mensajes: { type: array, items: { type: string } }
+    Ambiente:
+      type: object
+      required: [id, nombre]
+      properties: { id: { $ref: '#/components/schemas/Uuid' }, nombre: { type: string } }
+    EstadoAmbiente:
+      type: object
+      required: [id, nombre]
+      properties: { id: { $ref: '#/components/schemas/Uuid' }, nombre: { type: string } }
+    EstadoMetadatoAmbiente:
+      type: object
+      required: [id, nombre]
+      properties: { id: { $ref: '#/components/schemas/Uuid' }, nombre: { type: string } }
+    MetadatoAmbiente:
+      type: object
+      required: [id, idParametro, idAmbiente, idEstadoMetadatoAmbiente]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        idParametro: { $ref: '#/components/schemas/Uuid' }
+        idAmbiente: { $ref: '#/components/schemas/Uuid' }
+        idEstadoMetadatoAmbiente: { $ref: '#/components/schemas/Uuid' }
+    MetadatoAmbienteRequest:
+      type: object
+      required: [idParametro, idAmbiente, idEstadoMetadatoAmbiente]
+      properties:
+        idParametro: { $ref: '#/components/schemas/InputUuid' }
+        idAmbiente: { $ref: '#/components/schemas/InputUuid' }
+        idEstadoMetadatoAmbiente: { $ref: '#/components/schemas/InputUuid' }
+    TokenRequest:
+      type: object
+      required: [token, estadoToken, aplicacionId, ambienteId, fechaExpiracion]
+      properties:
+        token: { type: string, minLength: 1, writeOnly: true }
+        estadoToken: { $ref: '#/components/schemas/InputUuid' }
+        aplicacionId: { $ref: '#/components/schemas/InputUuid' }
+        ambienteId: { $ref: '#/components/schemas/InputUuid' }
+        fechaExpiracion: { $ref: '#/components/schemas/InputDateTime' }
+    EstadoTokenRequest:
+      type: object
+      required: [estadoToken]
+      properties: { estadoToken: { $ref: '#/components/schemas/InputUuid' } }
+    ValidarTokenRequest:
+      type: object
+      required: [token]
+      properties: { token: { type: string, minLength: 1, writeOnly: true } }
+    Token:
+      type: object
+      required: [id, estadoToken, aplicacionId, ambienteId, fechaCreacion, fechaExpiracion]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        estadoToken: { $ref: '#/components/schemas/Uuid' }
+        aplicacionId: { $ref: '#/components/schemas/Uuid' }
+        ambienteId: { $ref: '#/components/schemas/Uuid' }
+        fechaCreacion: { type: string, format: date-time }
+        fechaExpiracion: { type: string, format: date-time }
+    EstadoToken:
+      type: object
+      required: [id, estado]
+      properties: { id: { $ref: '#/components/schemas/Uuid' }, estado: { type: string } }
+    ValidarTokenResponse:
+      allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [valido], properties: { valido: { type: boolean } } }]
+    ParametrosTokenResponse:
+      allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [aplicacion, ambiente, parametros], properties: { aplicacion: { $ref: '#/components/schemas/Aplicacion' }, ambiente: { $ref: '#/components/schemas/Ambiente' }, parametros: { type: array, items: { $ref: '#/components/schemas/Parametro' } } } }]
     OrganizacionRequest:
       type: object
       additionalProperties: false
@@ -678,6 +997,12 @@ components:
         id: { $ref: '#/components/schemas/Uuid' }
         tipo: { type: string, example: STRING }
         detalle: { type: string }
+    AmbienteResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [ambientes], properties: { ambientes: { type: array, items: { $ref: '#/components/schemas/Ambiente' } } } }] }
+    EstadoAmbienteResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [estadosAmbiente], properties: { estadosAmbiente: { type: array, items: { $ref: '#/components/schemas/EstadoAmbiente' } } } }] }
+    EstadoMetadatoAmbienteResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [estadosMetadatoAmbiente], properties: { estadosMetadatoAmbiente: { type: array, items: { $ref: '#/components/schemas/EstadoMetadatoAmbiente' } } } }] }
+    MetadatoAmbienteResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [metadatosAmbiente], properties: { metadatosAmbiente: { type: array, items: { $ref: '#/components/schemas/MetadatoAmbiente' } } } }] }
+    TokenResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [tokens], properties: { tokens: { type: array, items: { $ref: '#/components/schemas/Token' } } } }] }
+    EstadoTokenResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [estadosToken], properties: { estadosToken: { type: array, items: { $ref: '#/components/schemas/EstadoToken' } } } }] }
     OrganizacionResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [organizaciones], properties: { organizaciones: { type: array, items: { $ref: '#/components/schemas/Organizacion' } } } }] }
     AplicacionResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [aplicaciones], properties: { aplicaciones: { type: array, items: { $ref: '#/components/schemas/Aplicacion' } } } }] }
     ModuloResponse: { allOf: [{ $ref: '#/components/schemas/MessageResponse' }, { type: object, required: [modulos], properties: { modulos: { type: array, items: { $ref: '#/components/schemas/Modulo' } } } }] }

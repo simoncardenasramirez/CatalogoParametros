@@ -8,6 +8,8 @@ El archivo [catalogo-parametros-v1.yaml](catalogo-parametros-v1.yaml) documenta 
 - [Guía de integración por endpoint](GUIA-INTEGRACION.md): campos, ejemplos cURL, respuestas, errores, relaciones y SSE para las 68 operaciones.
 - [Colección Postman](catalogo-parametros.postman_collection.json): solicitudes importables con host e IDs configurables.
 
+La administraciÃ³n embebida tiene un contrato separado en [catalogo-administracion-v1.yaml](catalogo-administracion-v1.yaml).
+
 ## Inventario de operaciones
 
 Prefijo común: `/catalogo-parametros/api/v1`.
@@ -26,6 +28,10 @@ Prefijo común: `/catalogo-parametros/api/v1`.
 | Estados de ambiente | `/estados-ambiente` | Listar, consultar por ID, crear, actualizar, eliminar, SSE |
 | Estados de metadato de ambiente | `/estados-metadato-ambiente` | Listar, consultar por ID, crear, actualizar, eliminar, SSE |
 | Metadatos de ambiente | `/metadatos-ambiente` | Listar, consultar por ID, crear, actualizar, eliminar, SSE |
+| Tokens | `/tokens` | Listar, consultar por ID, crear, actualizar estado, validar, consultar parÃ¡metros autorizados |
+| Estados de token | `/estados-token` | Listar, consultar por ID |
+
+La administraciÃ³n embebida se documenta aparte en [catalogo-administracion-v1.yaml](catalogo-administracion-v1.yaml) e incluye consulta, SSE, creaciÃ³n, actualizaciÃ³n y eliminaciÃ³n por recurso.
 
 Convenciones:
 

@@ -31,6 +31,12 @@ Las escrituras de organizaciones, aplicaciones, módulos, funcionalidades, pará
 
 `MetadatoAmbiente` relaciona parámetro, ambiente y estado de metadato de ambiente. No contiene `valor` ni `idTipoMetadato`. El catálogo `EstadoAmbiente` es independiente: el DTO actual de ambiente no incluye una referencia a él.
 
+## Tokens y estados de token
+
+La API expone `GET` y `POST /catalogo-parametros/api/v1/tokens`, consulta por ID, `PATCH /tokens/{id}/estado`, `POST /tokens/{id}/validar` y `GET /tokens/{id}/parametros`. Los cuerpos de creaciÃ³n y validaciÃ³n reciben el secreto en `token`; el backend no devuelve ni almacena el secreto en texto plano.
+
+TambiÃ©n estÃ¡n disponibles `GET /catalogo-parametros/api/v1/estados-token` y `GET /estados-token/{id}` para consultar los estados vÃ¡lidos.
+
 ## Reglas comunes
 
 - Los IDs son UUID en texto. El ID del recurso se envía en la ruta al consultar, actualizar o eliminar; no se envía como campo del cuerpo de creación.
@@ -87,6 +93,10 @@ Las escrituras de módulos y funcionalidades devuelven actualmente `parametros: 
 - [Estados de ambiente](#estados-ambiente)
 - [Estados de metadato de ambiente](#estados-metadato-ambiente)
 - [Metadatos de ambiente](#metadatos-ambiente)
+- [Tokens](#tokens)
+- [Estados de token](#estados-token)
+
+La administraciÃ³n embebida de cada aplicaciÃ³n estÃ¡ documentada en el contrato separado [catalogo-administracion-v1.yaml](catalogo-administracion-v1.yaml).
 
 <a id="organizaciones"></a>
 
