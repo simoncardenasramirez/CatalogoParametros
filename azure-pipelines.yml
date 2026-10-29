@@ -15,16 +15,15 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  # Maven y Trivy comparten el repositorio local estándar del agente.
+  # Maven y Trivy comparten el repositorio local estÃ¡ndar del agente.
   MAVEN_CACHE_FOLDER: $(Build.SourcesDirectory)/.m2/repository
   SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
   TRIVY_CACHE_DIR: $(Pipeline.Workspace)/.trivy/cache
   TRIVY_VERSION: '0.74.0'
-  IMAGE_VERSION_PREFIX: '0.0'
-  # La version se asigna al latest ANTERIOR, no a la imagen nueva.
-  # Contador persistente por pipeline y rama; los PR no consumen el de develop.
-  # Reserva el numero al iniciar, incluso si la ejecucion falla.
-  IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 2)]
+  IMAGE_VERSION_PREFIX: '0.1'
+  # La version se publica con su etiqueta y tambien actualiza latest.
+  # El contador incrementa el parche por rama; los PR no publican imagenes.
+  IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 0)]
 
 steps:
   - checkout: self
@@ -82,7 +81,7 @@ steps:
         echo "##vso[task.logissue type=error]Configura SONAR_TOKEN como variable secreta del pipeline."
         exit 1
       fi
-    displayName: Verificar configuración de Sonar
+    displayName: Verificar configuraciÃ³n de Sonar
     env:
       SONAR_TOKEN: $(SONAR_TOKEN)
 
@@ -175,7 +174,7 @@ steps:
         --severity HIGH,CRITICAL \
         --exit-code 1 \
         .
-    displayName: Analizar dependencias, secretos y configuración con Trivy
+    displayName: Analizar dependencias, secretos y configuraciÃ³n con Trivy
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
 
   - task: Docker@2
@@ -189,15 +188,15 @@ steps:
       set -euo pipefail
 
       repositorio="simon4219/catalogo-parametros"
-      version_anterior="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
+      version_nueva="${IMAGE_VERSION_PREFIX}.${IMAGE_VERSION_PATCH}"
       imagen_nueva="catalogo-candidato:${BUILD_BUILDID}"
 
-      if [[ ! "$version_anterior" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "##vso[task.logissue type=error]La versión debe tener formato X.Y.Z."
+      if [[ ! "$version_nueva" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "##vso[task.logissue type=error]La versiÃ³n debe tener formato X.Y.Z."
         exit 1
       fi
 
-      # Construir primero sin modificar las imágenes de Docker Hub.
+      # Construir primero sin modificar las imÃ¡genes de Docker Hub.
       echo "Construyendo nueva imagen..."
 
       docker build \
@@ -205,7 +204,7 @@ steps:
         --tag "$imagen_nueva" \
         .
 
-      # Impedir la publicación si la imagen contiene vulnerabilidades graves.
+      # Impedir la publicaciÃ³n si la imagen contiene vulnerabilidades graves.
       echo "Analizando nueva imagen con Trivy..."
 
       trivy image \
@@ -215,73 +214,29 @@ steps:
         --exit-code 1 \
         "$imagen_nueva"
 
-      archivo_error="$(mktemp)"
-      trap 'rm -f "$archivo_error"' EXIT
-
-      # Recuperar la imagen que actualmente tiene la etiqueta latest.
-      echo "Buscando latest anterior..."
-
-      if docker pull "${repositorio}:latest" 2>"$archivo_error"; then
-
-        # Evitar sobrescribir una versión histórica existente.
-        if docker manifest inspect \
-          "${repositorio}:${version_anterior}" \
-          > /dev/null 2>"$archivo_error"; then
-
-          echo "##vso[task.logissue type=error]La versión ${version_anterior} ya existe. No se sobrescribirá."
-          exit 1
-
-        elif ! grep -Eqi \
-          'manifest unknown|no such manifest' "$archivo_error"; then
-
-          cat "$archivo_error" >&2
-          echo "##vso[task.logissue type=error]No se pudo comprobar si la versión histórica existe."
-          exit 1
-        fi
-
-        # Dar una versión a la imagen anterior antes de reemplazar latest.
-        echo "Guardando latest anterior como ${repositorio}:${version_anterior}..."
-
-        docker tag \
-          "${repositorio}:latest" \
-          "${repositorio}:${version_anterior}"
-
-        docker push "${repositorio}:${version_anterior}"
-
-        echo "Imagen anterior conservada como ${version_anterior}."
-
-      elif grep -Eqi 'manifest unknown' "$archivo_error"; then
-
-        # Primera ejecución cuando todavía no existe latest.
-        echo "No existe latest anterior. Se publicará el primer latest."
-
-      else
-
-        # No confundir errores de autenticación o red con una imagen inexistente.
-        cat "$archivo_error" >&2
-        echo "##vso[task.logissue type=error]No se pudo descargar latest. Se cancela la publicación."
+      # No sobrescribir una version historica existente.
+      if docker manifest inspect "${repositorio}:${version_nueva}" > /dev/null 2>&1; then
+        echo "##vso[task.logissue type=error]La version ${version_nueva} ya existe. No se sobrescribira."
         exit 1
-
       fi
 
-      # La nueva imagen se publica únicamente con la etiqueta latest.
-      echo "Publicando nueva imagen como ${repositorio}:latest..."
-
-      docker tag \
-        "$imagen_nueva" \
-        "${repositorio}:latest"
-
+      echo "Publicando nueva imagen como ${repositorio}:${version_nueva} y latest..."
+      docker tag "$imagen_nueva" "${repositorio}:${version_nueva}"
+      docker tag "$imagen_nueva" "${repositorio}:latest"
+      docker push "${repositorio}:${version_nueva}"
       docker push "${repositorio}:latest"
 
-      echo "Publicación completada."
+      echo "Publicacion completada: ${repositorio}:${version_nueva} y latest"
       echo "Imagen actual: ${repositorio}:latest"
-    displayName: Versionar imagen anterior y publicar nueva como latest
+    displayName: Publicar imagen versionada y latest
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
 
   - task: Docker@2
-    displayName: Cerrar sesión en Docker Hub
+    displayName: Cerrar sesiÃ³n en Docker Hub
     condition: and(always(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     inputs:
       command: logout
       containerRegistry: DockerHubConnection
+
+
