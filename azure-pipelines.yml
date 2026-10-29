@@ -200,6 +200,8 @@ steps:
       echo "Construyendo nueva imagen..."
 
       docker build \
+        --secret id=maven_settings,src="$(Agent.TempDirectory)/maven-settings.xml" \
+        --secret id=github_packages_token,env=GITHUB_PACKAGES_TOKEN \
         --file Dockerfile \
         --tag "$imagen_nueva" \
         .
@@ -231,6 +233,8 @@ steps:
     displayName: Publicar imagen versionada y latest
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
+    env:
+      GITHUB_PACKAGES_TOKEN: $(GITHUB_PACKAGES_TOKEN)
 
   - task: Docker@2
     displayName: Cerrar sesiÃ³n en Docker Hub
