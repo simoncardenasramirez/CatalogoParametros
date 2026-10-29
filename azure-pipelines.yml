@@ -20,6 +20,7 @@ variables:
   SONAR_USER_HOME: $(Pipeline.Workspace)/.sonar
   TRIVY_CACHE_DIR: $(Pipeline.Workspace)/.trivy/cache
   TRIVY_VERSION: '0.74.0'
+  # Cambio documental para ejecutar nuevamente la publicación inicial 0.1.0.
   IMAGE_VERSION_PREFIX: '0.1'
   # La version se publica con su etiqueta y tambien actualiza latest.
   # El contador incrementa el parche por rama; los PR no publican imagenes.
