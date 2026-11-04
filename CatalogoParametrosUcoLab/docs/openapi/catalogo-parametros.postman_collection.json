@@ -3203,6 +3203,55 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Cargas masivas de parametros",
+      "item": [
+        {
+          "name": "GET - Descargar plantilla",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/cargas-masivas/parametros/plantilla"
+          }
+        },
+        {
+          "name": "POST - Validar XLSX",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "archivo", "type": "file", "src": "plantilla-carga-parametros.xlsx" }]
+            },
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/cargas-masivas/parametros/validar"
+          }
+        },
+        {
+          "name": "POST - Cargar XLSX validado",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "archivo", "type": "file", "src": "plantilla-carga-parametros.xlsx" }]
+            },
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/cargas-masivas/parametros"
+          }
+        },
+        {
+          "name": "POST - Descargar reporte de errores",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "archivo", "type": "file", "src": "plantilla-carga-parametros.xlsx" }]
+            },
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/cargas-masivas/parametros/reporte-errores"
+          }
+        }
+      ]
     }
   ]
 }
