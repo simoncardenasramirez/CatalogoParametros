@@ -1,0 +1,1944 @@
+{
+  "info": {
+    "name": "Integración Parámetros — 93 operaciones",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Inventario contrastado con los controladores al 2026-11-03. Ejemplos ilustrativos. Configure IDs reales y sesión administrativa. El secretoConsulta solo se envía a la consulta por token. No ejecutar la colección completa: contiene DELETE y conexiones SSE continuas."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "idOrganizacion",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idAplicacion",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idModulo",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idFuncionalidad",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idParametro",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idMetadato",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idTipoParametro",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idTipoMetadato",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idAmbiente",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idEstadoAmbiente",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idEstadoMetadatoAmbiente",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idMetadatoAmbiente",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "idToken",
+      "value": ""
+    },
+    {
+      "key": "idEstadoToken",
+      "value": ""
+    },
+    {
+      "key": "secretoConsulta",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Organizaciones",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"UCO\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones/{{idOrganizacion}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones/{{idOrganizacion}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"UCO\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones/{{idOrganizacion}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/organizaciones/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aplicaciones",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"UcoLab\",\n  \"idOrganizacion\": \"{{idOrganizacion}}\",\n  \"activa\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"UcoLab\",\n  \"idOrganizacion\": \"{{idOrganizacion}}\",\n  \"activa\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Cambiar estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/cambiarestado",
+            "description": "Cambiar estado. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Módulos",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Matriculas\",\n  \"idAplicacion\": \"{{idAplicacion}}\",\n  \"activo\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos/{{idModulo}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos/{{idModulo}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Matriculas\",\n  \"idAplicacion\": \"{{idAplicacion}}\",\n  \"activo\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos/{{idModulo}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Cambiar estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/modulos/{{idModulo}}/cambiarestado",
+            "description": "Cambiar estado. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Funcionalidades",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Crear matricula\",\n  \"idModulo\": \"{{idModulo}}\",\n  \"activo\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades/{{idFuncionalidad}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades/{{idFuncionalidad}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Crear matricula\",\n  \"idModulo\": \"{{idModulo}}\",\n  \"activo\": \"true\",\n  \"fechaInicio\": \"2026-10-01T08:00:00-05:00\",\n  \"fechaFinal\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades/{{idFuncionalidad}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Cambiar estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/funcionalidades/{{idFuncionalidad}}/cambiarestado",
+            "description": "Cambiar estado. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parámetros",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"idioma\",\n  \"idFuncionalidad\": \"{{idFuncionalidad}}\",\n  \"idTipoParametro\": \"{{idTipoParametro}}\",\n  \"activo\": \"true\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros/{{idParametro}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros/{{idParametro}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"idioma\",\n  \"idFuncionalidad\": \"{{idFuncionalidad}}\",\n  \"idTipoParametro\": \"{{idTipoParametro}}\",\n  \"activo\": \"true\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros/{{idParametro}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Cambiar estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/parametros/{{idParametro}}/cambiarestado",
+            "description": "Cambiar estado. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metadatos",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "catalogo-parametros",
+                "api",
+                "v1",
+                "metadatos"
+              ],
+              "query": [
+                {
+                  "key": "idParametro",
+                  "value": "{{idParametro}}",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"valor\": \"es-CO\",\n  \"idAmbiente\": \"{{idAmbiente}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos/{{idMetadato}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos/{{idMetadato}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"valor\": \"es-CO\",\n  \"idAmbiente\": \"{{idAmbiente}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos/{{idMetadato}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipos de parámetro",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tipos-parametro",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tipos-parametro/{{idTipoParametro}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipos de metadato",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tipos-metadato",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tipos-metadato/{{idTipoMetadato}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ambientes",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Desarrollo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes/{{idAmbiente}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes/{{idAmbiente}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Desarrollo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes/{{idAmbiente}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/ambientes/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estados de ambiente",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Activo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente/{{idEstadoAmbiente}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente/{{idEstadoAmbiente}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Activo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente/{{idEstadoAmbiente}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-ambiente/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estados de metadato de ambiente",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Aprobado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente/{{idEstadoMetadatoAmbiente}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente/{{idEstadoMetadatoAmbiente}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Aprobado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente/{{idEstadoMetadatoAmbiente}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-metadato-ambiente/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metadatos de ambiente",
+      "item": [
+        {
+          "name": "GET — Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente?page=1&pageSize=10",
+            "description": "Listar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "POST — Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente",
+            "description": "Crear. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"idEstadoMetadatoAmbiente\": \"{{idEstadoMetadatoAmbiente}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET — Consultar por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente/{{idMetadatoAmbiente}}",
+            "description": "Consultar por ID. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "PUT — Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente/{{idMetadatoAmbiente}}",
+            "description": "Actualizar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"idEstadoMetadatoAmbiente\": \"{{idEstadoMetadatoAmbiente}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE — Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente/{{idMetadatoAmbiente}}",
+            "description": "Eliminar. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        },
+        {
+          "name": "GET — Escuchar cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/metadatos-ambiente/events",
+            "description": "Escuchar cambios. Consultar GUIA-INTEGRACION.md y el contrato OpenAPI para validaciones y errores."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tokens y estados de token",
+      "item": [
+        {
+          "name": "GET /catalogo-parametros/api/v1/estados-token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-token"
+          }
+        },
+        {
+          "name": "GET /catalogo-parametros/api/v1/estados-token/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/estados-token/{{idEstadoToken}}"
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/tokens",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{secretoConsulta}}\",\n  \"estadoToken\": \"{{idEstadoToken}}\",\n  \"aplicacionId\": \"{{idAplicacion}}\",\n  \"ambienteId\": \"{{idAmbiente}}\",\n  \"fechaExpiracion\": \"2027-12-31T23:59:59Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /catalogo-parametros/api/v1/tokens",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens"
+          }
+        },
+        {
+          "name": "GET /catalogo-parametros/api/v1/tokens/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens/{{idToken}}"
+          }
+        },
+        {
+          "name": "PATCH /catalogo-parametros/api/v1/tokens/{id}/estado",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens/{{idToken}}/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estadoToken\": \"{{idEstadoToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/tokens/{id}/validar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens/{{idToken}}/validar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{secretoConsulta}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /catalogo-parametros/api/v1/tokens/{id}/parametros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/tokens/{{idToken}}/parametros",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretoConsulta}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Administración por aplicación (microfrontend)",
+      "item": [
+        {
+          "name": "GET /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/events"
+          }
+        },
+        {
+          "name": "GET /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion"
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/modulos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Inventario\",\n  \"activo\": true,\n  \"fechaInicio\": \"2026-11-01T00:00:00-05:00\",\n  \"fechaFinal\": \"2027-12-31T23:59:59-05:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/funcionalidades",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Control de existencias\",\n  \"idModulo\": \"{{idModulo}}\",\n  \"activo\": true,\n  \"fechaInicio\": \"2026-11-01T00:00:00-05:00\",\n  \"fechaFinal\": \"2027-12-31T23:59:59-05:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/parametros",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"configuracion-inventario\",\n  \"idFuncionalidad\": \"{{idFuncionalidad}}\",\n  \"idTipoParametro\": \"{{idTipoParametro}}\",\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"valor\": {\n    \"maximoProductos\": 100\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos-ambiente",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"valor\": {\n    \"maximoProductos\": 100\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/modulos/{{idModulo}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Inventario\",\n  \"activo\": true,\n  \"fechaInicio\": \"2026-11-01T00:00:00-05:00\",\n  \"fechaFinal\": \"2027-12-31T23:59:59-05:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/funcionalidades/{{idFuncionalidad}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Control de existencias\",\n  \"idModulo\": \"{{idModulo}}\",\n  \"activo\": true,\n  \"fechaInicio\": \"2026-11-01T00:00:00-05:00\",\n  \"fechaFinal\": \"2027-12-31T23:59:59-05:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/parametros/{{idParametro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"configuracion-inventario\",\n  \"idFuncionalidad\": \"{{idFuncionalidad}}\",\n  \"idTipoParametro\": \"{{idTipoParametro}}\",\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos/{{idMetadato}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"valor\": {\n    \"maximoProductos\": 100\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos-ambiente/{{idMetadato}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idParametro\": \"{{idParametro}}\",\n  \"idTipoMetadato\": \"{{idTipoMetadato}}\",\n  \"idAmbiente\": \"{{idAmbiente}}\",\n  \"valor\": {\n    \"maximoProductos\": 100\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/modulos/{{idModulo}}"
+          }
+        },
+        {
+          "name": "DELETE /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/funcionalidades/{{idFuncionalidad}}"
+          }
+        },
+        {
+          "name": "DELETE /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/parametros/{{idParametro}}"
+          }
+        },
+        {
+          "name": "DELETE /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos/{{idMetadato}}"
+          }
+        },
+        {
+          "name": "DELETE /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/catalogo-parametros/api/v1/aplicaciones/{{idAplicacion}}/administracion/metadatos-ambiente/{{idMetadato}}"
+          }
+        }
+      ]
+    }
+  ]
+}

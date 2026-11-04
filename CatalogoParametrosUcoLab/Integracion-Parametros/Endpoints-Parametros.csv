@@ -1,0 +1,94 @@
+﻿metodo,ruta,grupo,uso,autenticacion,carga_seguridad
+GET,/catalogo-parametros/api/v1/ambientes/events,ambientes,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/ambientes,ambientes,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/ambientes/{id},ambientes,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/ambientes/{id},ambientes,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/ambientes,ambientes,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/ambientes/{id},ambientes,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/aplicaciones/events,aplicaciones,Eventos SSE,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/aplicaciones,aplicaciones,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/aplicaciones/{id},aplicaciones,Consultar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones,aplicaciones,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{id},aplicaciones,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{id},aplicaciones,Eliminar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{id}/cambiarestado,aplicaciones,Cambiar estado,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/events,Administración embebida,Eventos SSE,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion,Administración embebida,Consultar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos,Administración embebida,Crear,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades,Administración embebida,Crear,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros,Administración embebida,Crear,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos,Administración embebida,Crear,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente,Administración embebida,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos/{id},Administración embebida,Actualizar,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades/{id},Administración embebida,Actualizar,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros/{id},Administración embebida,Actualizar,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos/{id},Administración embebida,Actualizar,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente/{id},Administración embebida,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/modulos/{id},Administración embebida,Eliminar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/funcionalidades/{id},Administración embebida,Eliminar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/parametros/{id},Administración embebida,Eliminar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos/{id},Administración embebida,Eliminar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/metadatos-ambiente/{id},Administración embebida,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-ambiente/events,estados-ambiente,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/estados-ambiente,estados-ambiente,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/estados-ambiente/{id},estados-ambiente,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/estados-ambiente/{id},estados-ambiente,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-ambiente,estados-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-ambiente/{id},estados-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-metadato-ambiente/events,estados-metadato-ambiente,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/estados-metadato-ambiente,estados-metadato-ambiente,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/estados-metadato-ambiente/{id},estados-metadato-ambiente,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/estados-metadato-ambiente/{id},estados-metadato-ambiente,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-metadato-ambiente,estados-metadato-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-metadato-ambiente/{id},estados-metadato-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-token,estados-token,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/estados-token/{id},estados-token,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/funcionalidades/events,funcionalidades,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/funcionalidades,funcionalidades,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/funcionalidades/{id},funcionalidades,Actualizar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/funcionalidades/{id}/cambiarestado,funcionalidades,Cambiar estado,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/funcionalidades/{id},funcionalidades,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/funcionalidades,funcionalidades,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/funcionalidades/{id},funcionalidades,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos/events,metadatos,Eventos SSE,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/metadatos/{id},metadatos,Actualizar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/metadatos,metadatos,Crear,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/metadatos/{id},metadatos,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos,metadatos,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos/{id},metadatos,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos-ambiente/events,metadatos-ambiente,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/metadatos-ambiente,metadatos-ambiente,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/metadatos-ambiente/{id},metadatos-ambiente,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/metadatos-ambiente/{id},metadatos-ambiente,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos-ambiente,metadatos-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/metadatos-ambiente/{id},metadatos-ambiente,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/modulos/events,modulos,Eventos SSE,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/modulos/{id},modulos,Eliminar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/modulos,modulos,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/modulos/{id},modulos,Actualizar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/modulos/{id}/cambiarestado,modulos,Cambiar estado,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/modulos,modulos,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/modulos/{id},modulos,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/organizaciones/events,organizaciones,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/organizaciones,organizaciones,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/organizaciones/{id},organizaciones,Actualizar,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/organizaciones/{id},organizaciones,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/organizaciones,organizaciones,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/organizaciones/{id},organizaciones,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/parametros/events,parametros,Eventos SSE,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/parametros,parametros,Crear,Sesión Seguridad / PEP,SI
+PUT,/catalogo-parametros/api/v1/parametros/{id},parametros,Actualizar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/parametros/{id}/cambiarestado,parametros,Cambiar estado,Sesión Seguridad / PEP,SI
+DELETE,/catalogo-parametros/api/v1/parametros/{id},parametros,Eliminar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/parametros,parametros,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/parametros/{id},parametros,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tipos-metadato,tipos-metadato,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tipos-metadato/{id},tipos-metadato,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tipos-parametro,tipos-parametro,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tipos-parametro/{id},tipos-parametro,Consultar,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/tokens,tokens,Crear,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tokens,tokens,Consultar,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tokens/{id},tokens,Consultar,Sesión Seguridad / PEP,SI
+PATCH,/catalogo-parametros/api/v1/tokens/{id}/estado,tokens,Cambiar estado,Sesión Seguridad / PEP,SI
+POST,/catalogo-parametros/api/v1/tokens/{id}/validar,tokens,Validar secreto del token,Sesión Seguridad / PEP,SI
+GET,/catalogo-parametros/api/v1/tokens/{id}/parametros,tokens,Consultar parámetros autorizados,Bearer del catálogo,NO
