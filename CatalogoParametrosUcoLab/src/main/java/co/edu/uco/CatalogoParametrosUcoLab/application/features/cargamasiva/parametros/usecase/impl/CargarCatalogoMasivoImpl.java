@@ -37,6 +37,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Fun
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoAmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoMetadatoEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoParametroEntity;
@@ -48,6 +49,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoParametroRepository;
@@ -63,6 +65,7 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
 
     private final CargaMasivaExcelPort excel;
     private final CargaMasivaParametrosRepository loteRepository;
+    private final OrganizacionRepository organizaciones;
     private final AplicacionRepository aplicaciones;
     private final ModuloRepository modulos;
     private final FuncionalidadRepository funcionalidades;
@@ -80,7 +83,8 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
     private final TelemetryService telemetry;
 
     public CargarCatalogoMasivoImpl(final CargaMasivaExcelPort excel,
-            final CargaMasivaParametrosRepository loteRepository, final AplicacionRepository aplicaciones,
+            final CargaMasivaParametrosRepository loteRepository, final OrganizacionRepository organizaciones,
+            final AplicacionRepository aplicaciones,
             final ModuloRepository modulos, final FuncionalidadRepository funcionalidades,
             final ParametroRepository parametros, final TipoParametroRepository tiposParametro,
             final MetadatoRepository metadatos, final TipoMetadatoRepository tiposMetadato,
@@ -92,6 +96,7 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
             final TelemetryService telemetry) {
         this.excel = excel;
         this.loteRepository = loteRepository;
+        this.organizaciones = organizaciones;
         this.aplicaciones = aplicaciones;
         this.modulos = modulos;
         this.funcionalidades = funcionalidades;
@@ -172,7 +177,7 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
     }
 
     private Referencias cargarReferencias() {
-        return new Referencias(aplicaciones.findAll(), modulos.findAll(), funcionalidades.findAll(),
+        return new Referencias(organizaciones.findAll(), aplicaciones.findAll(), modulos.findAll(), funcionalidades.findAll(),
                 parametros.findAll(), tiposParametro.findAll(), metadatos.findAll(), tiposMetadato.findAll(),
                 ambientes.findAll(), estadosMetadato.findAll(), metadatosAmbiente.findAll());
     }
@@ -182,8 +187,10 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
             final Map<String, ParametroEntity> parametrosPorClave, final Set<String> metadatosPorClave,
             final List<FuncionalidadEntity> funcionalidadesNuevas, final List<ParametroEntity> parametrosNuevos,
             final List<MetadatoEntity> metadatosNuevos, final List<MetadatoAmbienteEntity> metadatosAmbienteNuevos) {
+        var organizacion = unica(refs.organizaciones, fila.organizacion(), "Organizacion", "ORGANIZATION_NOT_FOUND",
+                "La organizacion no existe.", (entity, value) -> entity.getNombre().equalsIgnoreCase(value));
         var aplicacion = unica(refs.aplicaciones, fila.aplicacion(), "Aplicacion", "APPLICATION_NOT_FOUND", "La aplicacion no existe.",
-                (entity, value) -> entity.getNombre().equalsIgnoreCase(value));
+                (entity, value) -> organizacion.getId().equals(entity.getIdOrganizacion()) && entity.getNombre().equalsIgnoreCase(value));
         validarVigencia(aplicacion.isActiva(), aplicacion.getFechaInicio(), aplicacion.getFechaFinal(), "Aplicacion");
         var modulo = unica(refs.modulos, fila.modulo(), "Modulo", "MODULE_NOT_FOUND", "El modulo no existe.",
                 (entity, value) -> entity.getIdAplicacion().equals(aplicacion.getId()) && entity.getNombre().equalsIgnoreCase(value));
@@ -338,7 +345,7 @@ public final class CargarCatalogoMasivoImpl implements CargarCatalogoMasivo {
     }
 
     private record Evaluacion(CargaMasivaResultado resultado, CargaMasivaLote lote) { }
-    private record Referencias(List<AplicacionEntity> aplicaciones, List<ModuloEntity> modulos,
+    private record Referencias(List<OrganizacionEntity> organizaciones, List<AplicacionEntity> aplicaciones, List<ModuloEntity> modulos,
             List<FuncionalidadEntity> funcionalidades, List<ParametroEntity> parametros,
             List<TipoParametroEntity> tiposParametro, List<MetadatoEntity> metadatos,
             List<TipoMetadatoEntity> tiposMetadato, List<AmbienteEntity> ambientes,

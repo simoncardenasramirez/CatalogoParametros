@@ -26,9 +26,28 @@ class CargaMasivaExcelAdapterTest {
 
         assertEquals(1, libro.filas().size());
         assertTrue(libro.errores().isEmpty());
+        assertEquals("UCO", libro.filas().getFirst().organizacion());
         assertEquals("App", libro.filas().getFirst().aplicacion());
         assertEquals("json", libro.filas().getFirst().tipoMetadato());
         assertEquals("valor", libro.filas().getFirst().valor().get("clave").asText());
+    }
+
+    @Test
+    void debeGenerarPlantillaConInstruccionesEjemploListasYValidaciones() throws Exception {
+        try (var workbook = WorkbookFactory.create(new ByteArrayInputStream(adapter.plantilla()))) {
+            assertEquals(4, workbook.getNumberOfSheets());
+            assertEquals("Catalogo", workbook.getSheetName(0));
+            assertEquals("Instrucciones", workbook.getSheetName(1));
+            assertEquals("Ejemplo", workbook.getSheetName(2));
+            assertEquals("Listas", workbook.getSheetName(3));
+            assertEquals("Campo", workbook.getSheet("Instrucciones").getRow(0).getCell(0).getStringCellValue());
+            assertEquals("UCO", workbook.getSheet("Ejemplo").getRow(1).getCell(0).getStringCellValue());
+            assertEquals("tiempo-espera", workbook.getSheet("Ejemplo").getRow(1).getCell(7).getStringCellValue());
+            assertEquals("{\"maxIntentos\":3,\"habilitado\":true}",
+                    workbook.getSheet("Ejemplo").getRow(2).getCell(13).getStringCellValue());
+            assertEquals("date", workbook.getSheet("Ejemplo").getRow(3).getCell(10).getStringCellValue());
+            assertTrue(workbook.getSheet("Catalogo").getDataValidations().size() >= 3);
+        }
     }
 
     @Test
@@ -87,7 +106,7 @@ class CargaMasivaExcelAdapterTest {
         try (var workbook = WorkbookFactory.create(new ByteArrayInputStream(adapter.plantilla()));
                 var output = new ByteArrayOutputStream()) {
             var row = workbook.getSheet("Catalogo").createRow(1);
-            String[] values = { aplicacion, modulo, funcionalidad, "", "", "true", parametro, tipoParametro,
+            String[] values = { "UCO", aplicacion, modulo, funcionalidad, "", "", "true", parametro, tipoParametro,
                     "true", tipoMetadato, ambiente, estado, valor };
             for (var index = 0; index < values.length; index++) row.createCell(index).setCellValue(values[index]);
             workbook.write(output);

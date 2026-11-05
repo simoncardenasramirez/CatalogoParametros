@@ -378,7 +378,7 @@ paths:
       tags: [ParÃ¡metros]
       operationId: cargarParametrosMasivamente
       summary: Persiste atomicamente funcionalidades nuevas, parametros, metadatos y asociaciones de ambiente
-      description: Aplicacion, modulo, tipos, ambiente y estado deben existir y estar vigentes. La operacion se rechaza completa si alguna fila tiene errores.
+      description: Organizacion, aplicacion, modulo, tipos, ambiente y estado deben existir y estar vigentes. La aplicacion se resuelve dentro de la organizacion indicada en la primera columna de la plantilla. La operacion se rechaza completa si alguna fila tiene errores.
       requestBody: { $ref: '#/components/requestBodies/CargaMasivaParametrosRequest' }
       responses:
         '200': { $ref: '#/components/responses/CargaMasivaParametrosOk' }
@@ -763,7 +763,7 @@ components:
               archivo:
                 type: string
                 format: binary
-                description: Libro XLSX descargado desde la plantilla oficial; maximo 5 MB y 1000 filas.
+                description: Libro XLSX descargado desde la plantilla oficial; maximo 5 MB y 1000 filas. La hoja Catalogo inicia con las columnas Organizacion y Aplicacion.
     NombreRequest:
       required: true
       content:

@@ -29,6 +29,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Amb
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AplicacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.EstadoMetadatoAmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ModuloEntity;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.OrganizacionEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoMetadatoEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
@@ -39,6 +40,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.MetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ModuloRepository;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.OrganizacionRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoMetadatoRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoParametroRepository;
@@ -48,6 +50,7 @@ import tools.jackson.databind.ObjectMapper;
 class CargarCatalogoMasivoImplTest {
     private final CargaMasivaExcelPort excel = Mockito.mock(CargaMasivaExcelPort.class);
     private final CargaMasivaParametrosRepository lote = Mockito.mock(CargaMasivaParametrosRepository.class);
+    private final OrganizacionRepository organizaciones = Mockito.mock(OrganizacionRepository.class);
     private final AplicacionRepository aplicaciones = Mockito.mock(AplicacionRepository.class);
     private final ModuloRepository modulos = Mockito.mock(ModuloRepository.class);
     private final FuncionalidadRepository funcionalidades = Mockito.mock(FuncionalidadRepository.class);
@@ -64,6 +67,7 @@ class CargarCatalogoMasivoImplTest {
     private final CrearMetadatoAmbientePublisher publisherAmbiente = Mockito.mock(CrearMetadatoAmbientePublisher.class);
     private final CargarCatalogoMasivoImpl useCase;
     private final UUID appId = UUID.randomUUID();
+    private final UUID organizacionId = UUID.randomUUID();
     private final UUID moduloId = UUID.randomUUID();
     private final UUID tipoParametroId = UUID.randomUUID();
     private final UUID tipoMetadatoId = UUID.randomUUID();
@@ -71,7 +75,7 @@ class CargarCatalogoMasivoImplTest {
     private final UUID estadoId = UUID.randomUUID();
 
     CargarCatalogoMasivoImplTest() {
-        useCase = new CargarCatalogoMasivoImpl(excel, lote, aplicaciones, modulos, funcionalidades, parametros,
+        useCase = new CargarCatalogoMasivoImpl(excel, lote, organizaciones, aplicaciones, modulos, funcionalidades, parametros,
                 tiposParametro, metadatos, tiposMetadato, ambientes, estados, metadatosAmbiente,
                 publisherFuncionalidad, publisherParametro, publisherMetadato, publisherAmbiente,
                 new TelemetryService(new SimpleMeterRegistry()));
@@ -79,7 +83,8 @@ class CargarCatalogoMasivoImplTest {
 
     @BeforeEach
     void prepararReferencias() {
-        when(aplicaciones.findAll()).thenReturn(List.of(AplicacionEntity.create(appId, "Aplicacion", UUID.randomUUID(), true, null, null)));
+        when(organizaciones.findAll()).thenReturn(List.of(OrganizacionEntity.create(organizacionId, "UCO")));
+        when(aplicaciones.findAll()).thenReturn(List.of(AplicacionEntity.create(appId, "Aplicacion", organizacionId, true, null, null)));
         when(modulos.findAll()).thenReturn(List.of(ModuloEntity.create(moduloId, "Modulo", appId, true, null, null)));
         when(funcionalidades.findAll()).thenReturn(List.of());
         when(parametros.findAll()).thenReturn(List.of());
@@ -123,6 +128,18 @@ class CargarCatalogoMasivoImplTest {
     }
 
     @Test
+    void debeRechazarSinGuardarCuandoLaOrganizacionNoExiste() {
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(filaValida()), List.of()));
+        when(organizaciones.findAll()).thenReturn(List.of());
+
+        var resultado = useCase.cargar(new byte[] { 1 });
+
+        assertFalse(resultado.ready());
+        assertEquals("ORGANIZATION_NOT_FOUND", resultado.errores().getFirst().codigo());
+        verifyNoInteractions(lote, publisherFuncionalidad, publisherParametro, publisherMetadato, publisherAmbiente);
+    }
+
+    @Test
     void debeRechazarCuandoElParametroExistenteTieneOtroEstadoOTipo() {
         var funcionId = UUID.randomUUID();
         when(funcionalidades.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity
@@ -139,7 +156,7 @@ class CargarCatalogoMasivoImplTest {
 
     @Test
     void debeRechazarFechaInvalidaYValorNoCompatible() {
-        var fila = new CargaMasivaFila(2, "Aplicacion", "Modulo", "Funcion", "fecha-invalida", "", "true",
+        var fila = new CargaMasivaFila(2, "UCO", "Aplicacion", "Modulo", "Funcion", "fecha-invalida", "", "true",
                 "Parametro", "texto", "true", "json", "dev", "vigente", new ObjectMapper().createObjectNode());
         when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(fila), List.of()));
 
@@ -154,7 +171,7 @@ class CargarCatalogoMasivoImplTest {
     }
 
     private CargaMasivaFila filaValidaConFuncion(final UUID ignored, final String activoParametro) {
-        return new CargaMasivaFila(2, "Aplicacion", "Modulo", "Funcion", "", "", "true", "Parametro",
+        return new CargaMasivaFila(2, "UCO", "Aplicacion", "Modulo", "Funcion", "", "", "true", "Parametro",
                 "texto", activoParametro, "json", "dev", "vigente", new ObjectMapper().createObjectNode().put("clave", "valor"));
     }
 }

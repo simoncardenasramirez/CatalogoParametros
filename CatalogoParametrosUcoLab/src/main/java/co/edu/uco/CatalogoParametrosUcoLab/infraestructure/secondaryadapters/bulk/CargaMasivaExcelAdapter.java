@@ -9,14 +9,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
@@ -35,10 +42,11 @@ public final class CargaMasivaExcelAdapter implements CargaMasivaExcelPort {
     public static final int MAX_FILAS = 1_000;
     private static final String HOJA = "Catalogo";
     private static final List<String> ENCABEZADOS = List.of(
-            "Aplicacion", "Modulo", "Funcionalidad", "Fecha inicio funcionalidad",
+            "Organizacion", "Aplicacion", "Modulo", "Funcionalidad", "Fecha inicio funcionalidad",
             "Fecha final funcionalidad", "Activo funcionalidad", "Parametro", "Tipo parametro",
             "Activo parametro", "Tipo metadato", "Ambiente", "Estado metadato ambiente", "Valor");
     private static final List<String> BOOLEANOS = List.of("true", "false");
+    private static final List<String> TIPOS_METADATO = List.of("json", "alfanumerico", "date");
 
     private final ObjectMapper objectMapper;
 
@@ -51,18 +59,22 @@ public final class CargaMasivaExcelAdapter implements CargaMasivaExcelPort {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             var sheet = workbook.createSheet(HOJA);
             var header = sheet.createRow(0);
+            var headerStyle = crearEstiloEncabezado(workbook);
             for (var index = 0; index < ENCABEZADOS.size(); index++) {
                 header.createCell(index).setCellValue(ENCABEZADOS.get(index));
-                sheet.setColumnWidth(index, index == 12 ? 20_000 : 8_000);
+                header.getCell(index).setCellStyle(headerStyle);
+                sheet.setColumnWidth(index, anchoColumna(index));
             }
-            agregarValidacionBooleanos(sheet, 5);
-            agregarValidacionBooleanos(sheet, 8);
-            var instructions = workbook.createSheet("Instrucciones");
-            instructions.createRow(0).createCell(0).setCellValue("Una fila crea o reutiliza funcionalidad y parametro, y crea metadato y asociacion de ambiente.");
-            instructions.createRow(1).createCell(0).setCellValue("Aplicacion, modulo, tipos, ambiente y estado deben existir previamente. No se crean desde el archivo.");
-            instructions.createRow(2).createCell(0).setCellValue("Las fechas deben usar ISO-8601 con zona, por ejemplo 2026-01-01T00:00:00-05:00.");
-            instructions.createRow(3).createCell(0).setCellValue("Para tipo JSON use un objeto o arreglo JSON. Para alfanumerico y date use texto.");
-            instructions.createRow(4).createCell(0).setCellValue("Maximo 1.000 filas. No use formulas ni modifique los encabezados.");
+            header.setHeightInPoints(32);
+            sheet.createFreezePane(0, 1);
+            sheet.setAutoFilter(new CellRangeAddress(0, MAX_FILAS, 0, ENCABEZADOS.size() - 1));
+            sheet.setDisplayGridlines(false);
+            agregarValidacionBooleanos(sheet, 6);
+            agregarValidacionBooleanos(sheet, 9);
+            agregarValidacionLista(sheet, 10, TIPOS_METADATO);
+            crearHojaInstrucciones(workbook, headerStyle);
+            crearHojaEjemplo(workbook, headerStyle);
+            crearHojaListas(workbook, headerStyle);
             workbook.write(output);
             return output.toByteArray();
         } catch (IOException exception) {
@@ -105,7 +117,8 @@ public final class CargaMasivaExcelAdapter implements CargaMasivaExcelPort {
                 }
                 if (!nonEmpty) continue;
                 filas.add(new CargaMasivaFila(index + 1, values[0], values[1], values[2], values[3], values[4],
-                        values[5], values[6], values[7], values[8], values[9], values[10], values[11], valor(values[12], index + 1, errores)));
+                        values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12],
+                        valor(values[13], index + 1, errores)));
             }
             if (filas.isEmpty()) errores.add(error(0, "file", "", "EMPTY_FILE", "El archivo no contiene filas de datos."));
             return new CargaMasivaLibro(filas, errores);
@@ -140,11 +153,119 @@ public final class CargaMasivaExcelAdapter implements CargaMasivaExcelPort {
     }
 
     private void agregarValidacionBooleanos(final Sheet sheet, final int column) {
+        agregarValidacionLista(sheet, column, BOOLEANOS);
+    }
+
+    private void agregarValidacionLista(final Sheet sheet, final int column, final List<String> values) {
         DataValidationHelper helper = sheet.getDataValidationHelper();
-        DataValidationConstraint constraint = helper.createExplicitListConstraint(BOOLEANOS.toArray(String[]::new));
+        DataValidationConstraint constraint = helper.createExplicitListConstraint(values.toArray(String[]::new));
         DataValidation validation = helper.createValidation(constraint, new CellRangeAddressList(1, MAX_FILAS, column, column));
         validation.setSuppressDropDownArrow(false);
+        validation.setShowErrorBox(true);
         sheet.addValidationData(validation);
+    }
+
+    private void crearHojaInstrucciones(final Workbook workbook, final CellStyle headerStyle) {
+        var instructions = workbook.createSheet("Instrucciones");
+        var headers = List.of("Campo", "Obligatorio", "Ejemplo", "Descripción");
+        var header = instructions.createRow(0);
+        for (var index = 0; index < headers.size(); index++) {
+            header.createCell(index).setCellValue(headers.get(index));
+            header.getCell(index).setCellStyle(headerStyle);
+        }
+        var rows = List.of(
+                List.of("Organizacion, Aplicacion, Modulo, Funcionalidad", "Sí", "UCO / Catalogo Parametros / Configuracion / Cargar parametros", "Deben existir previamente en el catálogo. La aplicacion se busca dentro de la organizacion indicada."),
+                List.of("Fecha inicio funcionalidad", "No", "2026-01-01T00:00:00-05:00", "Formato ISO-8601 con zona horaria."),
+                List.of("Fecha final funcionalidad", "No", "2026-12-31T23:59:59-05:00", "No puede ser anterior a la fecha de inicio."),
+                List.of("Activo funcionalidad, Activo parametro", "Sí", "true", "Seleccione true o false."),
+                List.of("Parametro", "Sí", "tiempo-espera", "Nombre del parámetro que se creará o reutilizará."),
+                List.of("Tipo parametro", "Sí", "configuracion", "Debe coincidir con un tipo existente."),
+                List.of("Tipo metadato", "Sí", "alfanumerico", "Valores admitidos: json, alfanumerico o date."),
+                List.of("Ambiente, Estado metadato ambiente", "Sí", "Develop / Activo", "Deben existir previamente en el catálogo."),
+                List.of("Valor", "Sí", "30 o {\"limite\":30}", "Use texto para alfanumerico/date y JSON válido para json."),
+                List.of("Archivo completo", "—", "Máximo 1.000 filas", "No cambie los encabezados, no use fórmulas y deje la hoja Catalogo como primera hoja."));
+        for (var rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            var row = instructions.createRow(rowIndex + 1);
+            var values = rows.get(rowIndex);
+            for (var column = 0; column < values.size(); column++) row.createCell(column).setCellValue(values.get(column));
+        }
+        instructions.setColumnWidth(0, 20_000);
+        instructions.setColumnWidth(1, 4_500);
+        instructions.setColumnWidth(2, 19_000);
+        instructions.setColumnWidth(3, 45_000);
+        instructions.createFreezePane(0, 1);
+        instructions.setDisplayGridlines(false);
+    }
+
+    private void crearHojaEjemplo(final Workbook workbook, final CellStyle headerStyle) {
+        var example = workbook.createSheet("Ejemplo");
+        var header = example.createRow(0);
+        for (var index = 0; index < ENCABEZADOS.size(); index++) {
+            header.createCell(index).setCellValue(ENCABEZADOS.get(index));
+            header.getCell(index).setCellStyle(headerStyle);
+        }
+        var rows = List.of(
+                List.of("UCO", "Catalogo Parametros", "Configuracion", "Cargar parametros", "2026-01-01T00:00:00-05:00",
+                        "", "true", "tiempo-espera", "configuracion", "true", "alfanumerico", "Develop", "Activo", "30"),
+                List.of("UCO", "Catalogo Parametros", "Configuracion", "Cargar parametros", "2026-01-01T00:00:00-05:00",
+                        "", "true", "max-intentos", "configuracion", "true", "json", "Develop", "Activo", "{\"maxIntentos\":3,\"habilitado\":true}"),
+                List.of("UCO", "Catalogo Parametros", "Configuracion", "Cargar parametros", "2026-01-01T00:00:00-05:00",
+                        "", "true", "fecha-corte", "configuracion", "true", "date", "Develop", "Activo", "2026-12-31"));
+        for (var rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            var row = example.createRow(rowIndex + 1);
+            var values = rows.get(rowIndex);
+            for (var index = 0; index < values.size(); index++) row.createCell(index).setCellValue(values.get(index));
+        }
+        for (var index = 0; index < ENCABEZADOS.size(); index++) example.setColumnWidth(index, anchoColumna(index));
+        example.createFreezePane(0, 1);
+        example.setAutoFilter(new CellRangeAddress(0, rows.size(), 0, ENCABEZADOS.size() - 1));
+        example.setDisplayGridlines(false);
+    }
+
+    private void crearHojaListas(final Workbook workbook, final CellStyle headerStyle) {
+        var lists = workbook.createSheet("Listas");
+        var header = lists.createRow(0);
+        header.createCell(0).setCellValue("Catálogo");
+        header.createCell(1).setCellValue("Valores de ejemplo");
+        header.createCell(2).setCellValue("Nota");
+        for (var index = 0; index < 3; index++) header.getCell(index).setCellStyle(headerStyle);
+        var rows = List.of(
+                List.of("Organizacion", "UCO", "Use el nombre exacto de una organizacion existente."),
+                List.of("Booleano", "true, false", "Se usa en Activo funcionalidad y Activo parametro."),
+                List.of("Tipo metadato", "json, alfanumerico, date", "El tipo debe coincidir con el valor cargado."),
+                List.of("Ambiente", "Develop", "Use el nombre real de un ambiente existente."),
+                List.of("Estado", "Activo", "Use el nombre real de un estado existente."));
+        for (var rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            var row = lists.createRow(rowIndex + 1);
+            for (var column = 0; column < 3; column++) row.createCell(column).setCellValue(rows.get(rowIndex).get(column));
+        }
+        lists.setColumnWidth(0, 18_000);
+        lists.setColumnWidth(1, 25_000);
+        lists.setColumnWidth(2, 42_000);
+        lists.setDisplayGridlines(false);
+    }
+
+    private CellStyle crearEstiloEncabezado(final Workbook workbook) {
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setColor(IndexedColors.WHITE.getIndex());
+        var style = workbook.createCellStyle();
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setWrapText(true);
+        return style;
+    }
+
+    private int anchoColumna(final int index) {
+        return switch (index) {
+            case 0, 1, 2, 3, 7, 8, 10, 11, 12 -> 13_000;
+            case 4, 5 -> 24_000;
+            case 13 -> 22_000;
+            default -> 10_000;
+        };
     }
 
     private boolean encabezadosValidos(final Row row) {
