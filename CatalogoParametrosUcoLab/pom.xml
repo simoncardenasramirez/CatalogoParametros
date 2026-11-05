@@ -59,6 +59,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Corrige la vulnerabilidad CVE-2026-66274 heredada transitivamente. -->
+            <dependency>
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>proton-j</artifactId>
+                <version>0.35.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
