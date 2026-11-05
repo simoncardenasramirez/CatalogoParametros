@@ -292,3 +292,4 @@ backend y busca el servicio `catalogo-parametros` en Jaeger.
 La integración de sesión BFF, PEP y Security UI está descrita en
 [docs/SEGURIDAD-INTEGRACION.md](docs/SEGURIDAD-INTEGRACION.md), con las variables
 locales, el arranque y las pruebas de autorización.
+<!-- Nota de mantenimiento: este servicio mantiene la configuración del catálogo centralizada. -->

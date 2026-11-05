@@ -23,7 +23,9 @@ FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /app
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN apk upgrade --no-cache \
+    && addgroup -S appgroup \
+    && adduser -S appuser -G appgroup
 
 COPY --from=build --chown=appuser:appgroup /app/target/*.jar app.jar
 
