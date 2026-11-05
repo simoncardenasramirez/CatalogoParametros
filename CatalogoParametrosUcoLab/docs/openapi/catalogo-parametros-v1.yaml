@@ -352,6 +352,52 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /catalogo-parametros/api/v1/cargas-masivas/parametros/plantilla:
+    get:
+      tags: [ParÃ¡metros]
+      operationId: descargarPlantillaCargaMasivaParametros
+      summary: Descarga la plantilla XLSX para carga masiva de parametros
+      responses:
+        '200':
+          description: Plantilla Excel
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema: { type: string, format: binary }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/cargas-masivas/parametros/validar:
+    post:
+      tags: [ParÃ¡metros]
+      operationId: validarCargaMasivaParametros
+      summary: Valida un archivo XLSX sin persistir cambios
+      requestBody: { $ref: '#/components/requestBodies/CargaMasivaParametrosRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/CargaMasivaParametrosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /catalogo-parametros/api/v1/cargas-masivas/parametros:
+    post:
+      tags: [ParÃ¡metros]
+      operationId: cargarParametrosMasivamente
+      summary: Persiste atomicamente funcionalidades nuevas, parametros, metadatos y asociaciones de ambiente
+      description: Organizacion, aplicacion, modulo, tipos, ambiente y estado deben existir y estar vigentes. La aplicacion se resuelve dentro de la organizacion indicada en la primera columna de la plantilla. La operacion se rechaza completa si alguna fila tiene errores.
+      requestBody: { $ref: '#/components/requestBodies/CargaMasivaParametrosRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/CargaMasivaParametrosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /catalogo-parametros/api/v1/cargas-masivas/parametros/reporte-errores:
+    post:
+      tags: [ParÃ¡metros]
+      operationId: descargarReporteCargaMasivaParametros
+      summary: Devuelve el XLSX anotado con errores por fila
+      requestBody: { $ref: '#/components/requestBodies/CargaMasivaParametrosRequest' }
+      responses:
+        '200':
+          description: Archivo Excel con errores
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema: { type: string, format: binary }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
   /catalogo-parametros/api/v1/metadatos:
     get:
       tags: [Metadatos]
@@ -706,6 +752,18 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/MetadatoRequest' }
+    CargaMasivaParametrosRequest:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required: [archivo]
+            properties:
+              archivo:
+                type: string
+                format: binary
+                description: Libro XLSX descargado desde la plantilla oficial; maximo 5 MB y 1000 filas. La hoja Catalogo inicia con las columnas Organizacion y Aplicacion.
     NombreRequest:
       required: true
       content:
@@ -773,6 +831,7 @@ components:
     MetadatosAmbienteOk: { description: Metadatos de ambiente encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/MetadatoAmbienteResponse' } } } }
     TokensOk: { description: Tokens encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/TokenResponse' } } } }
     EstadosTokenOk: { description: Estados de token encontrados, content: { application/json: { schema: { $ref: '#/components/schemas/EstadoTokenResponse' } } } }
+    CargaMasivaParametrosOk: { description: Resultado de validacion o carga masiva, content: { application/json: { schema: { $ref: '#/components/schemas/CargaMasivaResultado' } } } }
     ValidarTokenOk: { description: Resultado de validacion, content: { application/json: { schema: { $ref: '#/components/schemas/ValidarTokenResponse' } } } }
     ParametrosTokenOk: { description: Parametros autorizados, content: { application/json: { schema: { $ref: '#/components/schemas/ParametrosTokenResponse' } } } }
   schemas:
@@ -805,6 +864,27 @@ components:
       required: [mensajes]
       properties:
         mensajes: { type: array, items: { type: string } }
+    CargaMasivaError:
+      type: object
+      required: [fila, hoja, campo, codigo, descripcion]
+      properties:
+        fila: { type: integer, minimum: 0 }
+        hoja: { type: string }
+        campo: { type: string }
+        valor: { type: string }
+        codigo: { type: string }
+        descripcion: { type: string }
+    CargaMasivaResultado:
+      allOf:
+        - { $ref: '#/components/schemas/MessageResponse' }
+        - type: object
+          required: [ready, totalFilas, filasValidas, filasInvalidas, errores]
+          properties:
+            ready: { type: boolean, description: True solo cuando el boton de carga puede habilitarse. }
+            totalFilas: { type: integer, minimum: 0 }
+            filasValidas: { type: integer, minimum: 0 }
+            filasInvalidas: { type: integer, minimum: 0 }
+            errores: { type: array, items: { $ref: '#/components/schemas/CargaMasivaError' } }
     Ambiente:
       type: object
       required: [id, nombre]

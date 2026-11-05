@@ -94,7 +94,7 @@ steps:
       usuario_sin_resolver='$''(GITHUB_PACKAGES_USER)'
       token_sin_resolver='$''(GITHUB_PACKAGES_TOKEN)'
       if [[ -z "$usuario" || -z "$token" || "$usuario" == "$usuario_sin_resolver" || "$token" == "$token_sin_resolver" ]]; then
-        echo "##vso[task.logissue type=error]Configura GITHUB_PACKAGES_USER y GITHUB_PACKAGES_TOKEN como variables del pipeline; GITHUB_PACKAGES_TOKEN debe ser secreto."
+        echo "##vso[task.logissue type=error]Configura GITHUB_PACKAGES_USER y GITHUB_PACKAGES_TOKEN como variables del pipeline; GITHUB_PACKAGES_TOKEN debe ser secreto y tener acceso read:packages al paquete de MessageUcoLab."
         exit 1
       fi
 
@@ -105,6 +105,11 @@ steps:
         <servers>
           <server>
             <id>github</id>
+            <username>${env.GITHUB_PACKAGES_USER}</username>
+            <password>${env.GITHUB_PACKAGES_TOKEN}</password>
+          </server>
+          <server>
+            <id>github-messageucolab</id>
             <username>${env.GITHUB_PACKAGES_USER}</username>
             <password>${env.GITHUB_PACKAGES_TOKEN}</password>
           </server>
@@ -202,6 +207,7 @@ steps:
 
       docker build \
         --secret id=maven_settings,src="$(Agent.TempDirectory)/maven-settings.xml" \
+        --secret id=github_packages_user,env=GITHUB_PACKAGES_USER \
         --secret id=github_packages_token,env=GITHUB_PACKAGES_TOKEN \
         --file Dockerfile \
         --tag "$imagen_nueva" \
@@ -235,6 +241,7 @@ steps:
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     workingDirectory: $(Build.SourcesDirectory)/CatalogoParametrosUcoLab
     env:
+      GITHUB_PACKAGES_USER: $(GITHUB_PACKAGES_USER)
       GITHUB_PACKAGES_TOKEN: $(GITHUB_PACKAGES_TOKEN)
 
   - task: Docker@2

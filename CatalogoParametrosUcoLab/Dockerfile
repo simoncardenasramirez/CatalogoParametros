@@ -11,6 +11,7 @@ COPY src ./src
 COPY docs/openapi ./docs/openapi
 
 RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml,required=true \
+    --mount=type=secret,id=github_packages_user,env=GITHUB_PACKAGES_USER,required=true \
     --mount=type=secret,id=github_packages_token,env=GITHUB_PACKAGES_TOKEN,required=true \
     mvn --settings /root/.m2/settings.xml clean package -DskipTests
 
@@ -22,7 +23,11 @@ FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=build --chown=appuser:appgroup /app/target/*.jar app.jar
+
+USER appuser
 
 EXPOSE 8080
 
