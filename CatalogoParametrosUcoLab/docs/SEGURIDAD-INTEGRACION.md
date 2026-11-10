@@ -1,8 +1,9 @@
 # Integración del catálogo con Security Baseline
 
 Implementación del manual `Manual-integracion-aplicaciones.pdf` del workspace.
-El starter Maven existente se conserva en **0.1.3**, disponible en el repositorio
-local; la versión del stack Docker del manual es **0.1.6** y es independiente.
+El starter Maven existente se conserva en **0.1.4**, disponible en el repositorio
+local. El stack Docker de Security se fija en **0.1.13** mediante
+`Seguridad/security-baseline-local/.env`.
 No se sustituye por el SNAPSHOT antiguo mostrado en uno de los ejemplos del PDF.
 
 ## Configuración
@@ -11,8 +12,13 @@ No se sustituye por el SNAPSHOT antiguo mostrado en uno de los ejemplos del PDF.
 | --- | --- |
 | `PEP_URL` | `http://localhost:18081`; en Docker, `http://host.docker.internal:18081` |
 | `SECURITY_APPLICATION_NAME` | `Catalogo`, nombre registrado; debe coincidir exactamente con Seguridad y el host |
-| `SECURITY_ENVIRONMENT` | `local` |
+| `SECURITY_ENVIRONMENT` | `dev` |
 | `PEP_REGISTRATION_TOKEN` | Credencial emitida por Seguridad; obligatoria, solo backend |
+| `SECURITY_PEP_SERVICE_IDENTITY_ENABLED` | `true` cuando CatalogoParametros consuma MessageUcoLab por back-to-back |
+| `KEYCLOAK_TOKEN_URI` | Endpoint de token del realm de Security |
+| `ORIGIN_TO_DESTINATION_CLIENT_ID` | Client ID técnico de CatalogoParametros para MessageUcoLab |
+| `ORIGIN_TO_DESTINATION_CLIENT_SECRET` | Secreto técnico; solo en el gestor de secretos |
+| `MESSAGEUCOLAB_URL` | URL pública de MessageUcoLab protegida por PEP |
 | `FRONTEND_ALLOWED_ORIGINS` | `http://localhost:4200`, lista de orígenes exactos separada por comas |
 | `PEP_ALLOW_INSECURE_HTTP` | `true` exclusivamente para el laboratorio HTTP; por defecto `false` |
 
@@ -34,7 +40,7 @@ El Dockerfile y el pipeline existentes usan secretos para descargar el starter.
 ## Arranque local
 
 1. Levante `Seguridad/security-baseline-local` usando su `.env` del release fijo
-   0.1.6: `docker compose pull` y `docker compose up -d`.
+   0.1.13: `docker compose pull` y `docker compose up -d`.
 2. Verifique salud de PDP y PEP en los puertos 18080 y 18081. El BFF debe permitir
    `http://localhost:4200` tanto para CORS como para retorno del login; el Compose
    de Seguridad del workspace ya lo incluye.
@@ -92,3 +98,31 @@ permita sus URLs en la CSP. Las credenciales se inyectan mediante secretos.
 La consulta por token devuelve 401 ante un secreto ausente, incorrecto, expirado
 o revocado. Ese 401 no redirige el host al login OIDC. La administración de tokens
 y las demás rutas de negocio siguen pasando por PEP.
+
+## Consumo servidor a servidor (back-to-back)
+
+En este repositorio `CatalogoParametros` mantiene su protección PEP como destino
+y también actúa como origen para consumir mensajes de `MessageUcoLab`. Obtiene un
+token `client_credentials` con una identidad técnica exclusiva y no reutiliza un
+token de usuario ni la credencial `PEP_REGISTRATION_TOKEN`.
+
+Para habilitar un consumidor concreto, Seguridad debe aprovisionar por ambiente:
+
+1. Una identidad de servicio exclusiva para el flujo `CatalogoParametros` → `MessageUcoLab`.
+2. El `client_id` y `client_secret` en el gestor de secretos del consumidor.
+3. Un rol técnico con el método y la ruta exactos de MessageUcoLab, asignado a esa
+   identidad.
+4. La URL pública PEP de MessageUcoLab en `MESSAGEUCOLAB_URL`.
+
+El consumidor configura `security.pep.service-identity.*`, inyecta
+`ServiceAccessTokenProvider` y llama `token()` antes de ejecutar su `WebClient`.
+El código de negocio no debe implementar la solicitud OAuth ni la caché del token.
+Los errores 401, 403, timeout y `SERVICE_IDENTITY_*` deben conservarse como
+fallos diferenciables y nunca deben registrar secretos, tokens ni el encabezado
+`Authorization`.
+
+La ruta `/catalogo-parametros/api/v1/tokens/{id}/parametros` es una excepción
+existente: usa el secreto propio de Tokens y está excluida del PEP. No debe
+confundirse con el flujo hacia MessageUcoLab. El cliente conserva
+`X-Application-Id` y `X-Environment-Id`, y la configuración nueva agrega el
+Bearer técnico únicamente a las llamadas dirigidas a MessageUcoLab.
