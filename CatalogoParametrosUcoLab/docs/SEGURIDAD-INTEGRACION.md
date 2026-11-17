@@ -16,8 +16,8 @@ No se sustituye por el SNAPSHOT antiguo mostrado en uno de los ejemplos del PDF.
 | `PEP_REGISTRATION_TOKEN` | Credencial emitida por Seguridad; obligatoria, solo backend |
 | `SECURITY_PEP_SERVICE_IDENTITY_ENABLED` | `true` cuando CatalogoParametros consuma MessageUcoLab por back-to-back |
 | `KEYCLOAK_TOKEN_URI` | Endpoint de token del realm de Security |
-| `ORIGIN_TO_DESTINATION_CLIENT_ID` | Client ID técnico de CatalogoParametros para MessageUcoLab |
-| `ORIGIN_TO_DESTINATION_CLIENT_SECRET` | Secreto técnico; solo en el gestor de secretos |
+| `MESSAGEUCOLAB_CLIENT_ID` | Client ID técnico de CatalogoParametros para MessageUcoLab |
+| `MESSAGEUCOLAB_CLIENT_SECRET` | Secreto técnico; solo en el gestor de secretos |
 | `MESSAGEUCOLAB_URL` | URL pública de MessageUcoLab protegida por PEP |
 | `FRONTEND_ALLOWED_ORIGINS` | `http://localhost:4200`, lista de orígenes exactos separada por comas |
 | `PEP_ALLOW_INSECURE_HTTP` | `true` exclusivamente para el laboratorio HTTP; por defecto `false` |
@@ -123,6 +123,7 @@ fallos diferenciables y nunca deben registrar secretos, tokens ni el encabezado
 
 La ruta `/catalogo-parametros/api/v1/tokens/{id}/parametros` es una excepción
 existente: usa el secreto propio de Tokens y está excluida del PEP. No debe
-confundirse con el flujo hacia MessageUcoLab. El cliente conserva
-`X-Application-Id` y `X-Environment-Id`, y la configuración nueva agrega el
-Bearer técnico únicamente a las llamadas dirigidas a MessageUcoLab.
+confundirse con el flujo hacia MessageUcoLab. Esa ruta conserva sus encabezados
+`X-Application-Id` y `X-Environment-Id` porque valida el token del Catálogo;
+las llamadas de `MessageReader` hacia MessageUcoLab usan únicamente el Bearer
+de la identidad de servicio.

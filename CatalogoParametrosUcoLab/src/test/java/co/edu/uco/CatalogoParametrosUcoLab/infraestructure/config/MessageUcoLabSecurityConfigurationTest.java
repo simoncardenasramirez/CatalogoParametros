@@ -51,7 +51,7 @@ class MessageUcoLabSecurityConfigurationTest {
                         "http://127.0.0.1:" + server.getAddress().getPort());
 
         final String response = builder.build().get()
-                .uri("http://127.0.0.1:" + server.getAddress().getPort() + "/messageucolab/v1/public/messages/MSG_100")
+                .uri("http://127.0.0.1:" + server.getAddress().getPort() + "/messageucolab/v1/messages/consumer?code=MSG_100")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
