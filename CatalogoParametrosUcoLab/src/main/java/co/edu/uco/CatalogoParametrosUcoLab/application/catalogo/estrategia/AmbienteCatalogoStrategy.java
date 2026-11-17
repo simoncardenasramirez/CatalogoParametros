@@ -5,15 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheAmbienteRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
 
-/** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
-@Service
+/** Estrategia heredada; las consultas de ambientes usan el catalogo de records. */
 public final class AmbienteCatalogoStrategy extends CatalogoCacheStrategy<AmbienteEntity> implements AmbienteRepository {
     private final BaseDatosAmbienteRepository baseDatos;
 

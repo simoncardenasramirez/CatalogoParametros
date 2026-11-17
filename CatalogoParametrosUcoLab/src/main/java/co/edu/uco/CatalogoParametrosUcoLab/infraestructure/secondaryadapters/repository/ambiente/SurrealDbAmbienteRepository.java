@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.stereotype.Repository;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosAmbienteRepository;
@@ -15,7 +14,6 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.sur
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 
-@Repository
 public final class SurrealDbAmbienteRepository implements BaseDatosAmbienteRepository {
     private static final String TABLE_NAME = "ambientes";
     private final SurrealDbClient surrealDbClient;
