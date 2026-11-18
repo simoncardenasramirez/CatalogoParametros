@@ -2,6 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repositor
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoEntity;
@@ -13,4 +14,5 @@ public interface MetadatoRepository {
     Optional<MetadatoEntity> findById(UUID id);
     List<MetadatoEntity> findAll();
     List<MetadatoEntity> findByIdParametro(UUID idParametro);
+    List<MetadatoEntity> upsertAll(List<MetadatoEntity> metadatos, Set<UUID> idsExistentes);
 }

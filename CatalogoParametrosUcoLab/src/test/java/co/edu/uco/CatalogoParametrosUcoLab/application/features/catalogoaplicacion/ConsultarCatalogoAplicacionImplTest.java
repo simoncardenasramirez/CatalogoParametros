@@ -20,7 +20,7 @@ class ConsultarCatalogoAplicacionImplTest {
     private final BaseDatosMetadatoAmbienteRepository asociaciones=mock(BaseDatosMetadatoAmbienteRepository.class);
     private final ConsultarCatalogoAplicacionImpl caso=new ConsultarCatalogoAplicacionImpl(apps,modulos,funciones,parametros,
             metadatos,asociaciones,mock(AmbienteRepository.class),mock(TipoParametroRepository.class),
-            mock(BaseDatosTipoMetadatoRepository.class),mock(BaseDatosEstadoMetadatoAmbienteRepository.class),
+            mock(BaseDatosTipoMetadatoRepository.class),mock(EstadoMetadatoAmbienteRepository.class),
             new TelemetryService(new SimpleMeterRegistry()));
 
     @Test void debeExcluirTodaLaOtraRamaCuandoConsultaUnaAplicacion() {

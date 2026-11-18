@@ -27,12 +27,11 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 SELECT id, idFuncionalidad, activo FROM parametros;
                 SELECT id, idParametro, idAmbiente, idEstadoMetadatoAmbiente FROM metadatos_ambiente;
                 SELECT id, aplicacionId, ambienteId, estadoToken, fechaExpiracion FROM tokens;
-                SELECT id, nombre FROM estados_metadato_ambiente;
                 SELECT id, estado FROM estados_token;
                 """);
-        if (respuesta.size() < 9) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
+        if (respuesta.size() < 8) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
                 .build("SurrealDB no devolvio la proyeccion completa de vigencias.");
-        var primero = respuesta.size() - 9;
+        var primero = respuesta.size() - 8;
         var registros = new ArrayList<RegistroVigencia>();
         agregar(registros, respuesta.get(primero).path("result"), TipoRegistroVigencia.ORGANIZACION, null, null, null, null, null, null);
         agregar(registros, respuesta.get(primero + 1).path("result"), TipoRegistroVigencia.APLICACION, "idOrganizacion", "activa", "fechaInicio", "fechaFinal", null, null);
@@ -41,8 +40,15 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
         agregar(registros, respuesta.get(primero + 4).path("result"), TipoRegistroVigencia.PARAMETRO, "idFuncionalidad", "activo", null, null, null, null);
         agregar(registros, respuesta.get(primero + 5).path("result"), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
         agregar(registros, respuesta.get(primero + 6).path("result"), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
-        return new CatalogoVigencia(registros, estados(respuesta.get(primero + 7).path("result"), "nombre"),
-                estados(respuesta.get(primero + 8).path("result"), "estado"));
+        return new CatalogoVigencia(registros, estadosMetadatoAmbiente(),
+                estados(respuesta.get(primero + 7).path("result"), "estado"));
+    }
+
+    private java.util.Map<UUID, String> estadosMetadatoAmbiente() {
+        var resultado = new java.util.HashMap<UUID, String>();
+        EstadoMetadatoAmbienteCatalogoRecord.valores()
+                .forEach(estado -> resultado.put(estado.id(), estado.nombre()));
+        return resultado;
     }
 
     private void agregar(final List<RegistroVigencia> destino, final tools.jackson.databind.JsonNode filas,
@@ -127,10 +133,6 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
             final UUID estadoTokenInactivo) {
         if (registros.isEmpty()) return;
         var query = new StringBuilder("BEGIN TRANSACTION;\n");
-        if (registros.stream().anyMatch(r -> r.tipo() == TipoRegistroVigencia.METADATO_AMBIENTE)) {
-            query.append("UPSERT type::record('estados_metadato_ambiente', '").append(estadoAsociacionInactivo)
-                    .append("') SET nombre = 'inactivo';\n");
-        }
         if (registros.stream().anyMatch(r -> r.tipo() == TipoRegistroVigencia.TOKEN)) {
             query.append("UPSERT type::record('estados_token', '").append(estadoTokenInactivo)
                     .append("') SET estado = 'inactivo';\n");

@@ -18,7 +18,6 @@ class AmbienteRecordRepositoryTest {
         var ambientes = repository.findAll();
 
         assertEquals(3, ambientes.size());
-        assertTrue(ambientes.stream().allMatch(ambiente -> ambiente.isActivo()));
         assertEquals("Producción", ambientes.get(0).getNombre());
         assertEquals("Desarrollo", ambientes.get(1).getNombre());
         assertEquals("Pruebas", ambientes.get(2).getNombre());

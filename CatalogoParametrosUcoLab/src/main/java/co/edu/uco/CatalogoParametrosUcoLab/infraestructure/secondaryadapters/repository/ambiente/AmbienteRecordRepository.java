@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteCatalogoRecord;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.AmbienteEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.AmbienteRepository;
-import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 
 /** Adaptador de consulta para el catalogo fijo de ambientes. */
 @Repository
@@ -40,34 +39,9 @@ public final class AmbienteRecordRepository implements AmbienteRepository {
         return ambientes.subList(inicio, fin);
     }
 
-    @Override
-    public boolean existsByNombre(final String nombre) {
-        var nombreNormalizado = nombre == null ? "" : nombre.trim();
-        return entidades().stream().anyMatch(ambiente -> ambiente.getNombre().equalsIgnoreCase(nombreNormalizado));
-    }
-
-    @Override
-    public AmbienteEntity save(final AmbienteEntity ambiente) {
-        throw catalogoSoloLectura();
-    }
-
-    @Override
-    public AmbienteEntity update(final AmbienteEntity ambiente) {
-        throw catalogoSoloLectura();
-    }
-
-    @Override
-    public void deleteById(final UUID id) {
-        throw catalogoSoloLectura();
-    }
-
     private List<AmbienteEntity> entidades() {
         return AmbienteCatalogoRecord.valores().stream()
                 .map(AmbienteCatalogoRecord::toEntity)
                 .toList();
-    }
-
-    private TechnicalException catalogoSoloLectura() {
-        return TechnicalException.build("El catalogo de ambientes es fijo y solo permite consultas.");
     }
 }

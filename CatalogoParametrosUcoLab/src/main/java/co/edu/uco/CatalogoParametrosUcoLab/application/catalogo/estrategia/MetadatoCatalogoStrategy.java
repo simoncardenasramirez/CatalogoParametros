@@ -2,6 +2,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.application.catalogo.estrategia;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,16 @@ public final class MetadatoCatalogoStrategy extends CatalogoCacheStrategy<Metada
     @Override
     public List<MetadatoEntity> findByIdParametro(final UUID idParametro) {
         return consultar("parametro:" + idParametro, () -> baseDatos.findByIdParametro(idParametro));
+    }
+
+    @Override
+    public List<MetadatoEntity> upsertAll(final List<MetadatoEntity> metadatos, final Set<UUID> idsExistentes) {
+        if (metadatos.isEmpty()) return List.of();
+        return controlEstado.guardar(RegistroVigenciaMapper.INSTANCE.toRegistro(metadatos.get(0)), false, () -> {
+            var resultado = baseDatos.upsertAll(metadatos, idsExistentes);
+            invalidar();
+            return resultado;
+        });
     }
 
 }

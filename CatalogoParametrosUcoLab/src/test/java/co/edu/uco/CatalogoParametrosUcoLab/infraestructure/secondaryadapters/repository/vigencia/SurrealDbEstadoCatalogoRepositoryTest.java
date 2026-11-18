@@ -69,7 +69,7 @@ class SurrealDbEstadoCatalogoRepositoryTest {
         var respuesta = new tools.jackson.databind.ObjectMapper().readTree(
                 "[{\"result\":[{\"id\":\"organizaciones:" + id
                 + "\",\"fechaInicio\":\"2026-01-02T10:30:00-05:00\"}]},"
-                + "{\"result\":[]},{\"result\":[]},{\"result\":[]},{\"result\":[]}]");
+                + "{\"result\":[]},{\"result\":[]},{\"result\":[]}]");
         when(client.execute(anyString())).thenReturn(respuesta);
         assertEquals(1,repository.normalizarFechasUtc());
         var captura=ArgumentCaptor.forClass(String.class);

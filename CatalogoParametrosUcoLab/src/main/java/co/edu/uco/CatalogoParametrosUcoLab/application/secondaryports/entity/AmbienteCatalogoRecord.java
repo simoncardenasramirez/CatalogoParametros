@@ -4,11 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 /** Catalogo fijo de ambientes; no depende de una tabla persistida. */
-public record AmbienteCatalogoRecord(UUID id, String nombre, boolean activo) {
-
-    public AmbienteCatalogoRecord(final UUID id, final String nombre) {
-        this(id, nombre, true);
-    }
+public record AmbienteCatalogoRecord(UUID id, String nombre) {
 
     public static final UUID ID_PRODUCCION = UUID.fromString("00000000-0000-0000-0000-000000000010");
     public static final UUID ID_DESARROLLO = UUID.fromString("00000000-0000-0000-0000-000000000011");
@@ -24,6 +20,6 @@ public record AmbienteCatalogoRecord(UUID id, String nombre, boolean activo) {
     }
 
     public AmbienteEntity toEntity() {
-        return AmbienteEntity.create(id, nombre, activo);
+        return AmbienteEntity.create(id, nombre);
     }
 }
