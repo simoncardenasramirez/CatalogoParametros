@@ -31,17 +31,32 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 """);
         if (respuesta.size() < 8) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
                 .build("SurrealDB no devolvio la proyeccion completa de vigencias.");
-        var primero = respuesta.size() - 8;
+        var primero = inicioResultados(respuesta, 8);
         var registros = new ArrayList<RegistroVigencia>();
-        agregar(registros, respuesta.get(primero).path("result"), TipoRegistroVigencia.ORGANIZACION, null, null, null, null, null, null);
-        agregar(registros, respuesta.get(primero + 1).path("result"), TipoRegistroVigencia.APLICACION, "idOrganizacion", "activa", "fechaInicio", "fechaFinal", null, null);
-        agregar(registros, respuesta.get(primero + 2).path("result"), TipoRegistroVigencia.MODULO, "idAplicacion", "activo", "fechaInicio", "fechaFinal", null, null);
-        agregar(registros, respuesta.get(primero + 3).path("result"), TipoRegistroVigencia.FUNCIONALIDAD, "idModulo", "activo", "fechaInicio", "fechaFinal", null, null);
-        agregar(registros, respuesta.get(primero + 4).path("result"), TipoRegistroVigencia.PARAMETRO, "idFuncionalidad", "activo", null, null, null, null);
-        agregar(registros, respuesta.get(primero + 5).path("result"), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
-        agregar(registros, respuesta.get(primero + 6).path("result"), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
+        agregar(registros, resultado(respuesta, primero), TipoRegistroVigencia.ORGANIZACION, null, null, null, null, null, null);
+        agregar(registros, resultado(respuesta, primero + 1), TipoRegistroVigencia.APLICACION, "idOrganizacion", "activa", "fechaInicio", "fechaFinal", null, null);
+        agregar(registros, resultado(respuesta, primero + 2), TipoRegistroVigencia.MODULO, "idAplicacion", "activo", "fechaInicio", "fechaFinal", null, null);
+        agregar(registros, resultado(respuesta, primero + 3), TipoRegistroVigencia.FUNCIONALIDAD, "idModulo", "activo", "fechaInicio", "fechaFinal", null, null);
+        agregar(registros, resultado(respuesta, primero + 4), TipoRegistroVigencia.PARAMETRO, "idFuncionalidad", "activo", null, null, null, null);
+        agregar(registros, resultado(respuesta, primero + 5), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
+        agregar(registros, resultado(respuesta, primero + 6), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
         return new CatalogoVigencia(registros, estadosMetadatoAmbiente(),
-                estados(respuesta.get(primero + 7).path("result"), "estado"));
+                estados(resultado(respuesta, primero + 7), "estado"));
+    }
+
+    private tools.jackson.databind.JsonNode resultado(final tools.jackson.databind.JsonNode respuesta,
+            final int indice) {
+        return respuesta.path(indice).path("result");
+    }
+
+    private int inicioResultados(final tools.jackson.databind.JsonNode respuesta, final int cantidad) {
+        // SurrealDbClient incluye las sentencias de contexto; otros adaptadores pueden devolver solo las proyecciones.
+        if (respuesta.size() <= cantidad || esProyeccionDirecta(respuesta.path(0))) return 0;
+        return respuesta.size() - cantidad;
+    }
+
+    private boolean esProyeccionDirecta(final tools.jackson.databind.JsonNode respuesta) {
+        return respuesta.isObject() && !respuesta.has("status") && respuesta.path("result").isArray();
     }
 
     private java.util.Map<UUID, String> estadosMetadatoAmbiente() {
@@ -96,9 +111,10 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
         var respuesta = client.execute(consulta.toString());
         var cambios = new StringBuilder("BEGIN TRANSACTION;\n");
         int cantidad = 0;
+        var primero = inicioResultados(respuesta, tablas.size());
         for (int i = 0; i < tablas.size(); i++) {
             var tabla = tablas.get(i);
-            var filas = respuesta.get(respuesta.size() - tablas.size() + i).path("result");
+            var filas = resultado(respuesta, primero + i);
             for (var fila : filas) {
                 UUID id;
                 try {
