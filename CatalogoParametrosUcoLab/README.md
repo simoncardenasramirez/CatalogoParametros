@@ -1,5 +1,7 @@
 # Catálogo de Parámetros UCO Lab
 
+<!-- Cambio documental sin impacto funcional. -->
+
 Backend reactivo para administrar el catálogo de organizaciones, aplicaciones, módulos,
 funcionalidades, parámetros y metadatos. Está construido con Java 25, Spring Boot y
 Spring WebFlux, usa SurrealDB para persistencia y publica eventos en tiempo real mediante
