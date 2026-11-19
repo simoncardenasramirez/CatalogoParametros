@@ -100,6 +100,38 @@ class CargaMasivaExcelAdapterTest {
         assertNotNull(libro);
     }
 
+    @Test
+    void debeRechazarArchivoDemasiadoGrandeOLibroNoValido() {
+        assertEquals("FILE_TOO_LARGE", adapter.leer(new byte[5 * 1024 * 1024 + 1]).errores().getFirst().codigo());
+        assertEquals("INVALID_WORKBOOK", adapter.leer(new byte[] { 1, 2, 3 }).errores().getFirst().codigo());
+    }
+
+    @Test
+    void debeOmitirFilasVaciasYValoresSinContenidoCuandoLeeElLibro() throws Exception {
+        byte[] archivo;
+        try (var workbook = WorkbookFactory.create(new ByteArrayInputStream(adapter.plantilla()));
+                var output = new ByteArrayOutputStream()) {
+            var sheet = workbook.getSheet("Catalogo");
+            sheet.createRow(2);
+            workbook.write(output);
+            archivo = output.toByteArray();
+        }
+
+        var resultado = adapter.leer(archivo);
+
+        assertTrue(resultado.filas().isEmpty());
+        assertTrue(resultado.errores().stream().anyMatch(error -> "EMPTY_FILE".equals(error.codigo())));
+    }
+
+    @Test
+    void debeAnotarSinFilasCuandoLosErroresSonGlobales() {
+        var archivo = adaptarPlantilla("App", "Modulo", "Funcion", "Parametro", "tipo", "json", "dev", "vigente", "{}");
+
+        var reporte = adapter.anotar(archivo, List.of(new CargaMasivaError(0, "Catalogo", "file", "", "EMPTY_FILE", "Vacio.")));
+
+        assertFalse(reporte.length == 0);
+    }
+
     private byte[] adaptarPlantilla(final String aplicacion, final String modulo, final String funcionalidad,
             final String parametro, final String tipoParametro, final String tipoMetadato, final String ambiente,
             final String estado, final String valor) {

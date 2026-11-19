@@ -166,6 +166,71 @@ class CargarCatalogoMasivoImplTest {
         assertEquals("INVALID_DATE", resultado.errores().getFirst().codigo());
     }
 
+    @Test
+    void debeReutilizarReferenciasExistentesYRechazarDuplicadosDelMismoLote() {
+        var funcionId = UUID.randomUUID();
+        when(funcionalidades.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity
+                .create(funcionId, "Funcion", moduloId, true, null, null)));
+        when(parametros.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity
+                .create(UUID.randomUUID(), "Parametro", funcionId, tipoParametroId, true)));
+        var fila = filaValidaConFuncion(funcionId, "true");
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(fila, fila), List.of()));
+
+        var resultado = useCase.validar(new byte[] { 1 });
+
+        assertFalse(resultado.ready());
+        assertEquals("METADATA_ALREADY_EXISTS", resultado.errores().getFirst().codigo());
+    }
+
+    @Test
+    void debeRechazarBooleanoInvalidoYRangoDeFechasIncorrecto() {
+        var booleanoInvalido = new CargaMasivaFila(2, "UCO", "Aplicacion", "Modulo", "Funcion", "", "", "true",
+                "Parametro", "texto", "maybe", "json", "dev", "vigente", new ObjectMapper().createObjectNode());
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(booleanoInvalido), List.of()));
+        var resultadoBooleano = useCase.validar(new byte[] { 1 });
+        assertEquals("INVALID_BOOLEAN", resultadoBooleano.errores().getFirst().codigo());
+
+        var rangoInvalido = new CargaMasivaFila(2, "UCO", "Aplicacion", "Modulo", "Funcion",
+                "2027-01-01T00:00:00Z", "2026-01-01T00:00:00Z", "true", "Parametro", "texto", "true",
+                "json", "dev", "vigente", new ObjectMapper().createObjectNode());
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(rangoInvalido), List.of()));
+        var resultadoRango = useCase.validar(new byte[] { 1 });
+        assertEquals("INVALID_DATE_RANGE", resultadoRango.errores().getFirst().codigo());
+    }
+
+    @Test
+    void debeRechazarReferenciaAmbiguaOInactivaAntesDeCrearElLote() {
+        when(organizaciones.findAll()).thenReturn(List.of(OrganizacionEntity.create(organizacionId, "UCO"),
+                OrganizacionEntity.create(UUID.randomUUID(), "UCO")));
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(filaValida()), List.of()));
+        var ambiguo = useCase.validar(new byte[] { 1 });
+        assertEquals("AMBIGUOUS_REFERENCE", ambiguo.errores().getFirst().codigo());
+
+        when(organizaciones.findAll()).thenReturn(List.of(OrganizacionEntity.create(organizacionId, "UCO")));
+        when(aplicaciones.findAll()).thenReturn(List.of(AplicacionEntity.create(appId, "Aplicacion", organizacionId,
+                false, null, null)));
+        var inactivo = useCase.validar(new byte[] { 1 });
+        assertEquals("INACTIVE_REFERENCE", inactivo.errores().getFirst().codigo());
+    }
+
+    @Test
+    void debeRechazarAsociacionDeAmbienteYaExistente() {
+        var funcionId = UUID.randomUUID();
+        var parametroId = UUID.randomUUID();
+        when(funcionalidades.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.FuncionalidadEntity
+                .create(funcionId, "Funcion", moduloId, true, null, null)));
+        when(parametros.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity
+                .create(parametroId, "Parametro", funcionId, tipoParametroId, true)));
+        when(metadatosAmbiente.findAll()).thenReturn(List.of(co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.MetadatoAmbienteEntity
+                .create(UUID.randomUUID(), parametroId, ambienteId, estadoId)));
+        when(excel.leer(any())).thenReturn(new CargaMasivaLibro(List.of(filaValidaConFuncion(funcionId, "true")), List.of()));
+
+        var resultado = useCase.validar(new byte[] { 1 });
+
+        assertFalse(resultado.ready());
+        assertEquals("METADATA_ENVIRONMENT_ALREADY_EXISTS", resultado.errores().getFirst().codigo());
+    }
+
     private CargaMasivaFila filaValida() {
         return filaValidaConFuncion(UUID.randomUUID(), "true");
     }
