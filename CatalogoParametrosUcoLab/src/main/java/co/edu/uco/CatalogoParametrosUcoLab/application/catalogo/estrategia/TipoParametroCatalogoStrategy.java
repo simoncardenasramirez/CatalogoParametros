@@ -5,15 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.TipoParametroEntity;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.BaseDatosTipoParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.CacheTipoParametroRepository;
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.TipoParametroRepository;
 
-/** Replica la estrategia cache -> base de datos del catalogo de mensajes. */
-@Service
+/** Estrategia heredada; las consultas de tipos usan el catalogo de records. */
 public final class TipoParametroCatalogoStrategy extends CatalogoCacheStrategy<TipoParametroEntity> implements TipoParametroRepository {
     private final BaseDatosTipoParametroRepository baseDatos;
 

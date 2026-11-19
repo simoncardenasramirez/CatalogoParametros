@@ -13,6 +13,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.actuali
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadato.primaryports.dto.CrearMetadatoDtoRequest;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadato.primaryports.interactor.CrearMetadatoInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadato.secondaryports.publisher.CrearMetadatoPublisher;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadatostodosambientes.primaryports.dto.CrearMetadatosTodosAmbientesDtoRequest;
+import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.crearmetadatostodosambientes.primaryports.interactor.CrearMetadatosTodosAmbientesInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.eliminarmetadato.primaryports.interactor.EliminarMetadatoInteractor;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.eliminarmetadato.secondaryports.publisher.EliminarMetadatoPublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.secondaryports.event.MetadatoEvent;
@@ -34,13 +36,14 @@ public final class MetadatoController {
     private final EliminarMetadatoPublisher eliminarPublisher;
     private final ActualizarMetadatoInteractor actualizar;
     private final ActualizarMetadatoPublisher actualizarPublisher;
+    private final CrearMetadatosTodosAmbientesInteractor crearTodosAmbientes;
     public MetadatoController(final CrearMetadatoInteractor crear, final EliminarMetadatoInteractor eliminar,
             final ConsultarMetadatoInteractor consultar, final CrearMetadatoPublisher crearPublisher,
             final EliminarMetadatoPublisher eliminarPublisher, final ActualizarMetadatoInteractor actualizar,
-            final ActualizarMetadatoPublisher actualizarPublisher) {
+            final ActualizarMetadatoPublisher actualizarPublisher, final CrearMetadatosTodosAmbientesInteractor crearTodosAmbientes) {
         this.crear = crear; this.eliminar = eliminar; this.consultar = consultar;
         this.crearPublisher = crearPublisher; this.eliminarPublisher = eliminarPublisher;
-        this.actualizar = actualizar; this.actualizarPublisher = actualizarPublisher;
+        this.actualizar = actualizar; this.actualizarPublisher = actualizarPublisher; this.crearTodosAmbientes = crearTodosAmbientes;
     }
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "Suscribirse a eventos de metadatos", description = "Mantiene una conexion SSE abierta y publica cambios en los metadatos.")
@@ -62,6 +65,16 @@ public final class MetadatoController {
     public Mono<ResponseEntity<MetadatoResponse>> crearMetadato(@RequestBody final CrearMetadatoDtoRequest request) {
         return Mono.fromCallable(() -> { crear.execute(request); var response = new MetadatoResponse();
             response.getMensajes().add("Metadato creado exitosamente."); return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+    @PostMapping("/todos-los-ambientes")
+    @Operation(summary = "Crear o actualizar un metadato en todos los ambientes")
+    public Mono<ResponseEntity<MetadatoResponse>> crearMetadatoTodosAmbientes(
+            @RequestBody final CrearMetadatosTodosAmbientesDtoRequest request) {
+        return Mono.fromCallable(() -> { var response = new MetadatoResponse();
+            response.getMetadatos().addAll(crearTodosAmbientes.execute(request));
+            response.getMensajes().add("Metadato aplicado correctamente a todos los ambientes.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }).subscribeOn(Schedulers.boundedElastic());
     }
     @DeleteMapping("/{id}")

@@ -13,8 +13,7 @@ import static org.mockito.Mockito.*;
 class RedisCatalogosWiringTest {
     private static final String PAQUETE = "co.edu.uco.CatalogoParametrosUcoLab.";
     private static final String[] CATALOGOS = { "Parametro", "Organizacion", "Aplicacion", "Modulo",
-            "Funcionalidad", "Metadato", "TipoParametro", "TipoMetadato", "Ambiente", "EstadoAmbiente",
-            "MetadatoAmbiente", "EstadoMetadatoAmbiente" };
+            "Funcionalidad", "Metadato", "TipoParametro", "TipoMetadato", "MetadatoAmbiente" };
 
     @Test
     void debeResolverTodosLosPuertosSinAmbiguedadCuandoRegistraCatalogosCompletos() throws ClassNotFoundException {

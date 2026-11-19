@@ -11,25 +11,47 @@ por variables de despliegue:
 ```properties
 security.pep.service-identity.enabled=true
 security.pep.service-identity.token-uri=${KEYCLOAK_TOKEN_URI}
-security.pep.service-identity.client-id=${ORIGIN_TO_DESTINATION_CLIENT_ID}
-security.pep.service-identity.client-secret=${ORIGIN_TO_DESTINATION_CLIENT_SECRET}
+security.pep.service-identity.client-id=${MESSAGEUCOLAB_CLIENT_ID:${ORIGIN_TO_DESTINATION_CLIENT_ID}}
+security.pep.service-identity.client-secret=${MESSAGEUCOLAB_CLIENT_SECRET:${ORIGIN_TO_DESTINATION_CLIENT_SECRET}}
 security.pep.service-identity.timeout=3s
 security.pep.service-identity.refresh-skew=30s
 ```
 
 `MessageUcoLabSecurityConfiguration` agrega el Bearer técnico solamente a las
-peticiones cuyo origen coincide con `MESSAGEUCOLAB_URL`. El cliente conserva los
-encabezados de aplicación y ambiente que necesita MessageUcoLab.
+peticiones cuyo origen coincide con `MESSAGEUCOLAB_URL`. En la versión 0.3.0,
+`MessageReader` consume la ruta autenticada de servidor a servidor y ya no envía
+identificadores de aplicación ni ambiente.
+
+## Consumo desde una pantalla
+
+El navegador no usa `MessageReader`, `createMessageClient` ni recibe el secreto
+de la identidad. El backend expone el texto mediante su propia ruta protegida:
+
+```text
+GET /catalogo-parametros/api/v1/mensajes/{codigo}
+```
+
+Ejemplo desde el frontend:
+
+```javascript
+const respuesta = await fetch('/catalogo-parametros/api/v1/mensajes/MSG_100');
+const mensaje = await respuesta.json();
+mostrar({ title: mensaje.title, content: mensaje.content });
+```
+
+El backend consulta `MessageUcoLab` con la identidad de servicio y devuelve el
+detalle al navegador. El minifront se conserva únicamente para la pantalla de
+administración de mensajes.
 
 ## Aprovisionamiento en Security
 
 Para el ambiente `dev`, Security debe entregar a CatalogoParametros una identidad
 exclusiva y asignarle el rol técnico que permita consultar el recurso de lectura
 de mensajes. La autorización debe registrar el método y ruta exactos publicados
-por MessageUcoLab, por ejemplo:
+por MessageUcoLab:
 
 ```text
-GET /messageucolab/v1/public/messages/{codigo}
+GET /messageucolab/v1/messages/consumer
 ```
 
 `PEP_REGISTRATION_TOKEN` sigue siendo la credencial de CatalogoParametros como
@@ -41,9 +63,9 @@ Los valores siguientes no se inventan ni se versionan:
 
 ```env
 SECURITY_PEP_SERVICE_IDENTITY_ENABLED=true
-KEYCLOAK_TOKEN_URI=http://host.docker.internal:19090/realms/security-baseline/protocol/openid-connect/token
-ORIGIN_TO_DESTINATION_CLIENT_ID=<client-id-tecnico>
-ORIGIN_TO_DESTINATION_CLIENT_SECRET=<client-secret-tecnico>
+KEYCLOAK_TOKEN_URI=http://keycloak.localhost:19090/realms/security-baseline/protocol/openid-connect/token
+MESSAGEUCOLAB_CLIENT_ID=<client-id-tecnico>
+MESSAGEUCOLAB_CLIENT_SECRET=<client-secret-tecnico>
 MESSAGEUCOLAB_URL=<url-publica-de-messageucolab-protegida-por-pep>
 ```
 

@@ -78,8 +78,6 @@ public class SurrealDbClient {
                 DEFINE TABLE IF NOT EXISTS tipos_metadato SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS metadatos SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS ambientes SCHEMALESS;
-                DEFINE TABLE IF NOT EXISTS estados_ambiente SCHEMALESS;
-                DEFINE TABLE IF NOT EXISTS estados_metadato_ambiente SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS metadatos_ambiente SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS tokens SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS estados_token SCHEMALESS;

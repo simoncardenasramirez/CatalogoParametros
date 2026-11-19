@@ -17,12 +17,10 @@ class NuevosCatalogosPublisherTest {
             "co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.publisher.";
 
     static Stream<String[]> casos() {
-        return Stream.of("ambiente:Ambiente", "estadoambiente:EstadoAmbiente",
-                        "estadometadatoambiente:EstadoMetadatoAmbiente",
-                        "metadatoambiente:MetadatoAmbiente")
+        return Stream.of("metadatoambiente:MetadatoAmbiente")
                 .flatMap(definition -> {
                     final var parts = definition.split(":");
-                    return Stream.of(new String[] { parts[0], parts[1], "Crear", "created", "CREATED" },
+                    return Stream.<String[]>of(new String[] { parts[0], parts[1], "Crear", "created", "CREATED" },
                             new String[] { parts[0], parts[1], "Actualizar", "updated", "UPDATED" },
                             new String[] { parts[0], parts[1], "Eliminar", "deleted", "DELETED" });
                 });

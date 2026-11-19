@@ -3,6 +3,7 @@ package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.re
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
@@ -50,6 +51,21 @@ public final class SurrealDbMetadatoRepository implements BaseDatosMetadatoRepos
     @Override public List<MetadatoEntity> findAll() { return query("SELECT * FROM " + TABLE + ";"); }
     @Override public List<MetadatoEntity> findByIdParametro(final UUID id) {
         return query("SELECT * FROM %s WHERE idParametro = '%s';".formatted(TABLE, id));
+    }
+    @Override public List<MetadatoEntity> upsertAll(final List<MetadatoEntity> entities, final Set<UUID> existingIds) {
+        if (entities.isEmpty()) return List.of();
+        var query = new StringBuilder("BEGIN TRANSACTION;\n");
+        for (var entity : entities) {
+            var operation = existingIds.contains(entity.getId()) ? "UPDATE" : "CREATE";
+            query.append(operation).append(" type::record('").append(TABLE).append("', '").append(entity.getId())
+                    .append("') CONTENT { idParametro: '").append(entity.getIdParametro())
+                    .append("', idTipoMetadato: '").append(entity.getIdTipoMetadato())
+                    .append("', idAmbiente: '").append(entity.getIdAmbiente()).append("', valor: ")
+                    .append(serialize(entity.getValor())).append(" };\n");
+        }
+        query.append("COMMIT TRANSACTION;");
+        client.execute(query.toString());
+        return entities;
     }
     private List<MetadatoEntity> query(final String sql) {
         var nodes = result(client.execute(sql));

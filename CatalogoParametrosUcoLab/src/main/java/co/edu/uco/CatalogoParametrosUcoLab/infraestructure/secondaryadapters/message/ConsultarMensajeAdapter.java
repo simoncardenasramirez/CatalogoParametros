@@ -9,11 +9,13 @@ import co.edu.uco.messageucolab.client.api.MessageReader;
 import co.edu.uco.messageucolab.client.api.model.MessageDetails;
 
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajeDetallePort;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.MensajeDetalle;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.constants.Constants;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.PropertiesHelper;
 
 @Component
-public class ConsultarMensajeAdapter implements ConsultarMensajePort {
+public class ConsultarMensajeAdapter implements ConsultarMensajePort, ConsultarMensajeDetallePort {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(3);
 
@@ -33,22 +35,37 @@ public class ConsultarMensajeAdapter implements ConsultarMensajePort {
 
     @Override
     public String consultarMensaje(final String codigo) {
-        if (messageReader == null) {
-            return consultarRespaldoLocal(codigo);
-        }
+        return consultarDetalle(codigo).content();
+    }
 
-        try {
-            final String codigoMessageUcoLab = codigo.replace('-', '_');
-            final MessageDetails detalle = messageReader.getDetails(codigoMessageUcoLab)
-                    .block(TIMEOUT);
-            if (detalle != null && detalle.content() != null) {
-                return detalle.content();
+    @Override
+    public MensajeDetalle consultarDetalle(final String codigo) {
+        if (messageReader != null) {
+            try {
+                final String codigoMessageUcoLab = codigo.replace('-', '_');
+                final MessageDetails detalle = messageReader.getDetails(codigoMessageUcoLab)
+                        .block(TIMEOUT);
+                if (detalle != null && detalle.content() != null) {
+                    return new MensajeDetalle(
+                            detalle.code(),
+                            detalle.title(),
+                            detalle.content(),
+                            detalle.type(),
+                            detalle.category(),
+                            detalle.functionality());
+                }
+            } catch (final RuntimeException ignored) {
+                // MessageUcoLab no debe impedir que el catalogo responda sus validaciones.
             }
-        } catch (final RuntimeException ignored) {
-            // MessageUcoLab no debe impedir que el catalogo responda sus validaciones.
         }
 
-        return consultarRespaldoLocal(codigo);
+        return new MensajeDetalle(
+                codigo,
+                codigo,
+                consultarRespaldoLocal(codigo),
+                null,
+                null,
+                null);
     }
 
     private String consultarRespaldoLocal(final String codigo) {

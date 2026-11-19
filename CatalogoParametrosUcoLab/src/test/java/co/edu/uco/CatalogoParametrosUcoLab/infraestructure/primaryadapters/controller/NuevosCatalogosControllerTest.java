@@ -23,10 +23,7 @@ class NuevosCatalogosControllerTest {
             "co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.";
 
     static Stream<String[]> features() {
-        return Stream.of(new String[] {"ambiente", "Ambiente"},
-                new String[] {"estadoambiente", "EstadoAmbiente"},
-                new String[] {"estadometadatoambiente", "EstadoMetadatoAmbiente"},
-                new String[] {"metadatoambiente", "MetadatoAmbiente"});
+        return Stream.<String[]>of(new String[] {"metadatoambiente", "MetadatoAmbiente"});
     }
 
     @ParameterizedTest

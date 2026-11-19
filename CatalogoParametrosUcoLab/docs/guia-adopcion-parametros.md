@@ -59,7 +59,7 @@ Antes de emitir el token de consulta:
 3. Crear cada parámetro con su tipo y una funcionalidad de esa aplicación.
 4. Crear o seleccionar los ambientes necesarios, por ejemplo desarrollo y producción.
 5. En las asociaciones por ambiente, vincular el parámetro al ambiente y elegir un estado activo.
-6. Crear sus metadatos seleccionando **parámetro, tipo de metadato, ambiente y valor**. El ambiente del valor es obligatorio.
+6. Crear sus metadatos seleccionando **parámetro, tipo de metadato y valor**, y elegir un ambiente específico o todos los ambientes.
 7. Comprobar que los registros con estado estén disponibles y que sus padres y fechas de vigencia permitan utilizarlos.
 
 La relación queda así:

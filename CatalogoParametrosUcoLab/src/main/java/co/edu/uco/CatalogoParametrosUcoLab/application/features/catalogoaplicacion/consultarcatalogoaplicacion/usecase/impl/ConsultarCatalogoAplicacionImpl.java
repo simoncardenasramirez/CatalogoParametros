@@ -20,10 +20,10 @@ public final class ConsultarCatalogoAplicacionImpl implements ConsultarCatalogoA
     private final BaseDatosParametroRepository parametros;
     private final BaseDatosMetadatoRepository metadatos;
     private final BaseDatosMetadatoAmbienteRepository asociaciones;
-    private final BaseDatosAmbienteRepository ambientes;
-    private final BaseDatosTipoParametroRepository tiposParametro;
+    private final AmbienteRepository ambientes;
+    private final TipoParametroRepository tiposParametro;
     private final BaseDatosTipoMetadatoRepository tiposMetadato;
-    private final BaseDatosEstadoMetadatoAmbienteRepository estados;
+    private final EstadoMetadatoAmbienteRepository estados;
     private final TelemetryService telemetry;
     public ConsultarCatalogoAplicacionImpl(final BaseDatosAplicacionRepository aplicaciones,
             final BaseDatosModuloRepository modulos,
@@ -31,10 +31,10 @@ public final class ConsultarCatalogoAplicacionImpl implements ConsultarCatalogoA
             final BaseDatosParametroRepository parametros,
             final BaseDatosMetadatoRepository metadatos,
             final BaseDatosMetadatoAmbienteRepository asociaciones,
-            final BaseDatosAmbienteRepository ambientes,
-            final BaseDatosTipoParametroRepository tiposParametro,
+            final AmbienteRepository ambientes,
+            final TipoParametroRepository tiposParametro,
             final BaseDatosTipoMetadatoRepository tiposMetadato,
-            final BaseDatosEstadoMetadatoAmbienteRepository estados,
+            final EstadoMetadatoAmbienteRepository estados,
             final TelemetryService telemetry) {
         this.aplicaciones = aplicaciones;
         this.modulos = modulos;

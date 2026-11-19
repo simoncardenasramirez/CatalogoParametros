@@ -416,6 +416,17 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '409': { $ref: '#/components/responses/Conflict' }
         '500': { $ref: '#/components/responses/InternalError' }
+  /catalogo-parametros/api/v1/metadatos/todos-los-ambientes:
+    post:
+      tags: [Metadatos]
+      operationId: crearMetadatoTodosLosAmbientes
+      summary: Crear o actualizar un metadato en todos los ambientes
+      requestBody: { $ref: '#/components/requestBodies/MetadatosTodosAmbientesRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/MetadatosOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
   /catalogo-parametros/api/v1/metadatos/{id}:
     parameters: [{ $ref: '#/components/parameters/Id' }]
     get:
@@ -752,6 +763,11 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/MetadatoRequest' }
+    MetadatosTodosAmbientesRequest:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/MetadatosTodosAmbientesRequest' }
     CargaMasivaParametrosRequest:
       required: true
       content:
@@ -1004,6 +1020,15 @@ components:
         idAmbiente: { $ref: '#/components/schemas/InputUuid' }
         valor:
           description: JSON cuyo tipo debe coincidir con el tipo de metadato asociado.
+    MetadatosTodosAmbientesRequest:
+      type: object
+      additionalProperties: false
+      required: [idParametro, idTipoMetadato, valor]
+      properties:
+        idParametro: { $ref: '#/components/schemas/InputUuid' }
+        idTipoMetadato: { $ref: '#/components/schemas/InputUuid' }
+        valor:
+          description: JSON replicado en Producción, Desarrollo y Pruebas.
     Organizacion:
       type: object
       required: [id, nombre]

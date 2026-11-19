@@ -13,7 +13,7 @@ La URL base depende del ambiente y se antepone a `/catalogo-parametros/api/v1`. 
 | Módulos | `GET /modulos`, `GET /modulos/{id}` | `POST`, `PUT /{id}`, `DELETE /{id}` | `GET /modulos/events` |
 | Funcionalidades | `GET /funcionalidades`, `GET /funcionalidades/{id}` | `POST`, `PUT /{id}`, `DELETE /{id}` | `GET /funcionalidades/events` |
 | Parámetros | `GET /parametros`, `GET /parametros/{id}` | `POST`, `PUT /{id}`, `DELETE /{id}` | `GET /parametros/events` |
-| Metadatos | `GET /metadatos`, `GET /metadatos/{id}` | `POST`, `PUT /{id}`, `DELETE /{id}` | `GET /metadatos/events` |
+| Metadatos | `GET /metadatos`, `GET /metadatos/{id}` | `POST`, `POST /todos-los-ambientes`, `PUT /{id}`, `DELETE /{id}` | `GET /metadatos/events` |
 | Tipos de parámetro | `GET /tipos-parametro`, `GET /tipos-parametro/{id}` | Solo lectura | No |
 | Tipos de metadato | `GET /tipos-metadato`, `GET /tipos-metadato/{id}` | Solo lectura | No |
 
