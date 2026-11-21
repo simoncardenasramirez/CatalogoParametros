@@ -127,3 +127,49 @@ confundirse con el flujo hacia MessageUcoLab. Esa ruta conserva sus encabezados
 `X-Application-Id` y `X-Environment-Id` porque valida el token del Catálogo;
 las llamadas de `MessageReader` hacia MessageUcoLab usan únicamente el Bearer
 de la identidad de servicio.
+
+## Consumo M2M de parametros por aplicaciones consumidoras
+
+La identidad de servicio la crea Seguridad. Catalogo no registra el secreto ni
+solicita tokens a Seguridad. El administrador de la aplicación asocia en
+Catalogo el `client_id` entregado por Seguridad con un ambiente de la aplicación
+mediante:
+
+```text
+POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/identidades-servicio
+```
+
+Seguridad debe asignar a esa identidad el rol técnico exacto para:
+
+```text
+GET /catalogo-parametros/api/v1/parametros/consulta/m2m
+```
+
+El consumidor obtiene un JWT `client_credentials` con el starter de Seguridad y
+envía únicamente:
+
+```http
+GET /catalogo-parametros/api/v1/parametros/consulta/m2m
+Authorization: Bearer <jwt>
+```
+
+El PEP valida la firma, vigencia y permiso del JWT antes de invocar el backend.
+Después, Catalogo obtiene `azp` (o `client_id`) del payload ya validado, busca
+la asociación registrada y consulta únicamente los parámetros de la aplicación
+y ambiente asociados a ese `client_id`. Por eso una identidad asociada a
+Mensajes no puede recibir los parámetros de Seguridad. Si no existe asociación,
+la respuesta es `403`.
+
+La ruta `/catalogo-parametros/api/v1/tokens/{id}/parametros/m2m` permanece como
+compatibilidad con consumidores antiguos: requiere el Bearer del PEP y
+`X-Catalogo-Token`. No debe usarse para nuevas integraciones basadas en
+identidades de servicio.
+
+## Cambios del catalogo por Pulsar
+
+Para invalidar caches o actualizar proyecciones, Security puede suscribirse al
+topic configurado en `PULSAR_PUBLISH_TOPIC_NAMES`. El catalogo publica alli los
+cambios de `parametros` y `metadatos`; la suscripcion de Security debe tener un
+nombre propio para no compartir el cursor con MessageUcoLab. El mensaje contiene
+`eventType`, `resource`, `operation`, `resourceId`, `parentId`,
+`environmentId` y `eventId`, pero nunca el valor del parametro ni secretos.

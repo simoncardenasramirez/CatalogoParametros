@@ -65,30 +65,37 @@ public final class ConsultarParametrosPorTokenImpl implements ConsultarParametro
         if (!validarToken.execute(ValidarTokenDomain.create(tokenId, tokenPlano))) {
             return Resultado.noAutorizado();
         }
-        return tokens.findById(tokenId).map(token -> {
-            var detalles = parametros.findByAplicacionAndAmbiente(token.getAplicacionId(), token.getAmbienteId())
-                    .stream().filter(ParametroEntity::isActivo).map(parametro -> {
-                        var funcionalidad = funcionalidades.findById(parametro.getIdFuncionalidad()).orElse(null);
-                        var modulo = funcionalidad == null ? null
-                                : modulos.findById(funcionalidad.getIdModulo()).orElse(null);
-                        var metadata = metadatos.findByIdParametro(parametro.getId()).stream()
-                                .filter(metadato -> token.getAmbienteId().equals(metadato.getIdAmbiente()))
-                                .map(metadato -> new MetadatoDetalle(metadato,
-                                        tiposMetadato.findById(metadato.getIdTipoMetadato()).orElse(null)))
-                                .toList();
-                        var configuracion = metadatosAmbiente
-                                .findByIdParametroAndIdAmbiente(parametro.getId(), token.getAmbienteId()).stream()
-                                .findFirst().map(asociacion -> new MetadatoAmbienteDetalle(asociacion,
-                                        estadosMetadatoAmbiente.findById(
-                                                asociacion.getIdEstadoMetadatoAmbiente()).orElse(null)))
-                                .orElse(null);
-                        return new ParametroDetalle(parametro,
-                                tiposParametro.findById(parametro.getIdTipoParametro()).orElse(null),
-                                funcionalidad, modulo, metadata, configuracion);
-                    }).toList();
-            return Resultado.autorizado(aplicaciones.findById(token.getAplicacionId()).orElse(null),
-                    ambientes.findById(token.getAmbienteId()).orElse(null), detalles);
-        })
+        return tokens.findById(tokenId)
+                .map(token -> execute(token.getAplicacionId(), token.getAmbienteId()))
                 .orElseGet(Resultado::noAutorizado);
+    }
+
+    @Override
+    public Resultado execute(final UUID aplicacionId, final UUID ambienteId) {
+        if (aplicacionId == null || ambienteId == null) {
+            return Resultado.noAutorizado();
+        }
+        var detalles = parametros.findByAplicacionAndAmbiente(aplicacionId, ambienteId)
+                .stream().filter(ParametroEntity::isActivo).map(parametro -> {
+                    var funcionalidad = funcionalidades.findById(parametro.getIdFuncionalidad()).orElse(null);
+                    var modulo = funcionalidad == null ? null
+                            : modulos.findById(funcionalidad.getIdModulo()).orElse(null);
+                    var metadata = metadatos.findByIdParametro(parametro.getId()).stream()
+                            .filter(metadato -> ambienteId.equals(metadato.getIdAmbiente()))
+                            .map(metadato -> new MetadatoDetalle(metadato,
+                                    tiposMetadato.findById(metadato.getIdTipoMetadato()).orElse(null)))
+                            .toList();
+                    var configuracion = metadatosAmbiente
+                            .findByIdParametroAndIdAmbiente(parametro.getId(), ambienteId).stream()
+                            .findFirst().map(asociacion -> new MetadatoAmbienteDetalle(asociacion,
+                                    estadosMetadatoAmbiente.findById(
+                                            asociacion.getIdEstadoMetadatoAmbiente()).orElse(null)))
+                            .orElse(null);
+                    return new ParametroDetalle(parametro,
+                            tiposParametro.findById(parametro.getIdTipoParametro()).orElse(null),
+                            funcionalidad, modulo, metadata, configuracion);
+                }).toList();
+        return Resultado.autorizado(aplicaciones.findById(aplicacionId).orElse(null),
+                ambientes.findById(ambienteId).orElse(null), detalles);
     }
 }

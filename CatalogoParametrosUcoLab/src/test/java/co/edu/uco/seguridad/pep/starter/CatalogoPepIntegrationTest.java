@@ -42,6 +42,20 @@ class CatalogoPepIntegrationTest {
                 HttpStatus.UNAUTHORIZED, false);
     }
 
+    @Test void consultaM2mNoEsUnaRutaPublica() {
+        assertFalse(publicPaths().stream().anyMatch(path -> path.endsWith("/parametros/m2m")));
+        verify("/catalogo-parametros/api/v1/tokens/65208975-5350-45ce-81e4-2e54abfff853/parametros/m2m", false,
+                request -> { fail("Sin Bearer M2M no debe consultar PEP"); return Mono.empty(); },
+                HttpStatus.UNAUTHORIZED, false);
+    }
+
+    @Test void consultaPorIdentidadServicioNoEsUnaRutaPublica() {
+        assertFalse(publicPaths().stream().anyMatch(path -> path.endsWith("/parametros/consulta/m2m")));
+        verify("/catalogo-parametros/api/v1/parametros/consulta/m2m", false,
+                request -> { fail("Sin Bearer M2M no debe consultar PEP"); return Mono.empty(); },
+                HttpStatus.UNAUTHORIZED, false);
+    }
+
     private void verify(String path, boolean session, ExchangeFunction decision,
                         HttpStatus expected, boolean expectedBusiness) {
         var properties = new PepEnforcementProperties(true, URI.create("http://pep.example"),

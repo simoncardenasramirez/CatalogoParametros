@@ -21,7 +21,8 @@ public class WebConfig {
         config.setAllowedOrigins(Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim).filter(origin -> !origin.isEmpty()).toList());
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Accept", "Content-Type", "Authorization", "X-XSRF-TOKEN", "X-Correlation-Id"));
+        config.setAllowedHeaders(Arrays.asList("Accept", "Content-Type", "Authorization", "X-Catalogo-Token",
+                "X-XSRF-TOKEN", "X-Correlation-Id"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
         config.validateAllowCredentials();

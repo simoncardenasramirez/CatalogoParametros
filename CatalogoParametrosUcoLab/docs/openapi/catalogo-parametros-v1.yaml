@@ -31,6 +31,7 @@ tags:
   - name: Metadatos de ambiente
   - name: Tokens
   - name: Estados de token
+  - name: Consumo M2M
 
 paths:
   /catalogo-parametros/api/v1/organizaciones:
@@ -689,6 +690,37 @@ paths:
       summary: Consulta los parámetros autorizados por un token
       responses: { '200': { $ref: '#/components/responses/ParametrosTokenOk' }, '404': { $ref: '#/components/responses/NotFound' } }
 
+  /catalogo-parametros/api/v1/tokens/{id}/parametros/m2m:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    get:
+      tags: [Tokens]
+      operationId: consultarParametrosPorM2m
+      summary: Consulta parametros con identidad M2M
+      description: Requiere un JWT client_credentials autorizado por PEP y el secreto del token en X-Catalogo-Token.
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: header
+          name: X-Catalogo-Token
+          required: true
+          schema: { type: string }
+          description: Secreto del token asociado a la aplicacion y ambiente.
+      responses:
+        '200': { $ref: '#/components/responses/ParametrosTokenOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /catalogo-parametros/api/v1/parametros/consulta/m2m:
+    get:
+      tags: [Consumo M2M]
+      operationId: consultarParametrosPorIdentidadServicio
+      summary: Consulta parámetros con identidad de servicio
+      description: El PEP valida el Bearer y el catálogo resuelve la aplicación y el ambiente desde el client_id (claim azp). No se envían identificadores ni secretos del catálogo.
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/ParametrosTokenOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
   /catalogo-parametros/api/v1/estados-token:
     get:
       tags: [Estados de token]
@@ -704,6 +736,11 @@ paths:
       responses: { '200': { $ref: '#/components/responses/EstadosTokenOk' }, '404': { $ref: '#/components/responses/NotFound' } }
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
     Id:
       name: id

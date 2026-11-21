@@ -17,6 +17,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.Tip
 public interface ConsultarParametrosPorToken {
     Resultado execute(UUID tokenId, String tokenPlano);
 
+    Resultado execute(UUID aplicacionId, UUID ambienteId);
+
     record Resultado(boolean autorizado, AplicacionEntity aplicacion, AmbienteEntity ambiente,
             List<ParametroDetalle> parametros) {
         public static Resultado noAutorizado() { return new Resultado(false, null, null, List.of()); }

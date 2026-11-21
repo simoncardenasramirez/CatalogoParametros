@@ -114,6 +114,20 @@ public final class TokenController {
             description = "Valida el Bearer token y filtra por la aplicacion y el ambiente asociados.")
     public Mono<ResponseEntity<ParametrosTokenResponse>> consultarParametrosPorToken(@PathVariable final UUID id,
             @RequestHeader(name = "Authorization", required = false) final String authorization) {
+        return consultar(id, authorization);
+    }
+
+    @GetMapping("/{id}/parametros/m2m")
+    @Operation(summary = "Consultar parametros con identidad M2M",
+            description = "Requiere un JWT client_credentials autorizado por PEP y el secreto del token en X-Catalogo-Token.")
+    public Mono<ResponseEntity<ParametrosTokenResponse>> consultarParametrosPorM2m(@PathVariable final UUID id,
+            @RequestHeader(name = "X-Catalogo-Token", required = false) final String secretoCatalogo) {
+        final String authorization = secretoCatalogo == null || secretoCatalogo.isBlank()
+                ? null : "Bearer " + secretoCatalogo.trim();
+        return consultar(id, authorization);
+    }
+
+    private Mono<ResponseEntity<ParametrosTokenResponse>> consultar(final UUID id, final String authorization) {
         return Mono.fromCallable(() -> {
             var resultado = consultarParametros.execute(id, authorization);
             var response = new ParametrosTokenResponse(resultado.aplicacion(), resultado.ambiente(),

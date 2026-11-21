@@ -101,9 +101,9 @@ public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCata
                 crearParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
                 actualizarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
                 eliminarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
-                crearMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
-                actualizarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
-                eliminarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
+                crearMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente())),
+                actualizarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente())),
+                eliminarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente())),
                 crearMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro())),
                 actualizarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro())),
                 eliminarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro()))
