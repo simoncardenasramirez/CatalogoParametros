@@ -26,12 +26,10 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 SELECT id, idModulo, activo, fechaInicio, fechaFinal FROM funcionalidades;
                 SELECT id, idFuncionalidad, activo FROM parametros;
                 SELECT id, idParametro, idAmbiente, idEstadoMetadatoAmbiente FROM metadatos_ambiente;
-                SELECT id, aplicacionId, ambienteId, estadoToken, fechaExpiracion FROM tokens;
-                SELECT id, estado FROM estados_token;
                 """);
-        if (respuesta.size() < 8) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
+        if (respuesta.size() < 6) throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException
                 .build("SurrealDB no devolvio la proyeccion completa de vigencias.");
-        var primero = inicioResultados(respuesta, 8);
+        var primero = inicioResultados(respuesta, 6);
         var registros = new ArrayList<RegistroVigencia>();
         agregar(registros, resultado(respuesta, primero), TipoRegistroVigencia.ORGANIZACION, null, null, null, null, null, null);
         agregar(registros, resultado(respuesta, primero + 1), TipoRegistroVigencia.APLICACION, "idOrganizacion", "activa", "fechaInicio", "fechaFinal", null, null);
@@ -39,9 +37,7 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
         agregar(registros, resultado(respuesta, primero + 3), TipoRegistroVigencia.FUNCIONALIDAD, "idModulo", "activo", "fechaInicio", "fechaFinal", null, null);
         agregar(registros, resultado(respuesta, primero + 4), TipoRegistroVigencia.PARAMETRO, "idFuncionalidad", "activo", null, null, null, null);
         agregar(registros, resultado(respuesta, primero + 5), TipoRegistroVigencia.METADATO_AMBIENTE, "idParametro", null, null, null, "idAmbiente", "idEstadoMetadatoAmbiente");
-        agregar(registros, resultado(respuesta, primero + 6), TipoRegistroVigencia.TOKEN, "aplicacionId", null, null, "fechaExpiracion", "ambienteId", "estadoToken");
-        return new CatalogoVigencia(registros, estadosMetadatoAmbiente(),
-                estados(resultado(respuesta, primero + 7), "estado"));
+        return new CatalogoVigencia(registros, estadosMetadatoAmbiente());
     }
 
     private tools.jackson.databind.JsonNode resultado(final tools.jackson.databind.JsonNode respuesta,
@@ -84,15 +80,6 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
         return fecha == null ? null : fecha.toInstant();
     }
 
-    private java.util.Map<UUID, String> estados(final tools.jackson.databind.JsonNode filas, final String nombre) {
-        var resultado = new java.util.HashMap<UUID, String>();
-        for (var fila : filas) {
-            var id = uuid(fila.path("id"));
-            if (id != null) resultado.put(id, fila.path(nombre).asString());
-        }
-        return resultado;
-    }
-
     private UUID uuid(final tools.jackson.databind.JsonNode valor) {
         try {
             var texto = valor.asString().replace("`", "").replace("u'", "").replace("'", "");
@@ -102,11 +89,10 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
 
     @Override
     public int normalizarFechasUtc() {
-        var tablas = List.of("organizaciones", "aplicaciones", "modulos", "funcionalidades", "tokens");
+        var tablas = List.of("organizaciones", "aplicaciones", "modulos", "funcionalidades");
         var consulta = new StringBuilder();
         for (var tabla : tablas) {
-            consulta.append("SELECT id, ").append(tabla.equals("tokens") ? "fechaCreacion, fechaExpiracion"
-                    : "fechaInicio, fechaFinal").append(" FROM ").append(tabla).append(";\n");
+            consulta.append("SELECT id, fechaInicio, fechaFinal FROM ").append(tabla).append(";\n");
         }
         var respuesta = client.execute(consulta.toString());
         var cambios = new StringBuilder("BEGIN TRANSACTION;\n");
@@ -121,8 +107,7 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                     var valor = fila.path("id").asString().replace("`", "").replace("u'", "").replace("'", "");
                     id = UUID.fromString(valor.substring(valor.indexOf(':') + 1));
                 } catch (final IllegalArgumentException exception) { continue; }
-                var campos = tabla.equals("tokens") ? List.of("fechaCreacion", "fechaExpiracion")
-                        : List.of("fechaInicio", "fechaFinal");
+                var campos = List.of("fechaInicio", "fechaFinal");
                 for (var campo : campos) {
                     var fecha = co.edu.uco.CatalogoParametrosUcoLab.crosscutting.helpers.DateTimeHelper.parse(fila.path(campo));
                     if (fecha == null) continue;
@@ -145,14 +130,9 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
     }
 
     @Override
-    public void desactivar(final List<RegistroVigencia> registros, final UUID estadoAsociacionInactivo,
-            final UUID estadoTokenInactivo) {
+    public void desactivar(final List<RegistroVigencia> registros, final UUID estadoAsociacionInactivo) {
         if (registros.isEmpty()) return;
         var query = new StringBuilder("BEGIN TRANSACTION;\n");
-        if (registros.stream().anyMatch(r -> r.tipo() == TipoRegistroVigencia.TOKEN)) {
-            query.append("UPSERT type::record('estados_token', '").append(estadoTokenInactivo)
-                    .append("') SET estado = 'inactivo';\n");
-        }
         for (var registro : registros) {
             var tabla = switch (registro.tipo()) {
                 case APLICACION -> "aplicaciones";
@@ -160,18 +140,15 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 case FUNCIONALIDAD -> "funcionalidades";
                 case PARAMETRO -> "parametros";
                 case METADATO_AMBIENTE -> "metadatos_ambiente";
-                case TOKEN -> "tokens";
                 default -> throw co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException.build("El registro no tiene estado modificable.");
             };
             var campo = switch (registro.tipo()) {
                 case APLICACION -> "activa";
                 case METADATO_AMBIENTE -> "idEstadoMetadatoAmbiente";
-                case TOKEN -> "estadoToken";
                 default -> "activo";
             };
             var estado = switch (registro.tipo()) {
                 case METADATO_AMBIENTE -> "'" + estadoAsociacionInactivo + "'";
-                case TOKEN -> "'" + estadoTokenInactivo + "'";
                 default -> "false";
             };
             var anterior = registro.idEstado() == null ? "true" : "'" + registro.idEstado() + "'";
@@ -185,7 +162,6 @@ public final class SurrealDbEstadoCatalogoRepository implements EstadoCatalogoRe
                 case FUNCIONALIDAD -> "idModulo";
                 case PARAMETRO -> "idFuncionalidad";
                 case METADATO_AMBIENTE -> "idParametro";
-                case TOKEN -> "aplicacionId";
                 default -> "";
             };
             query.append(" AND ").append(padre).append(" = '").append(registro.idPadre()).append("'");

@@ -110,9 +110,19 @@ para recibir su propia copia:
 
 ```env
 PULSAR_PUBLISH_ENABLED=true
-PULSAR_PUBLISH_TOPIC_NAMES=persistent://public/default/catalogo-parametros-messageucolab-dev,persistent://public/default/catalogo-parametros-security-dev
-CATALOGO_ENVIRONMENT_ID=<uuid-opcional-para-cambios-de-parametros>
+PULSAR_PUBLISH_URL=pulsar://pulsar-parametros:6650
+PULSAR_PUBLISH_EVENTS_TOPIC_PREFIX=persistent://public/default/catalogo-parametros-events
 ```
+
+Cada consumidor se suscribe al topic terminado en su `client_id`:
+
+```text
+persistent://public/default/catalogo-parametros-events-<client_id>
+```
+
+El backend solo publica si la identidad registrada coincide simultáneamente con la aplicación
+y el ambiente del recurso. La configuración completa está en
+`docs/pulsar-eventos-catalogo.md`.
 
 El JSON publicado tiene esta forma:
 
@@ -124,13 +134,18 @@ El JSON publicado tiene esta forma:
   "operation": "UPDATED",
   "resourceId": "<uuid>",
   "parentId": "<uuid-funcionalidad-o-parametro>",
-  "environmentId": "<uuid-o-null>",
-  "eventId": "<uuid-unico>"
+  "applicationId": "<uuid-aplicacion>",
+  "environmentId": "<uuid-ambiente>",
+  "eventId": "<uuid-unico>",
+  "schemaVersion": 1,
+  "occurredAt": "<fecha-hora-utc>"
 }
 ```
 
 Los tipos posibles son `ParameterCreated`, `ParameterUpdated`,
-`ParameterDeleted`, `MetadataCreated`, `MetadataUpdated` y `MetadataDeleted`.
+`ParameterDeleted`, `MetadataCreated`, `MetadataUpdated`, `MetadataDeleted`,
+`MetadataEnvironmentCreated`, `MetadataEnvironmentUpdated` y
+`MetadataEnvironmentDeleted`.
 Los errores de Pulsar se registran y no deshacen la transacciÃ³n ya confirmada
 del catÃ¡logo; los consumidores deben usar `eventId` para idempotencia.
 

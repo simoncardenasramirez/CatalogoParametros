@@ -1,175 +1,63 @@
-# Integración del catálogo con Security Baseline
+# Integración con Security Baseline
 
-Implementación del manual `Manual-integracion-aplicaciones.pdf` del workspace.
-El starter Maven existente se conserva en **0.1.4**, disponible en el repositorio
-local. El stack Docker de Security se fija en **0.1.13** mediante
-`Seguridad/security-baseline-local/.env`.
-No se sustituye por el SNAPSHOT antiguo mostrado en uno de los ejemplos del PDF.
+El Catálogo usa el starter PEP para proteger sus endpoints administrativos y el
+starter M2M para consumir MessageUcoLab. Se conservan separados:
 
-## Configuración
+- `PEP_REGISTRATION_TOKEN`: credencial de registro del backend ante el PEP; solo backend.
+- Identidad de servicio de Catálogo hacia MessageUcoLab: `client_id` y secreto en `security.pep.service-identity.*`.
+- Identidades de servicio de los consumidores del Catálogo: las crea Seguridad; el Catálogo solo guarda la asociación `client_id` → aplicación + ambiente.
 
-| Variable backend | Uso / valor local |
-| --- | --- |
-| `PEP_URL` | `http://localhost:18081`; en Docker, `http://host.docker.internal:18081` |
-| `SECURITY_APPLICATION_NAME` | `Catalogo`, nombre registrado; debe coincidir exactamente con Seguridad y el host |
-| `SECURITY_ENVIRONMENT` | `dev` |
-| `PEP_REGISTRATION_TOKEN` | Credencial emitida por Seguridad; obligatoria, solo backend |
-| `SECURITY_PEP_SERVICE_IDENTITY_ENABLED` | `true` cuando CatalogoParametros consuma MessageUcoLab por back-to-back |
-| `KEYCLOAK_TOKEN_URI` | Endpoint de token del realm de Security |
-| `MESSAGEUCOLAB_CLIENT_ID` | Client ID técnico de CatalogoParametros para MessageUcoLab |
-| `MESSAGEUCOLAB_CLIENT_SECRET` | Secreto técnico; solo en el gestor de secretos |
-| `MESSAGEUCOLAB_URL` | URL pública de MessageUcoLab protegida por PEP |
-| `FRONTEND_ALLOWED_ORIGINS` | `http://localhost:4200`, lista de orígenes exactos separada por comas |
-| `PEP_ALLOW_INSECURE_HTTP` | `true` exclusivamente para el laboratorio HTTP; por defecto `false` |
+## Administración web
 
-Al iniciar con Maven puede activar `--spring.profiles.active=local` para habilitar
-HTTP local, o definir `PEP_ALLOW_INSECURE_HTTP=true`. El Compose ya inyecta esta
-excepción y la URL accesible desde el contenedor. El PEP omite `/actuator/health` y la ruta
-`/catalogo-parametros/api/v1/tokens/{id}/parametros`. Esta última conserva su
-autenticación propia: valida el Bearer del catálogo, estado activo y expiración;
-filtra los resultados por la aplicación y ambiente del token. Es una excepción
-al flujo PEP del manual, necesaria para consumidores autenticados con tokens del
-catálogo. No requiere registrar cada ID de token como recurso de Seguridad. Los controladores de negocio conservan sus reglas y el starter autoriza
-antes de invocarlos. El filtro CORS se ejecuta antes para cubrir también los errores.
+El frontend y el microfrontend usan la sesión web mediante cookies. El
+microfrontend recibe únicamente `applicationId` y `apiBaseUrl`; no recibe
+secretos, tokens internos ni credenciales de Seguridad. Sus operaciones se
+realizan bajo:
 
-Mantenga `GITHUB_PACKAGES_USER` y `GITHUB_PACKAGES_TOKEN` en el entorno de Maven;
-el servidor `github` de settings.xml debe leer `${env.GITHUB_PACKAGES_USER}` y
-`${env.GITHUB_PACKAGES_TOKEN}`. Nunca use la credencial PEP como token de Maven.
-El Dockerfile y el pipeline existentes usan secretos para descargar el starter.
+```text
+/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion
+/catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/administracion/events
+```
 
-## Arranque local
+El PEP autoriza usuario, aplicación, recurso y método. El backend vuelve a
+validar que el recurso pertenezca a la aplicación solicitada.
 
-1. Levante `Seguridad/security-baseline-local` usando su `.env` del release fijo
-   0.1.13: `docker compose pull` y `docker compose up -d`.
-2. Verifique salud de PDP y PEP en los puertos 18080 y 18081. El BFF debe permitir
-   `http://localhost:4200` tanto para CORS como para retorno del login; el Compose
-   de Seguridad del workspace ya lo incluye.
-3. En el frontend de administración de Seguridad (puerto 5173), registre la
-   aplicación con URL base `http://localhost:8080`, conserve su nombre exacto y
-   guarde la credencial una sola vez como `PEP_REGISTRATION_TOKEN`. Añada otro
-   administrador. Este paso requiere una cuenta administradora y MFA si se exige.
-4. Desde este directorio ejecute `docker compose -f docker-compose.yml up --build -d`.
-   Se mantienen los requisitos existentes de Azure y los secretos Maven.
-   El contexto adicional compila Security UI desde `../../Seguridad/security-ui`.
-5. Abra `http://localhost:4200`. El host verifica la sesión y redirige al login;
-   al regresar permite navegar a `/seguridad`. En Docker el bundle se sirve desde
-   `/security-ui/security-administration.js`, sin servidor preview adicional.
+## Consumo M2M del Catálogo
 
-Para desarrollo sin Docker, inicie el backend con perfil local, Security UI con
-`npm run build && npm run preview` y Angular con `npm start`. El JSON público
-`src/assets/security-config.json` del frontend apunta al bundle del puerto 5175.
-Docker usa `security-config.docker.json`. Ambos aceptan `applicationId` opcional.
-No se envían tokens a `mount`; el microfrontend usa la cookie BFF.
-
-## Recursos y asignaciones
-
-En `/seguridad`, cree recursos con el método y la ruta exactos, asígnelos a roles,
-agrupe roles en perfiles cuando aplique y asigne el rol o perfil a la persona
-para esta aplicación. Los recursos de solo consulta y los de escritura deben tener
-permisos independientes. No basta con crear el rol o registrar un administrador.
-
-El contrato en `docs/openapi/catalogo-parametros-v1.yaml` y los controladores son
-la referencia de rutas; incluya los endpoints SSE `GET .../events` en los permisos
-de consulta. No publique prefijos completos para resolver una denegación.
-
-## Verificación
-
-| Caso | Resultado |
-| --- | --- |
-| API sin sesión | 401, sin ejecutar negocio |
-| Usuario sin recurso asignado | 403, sin ejecutar negocio |
-| GET con permiso de lectura | 200 |
-| Escritura sin permiso | 403 |
-| Escritura con permiso | 2xx según las reglas del catálogo |
-| PEP/PDP no disponible | 503, sin ejecutar negocio |
-| Preflight del origen permitido | CORS con credenciales, sin exigir sesión |
-| Salir de `/seguridad` | `unmount` libera el microfrontend |
-
-Las pruebas `WebConfigTest` y `CatalogoPepIntegrationTest` verifican CORS y el
-contrato del starter con decisiones simuladas, sin sustituir la prueba de identidad,
-roles y MFA contra el stack real. Las pruebas del host verifican sesión, cookies,
-retorno de login y presentación de errores. La prueba real de permisos necesita
-una sesión de usuario y asignaciones registradas en Seguridad.
-
-En producción use URLs HTTPS, `PEP_ALLOW_INSECURE_HTTP=false`, orígenes exactos
-y cookies seguras del BFF. Sustituya el JSON público del host en el despliegue y
-permita sus URLs en la CSP. Las credenciales se inyectan mediante secretos.
-
-La consulta por token devuelve 401 ante un secreto ausente, incorrecto, expirado
-o revocado. Ese 401 no redirige el host al login OIDC. La administración de tokens
-y las demás rutas de negocio siguen pasando por PEP.
-
-## Consumo servidor a servidor (back-to-back)
-
-En este repositorio `CatalogoParametros` mantiene su protección PEP como destino
-y también actúa como origen para consumir mensajes de `MessageUcoLab`. Obtiene un
-token `client_credentials` con una identidad técnica exclusiva y no reutiliza un
-token de usuario ni la credencial `PEP_REGISTRATION_TOKEN`.
-
-Para habilitar un consumidor concreto, Seguridad debe aprovisionar por ambiente:
-
-1. Una identidad de servicio exclusiva para el flujo `CatalogoParametros` → `MessageUcoLab`.
-2. El `client_id` y `client_secret` en el gestor de secretos del consumidor.
-3. Un rol técnico con el método y la ruta exactos de MessageUcoLab, asignado a esa
-   identidad.
-4. La URL pública PEP de MessageUcoLab en `MESSAGEUCOLAB_URL`.
-
-El consumidor configura `security.pep.service-identity.*`, inyecta
-`ServiceAccessTokenProvider` y llama `token()` antes de ejecutar su `WebClient`.
-El código de negocio no debe implementar la solicitud OAuth ni la caché del token.
-Los errores 401, 403, timeout y `SERVICE_IDENTITY_*` deben conservarse como
-fallos diferenciables y nunca deben registrar secretos, tokens ni el encabezado
-`Authorization`.
-
-La ruta `/catalogo-parametros/api/v1/tokens/{id}/parametros` es una excepción
-existente: usa el secreto propio de Tokens y está excluida del PEP. No debe
-confundirse con el flujo hacia MessageUcoLab. Esa ruta conserva sus encabezados
-`X-Application-Id` y `X-Environment-Id` porque valida el token del Catálogo;
-las llamadas de `MessageReader` hacia MessageUcoLab usan únicamente el Bearer
-de la identidad de servicio.
-
-## Consumo M2M de parametros por aplicaciones consumidoras
-
-La identidad de servicio la crea Seguridad. Catalogo no registra el secreto ni
-solicita tokens a Seguridad. El administrador de la aplicación asocia en
-Catalogo el `client_id` entregado por Seguridad con un ambiente de la aplicación
-mediante:
+Seguridad crea la identidad de servicio y entrega su `client_id`/secreto al
+backend consumidor. En el frontend del Catálogo, un administrador asocia ese
+`client_id` al ambiente de la aplicación mediante:
 
 ```text
 POST /catalogo-parametros/api/v1/aplicaciones/{idAplicacion}/identidades-servicio
 ```
 
-Seguridad debe asignar a esa identidad el rol técnico exacto para:
+El rol técnico debe autorizar exactamente:
 
 ```text
 GET /catalogo-parametros/api/v1/parametros/consulta/m2m
 ```
 
-El consumidor obtiene un JWT `client_credentials` con el starter de Seguridad y
-envía únicamente:
+El consumidor obtiene un JWT con `client_credentials` y envía solo el Bearer:
 
 ```http
 GET /catalogo-parametros/api/v1/parametros/consulta/m2m
-Authorization: Bearer <jwt>
+Authorization: Bearer <JWT>
 ```
 
-El PEP valida la firma, vigencia y permiso del JWT antes de invocar el backend.
-Después, Catalogo obtiene `azp` (o `client_id`) del payload ya validado, busca
-la asociación registrada y consulta únicamente los parámetros de la aplicación
-y ambiente asociados a ese `client_id`. Por eso una identidad asociada a
-Mensajes no puede recibir los parámetros de Seguridad. Si no existe asociación,
-la respuesta es `403`.
+El PEP valida firma, vigencia y rol. Después el Catálogo extrae el `azp`/`client_id`
+del JWT validado, busca la asociación y consulta solo el ambiente asociado.
 
-La ruta `/catalogo-parametros/api/v1/tokens/{id}/parametros/m2m` permanece como
-compatibilidad con consumidores antiguos: requiere el Bearer del PEP y
-`X-Catalogo-Token`. No debe usarse para nuevas integraciones basadas en
-identidades de servicio.
+## Verificación mínima
 
-## Cambios del catalogo por Pulsar
+| Caso | Resultado esperado |
+| --- | --- |
+| API sin sesión | `401` |
+| Usuario sin permiso | `403` |
+| M2M sin Bearer | `401` |
+| M2M sin asociación | `403` |
+| M2M con asociación válida | `200`, solo su aplicación y ambiente |
+| PEP no disponible | `503` |
 
-Para invalidar caches o actualizar proyecciones, Security puede suscribirse al
-topic configurado en `PULSAR_PUBLISH_TOPIC_NAMES`. El catalogo publica alli los
-cambios de `parametros` y `metadatos`; la suscripcion de Security debe tener un
-nombre propio para no compartir el cursor con MessageUcoLab. El mensaje contiene
-`eventType`, `resource`, `operation`, `resourceId`, `parentId`,
-`environmentId` y `eventId`, pero nunca el valor del parametro ni secretos.
+El Catálogo ya no expone ni configura endpoints de tokens internos. Los secretos
+históricos deben revocarse y eliminarse según la política de Seguridad.

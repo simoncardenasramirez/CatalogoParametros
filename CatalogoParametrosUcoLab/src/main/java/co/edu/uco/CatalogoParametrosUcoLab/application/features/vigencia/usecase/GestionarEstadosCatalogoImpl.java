@@ -62,8 +62,7 @@ public final class GestionarEstadosCatalogoImpl implements GestionarEstadosCatal
             var cambios = catalogo.registros().stream().filter(evaluador::requiereDesactivacion).toList();
             if (cambios.isEmpty()) return;
             var estadoAsociacion = inactivo(catalogo.estadosAsociacion(), "metadato-ambiente");
-            var estadoToken = inactivo(catalogo.estadosToken(), "token");
-            repository.desactivar(cambios, estadoAsociacion, estadoToken);
+            repository.desactivar(cambios, estadoAsociacion);
             for (var cache : caches) {
                 try { cache.invalidar(); }
                 catch (final TechnicalException exception) {

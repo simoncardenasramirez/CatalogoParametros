@@ -27,7 +27,7 @@ public final class DateTimeHelper {
         try {
             return toUtc(OffsetDateTime.parse(text));
         } catch (final DateTimeParseException exception) {
-            // Compatibilidad de lectura: los tokens historicos sin zona se guardaban en UTC.
+            // Compatibilidad de lectura: registros historicos sin zona se guardaban en UTC.
             try { return LocalDateTime.parse(text).atOffset(ZoneOffset.UTC); }
             catch (final DateTimeParseException invalid) { return null; }
         }

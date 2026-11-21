@@ -30,25 +30,6 @@ class CatalogoPepIntegrationTest {
         return List.of(config.getProperty("security.pep.enforcement.public-paths").split(","));
     }
 
-    @Test void consultaPorTokenUsaSuAutenticacionPropiaSinConsultarPep() {
-        verify("/catalogo-parametros/api/v1/tokens/65208975-5350-45ce-81e4-2e54abfff853/parametros", false,
-                request -> { fail("El Bearer del catalogo no debe enviarse a PEP"); return Mono.empty(); },
-                HttpStatus.OK, true);
-    }
-
-    @Test void administracionDeTokensSigueProtegida() {
-        verify("/catalogo-parametros/api/v1/tokens", false,
-                request -> { fail("Sin sesion no debe consultar PEP"); return Mono.empty(); },
-                HttpStatus.UNAUTHORIZED, false);
-    }
-
-    @Test void consultaM2mNoEsUnaRutaPublica() {
-        assertFalse(publicPaths().stream().anyMatch(path -> path.endsWith("/parametros/m2m")));
-        verify("/catalogo-parametros/api/v1/tokens/65208975-5350-45ce-81e4-2e54abfff853/parametros/m2m", false,
-                request -> { fail("Sin Bearer M2M no debe consultar PEP"); return Mono.empty(); },
-                HttpStatus.UNAUTHORIZED, false);
-    }
-
     @Test void consultaPorIdentidadServicioNoEsUnaRutaPublica() {
         assertFalse(publicPaths().stream().anyMatch(path -> path.endsWith("/parametros/consulta/m2m")));
         verify("/catalogo-parametros/api/v1/parametros/consulta/m2m", false,
