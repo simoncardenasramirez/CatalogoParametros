@@ -1,0 +1,8 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sat Nov 21 10:43:30 GMT-05:00 2026
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1795275810391
+@default-github-https\://maven.pkg.github.com/seguridad-uco/securitybaseline/.lastUpdated=1795275810221
+@default-github-messageucolab-https\://maven.pkg.github.com/CamiloGarcia09/MessageUcolab--Backend/.lastUpdated=1795275810250
+https\://maven.pkg.github.com/CamiloGarcia09/MessageUcolab--Backend/.error=Could not transfer artifact org.springframework.boot\:spring-boot-starter-parent\:pom\:4.1.1 from/to github-messageucolab (https\://maven.pkg.github.com/CamiloGarcia09/MessageUcolab--Backend)\: Permission denied\: getsockopt
+https\://maven.pkg.github.com/seguridad-uco/securitybaseline/.error=Could not transfer artifact org.springframework.boot\:spring-boot-starter-parent\:pom\:4.1.1 from/to github (https\://maven.pkg.github.com/seguridad-uco/securitybaseline)\: Permission denied\: getsockopt
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.springframework.boot\:spring-boot-starter-parent\:pom\:4.1.1 from/to central (https\://repo.maven.apache.org/maven2)\: Permission denied\: getsockopt

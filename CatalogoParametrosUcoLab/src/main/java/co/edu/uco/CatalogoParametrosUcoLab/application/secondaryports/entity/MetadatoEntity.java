@@ -26,7 +26,7 @@ public final class MetadatoEntity {
         return new MetadatoEntity(id, idParametro, idTipoMetadato, idAmbiente, valor);
     }
 
-    /** Lectura compatible de registros historicos sin ambiente: nunca se exportan por token. */
+    /** Lectura compatible de registros historicos sin ambiente. */
     public static MetadatoEntity create(final UUID id, final UUID p, final UUID t, final JsonNode v) { return create(id, p, t, null, v); }
     public UUID getIdAmbiente() { return idAmbiente; }
     public UUID getId() { return id; }

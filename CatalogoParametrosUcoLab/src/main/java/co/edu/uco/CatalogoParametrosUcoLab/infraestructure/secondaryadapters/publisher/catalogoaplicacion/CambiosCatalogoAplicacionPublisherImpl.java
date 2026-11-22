@@ -26,6 +26,8 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadato.elimina
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.crearmetadatoambiente.secondaryports.publisher.CrearMetadatoAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.actualizarmetadatoambiente.secondaryports.publisher.ActualizarMetadatoAmbientePublisher;
 import co.edu.uco.CatalogoParametrosUcoLab.application.features.metadatoambiente.eliminarmetadatoambiente.secondaryports.publisher.EliminarMetadatoAmbientePublisher;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.entity.ParametroEntity;
+import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.repository.ParametroRepository;
 
 @Component
 public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCatalogoAplicacionPublisher {
@@ -49,6 +51,7 @@ public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCata
     private final CrearMetadatoAmbientePublisher crearMetadatoAmbiente;
     private final ActualizarMetadatoAmbientePublisher actualizarMetadatoAmbiente;
     private final EliminarMetadatoAmbientePublisher eliminarMetadatoAmbiente;
+    private final ParametroRepository parametros;
     public CambiosCatalogoAplicacionPublisherImpl(final CrearAplicacionPublisher crearAplicacion,
             final ActualizarAplicacionPublisher actualizarAplicacion,
             final EliminarAplicacionPublisher eliminarAplicacion,
@@ -66,7 +69,8 @@ public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCata
             final EliminarMetadatoPublisher eliminarMetadato,
             final CrearMetadatoAmbientePublisher crearMetadatoAmbiente,
             final ActualizarMetadatoAmbientePublisher actualizarMetadatoAmbiente,
-            final EliminarMetadatoAmbientePublisher eliminarMetadatoAmbiente) {
+            final EliminarMetadatoAmbientePublisher eliminarMetadatoAmbiente,
+            final ParametroRepository parametros) {
         this.crearAplicacion = crearAplicacion;
         this.actualizarAplicacion = actualizarAplicacion;
         this.eliminarAplicacion = eliminarAplicacion;
@@ -85,6 +89,7 @@ public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCata
         this.crearMetadatoAmbiente = crearMetadatoAmbiente;
         this.actualizarMetadatoAmbiente = actualizarMetadatoAmbiente;
         this.eliminarMetadatoAmbiente = eliminarMetadatoAmbiente;
+        this.parametros = parametros;
     }
     @PostConstruct void iniciar() {
         // Los historicos replay se consumen al arrancar; las conexiones nuevas reciben cambios vivos.
@@ -98,16 +103,19 @@ public final class CambiosCatalogoAplicacionPublisherImpl implements CambiosCata
                 crearFuncionalidad.getStream().map(e -> new CambioCatalogoAplicacion("funcionalidades", e.getEvent().name(), e.getFuncionalidad().getId(), e.getFuncionalidad().getIdModulo())),
                 actualizarFuncionalidad.getStream().map(e -> new CambioCatalogoAplicacion("funcionalidades", e.getEvent().name(), e.getFuncionalidad().getId(), e.getFuncionalidad().getIdModulo())),
                 eliminarFuncionalidad.getStream().map(e -> new CambioCatalogoAplicacion("funcionalidades", e.getEvent().name(), e.getFuncionalidad().getId(), e.getFuncionalidad().getIdModulo())),
-                crearParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
-                actualizarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
-                eliminarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad())),
-                crearMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
-                actualizarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
-                eliminarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro())),
-                crearMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro())),
-                actualizarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro())),
-                eliminarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro()))
+                crearParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad(), null, e.getParametro().getNombre())),
+                actualizarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad(), null, e.getParametro().getNombre())),
+                eliminarParametro.getStream().map(e -> new CambioCatalogoAplicacion("parametros", e.getEvent().name(), e.getParametro().getId(), e.getParametro().getIdFuncionalidad(), null, e.getParametro().getNombre())),
+                crearMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente(), nombreParametro(e.getMetadato().getIdParametro()), e.getMetadato().getValor())),
+                actualizarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente(), nombreParametro(e.getMetadato().getIdParametro()), e.getMetadato().getValor())),
+                eliminarMetadato.getStream().map(e -> new CambioCatalogoAplicacion("metadatos", e.getEvent().name(), e.getMetadato().getId(), e.getMetadato().getIdParametro(), e.getMetadato().getIdAmbiente(), nombreParametro(e.getMetadato().getIdParametro()), e.getMetadato().getValor())),
+                crearMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro(), e.getMetadatoAmbiente().getIdAmbiente(), nombreParametro(e.getMetadatoAmbiente().getIdParametro()))),
+                actualizarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro(), e.getMetadatoAmbiente().getIdAmbiente(), nombreParametro(e.getMetadatoAmbiente().getIdParametro()))),
+                eliminarMetadatoAmbiente.getStream().map(e -> new CambioCatalogoAplicacion("metadatos-ambiente", e.getEvent().name(), e.getMetadatoAmbiente().getId(), e.getMetadatoAmbiente().getIdParametro(), e.getMetadatoAmbiente().getIdAmbiente(), nombreParametro(e.getMetadatoAmbiente().getIdParametro())))
         ).subscribe(evento -> sink.tryEmitNext(evento));
+    }
+    private String nombreParametro(final java.util.UUID idParametro) {
+        return parametros.findById(idParametro).map(ParametroEntity::getNombre).orElse(null);
     }
     @Override public Flux<CambioCatalogoAplicacion> getStream() {
         // Resolver pertenencia puede consultar repositorios sin ocupar los hilos HTTP reactivos.

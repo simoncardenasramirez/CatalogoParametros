@@ -24,7 +24,7 @@ class GestionarEstadosCatalogoImplTest {
     private CatalogoVigencia catalogo(Instant fin) {
         var org=UUID.randomUUID();
         return new CatalogoVigencia(List.of(new RegistroVigencia(ORGANIZACION,org,null,null,null,true,null,null),
-                new RegistroVigencia(APLICACION,UUID.randomUUID(),org,null,null,true,null,fin)),Map.of(),Map.of());
+                new RegistroVigencia(APLICACION,UUID.randomUUID(),org,null,null,true,null,fin)),Map.of());
     }
 
     @Test void debeInvalidarYNotificarDespuesDePersistirCuandoHayVencidos() {
@@ -32,19 +32,19 @@ class GestionarEstadosCatalogoImplTest {
         when(repository.consultar()).thenReturn(datos);
         caso.sincronizar();
         var orden=inOrder(repository,cache,publisher);
-        orden.verify(repository).desactivar(eq(List.of(datos.registros().get(1))),any(),any());
+        orden.verify(repository).desactivar(eq(List.of(datos.registros().get(1))),any());
         orden.verify(cache).invalidar();
         orden.verify(publisher).publicar(List.of(datos.registros().get(1)));
     }
     @Test void debeEvitarEscriturasCuandoNoHayCambios() {
         when(repository.consultar()).thenReturn(catalogo(ahora.plusSeconds(1)));
         caso.sincronizar();
-        verify(repository,never()).desactivar(anyList(),any(),any());
+        verify(repository,never()).desactivar(anyList(),any());
         verifyNoInteractions(cache,publisher);
     }
     @Test void debeConservarCacheYEventosCuandoFallaLaTransaccion() {
         when(repository.consultar()).thenReturn(catalogo(ahora));
-        doThrow(TechnicalException.build("Fallo")).when(repository).desactivar(anyList(),any(),any());
+        doThrow(TechnicalException.build("Fallo")).when(repository).desactivar(anyList(),any());
         assertThrows(TechnicalException.class,caso::sincronizar);
         verifyNoInteractions(cache,publisher);
     }
@@ -68,14 +68,14 @@ class GestionarEstadosCatalogoImplTest {
         assertEquals("guardado",caso.guardar(registro,false,()->"guardado"));
         verify(repository,times(1)).consultar();
         verify(repository,never()).normalizarFechasUtc();
-        verify(repository,never()).desactivar(anyList(),any(),any());
+        verify(repository,never()).desactivar(anyList(),any());
         verifyNoInteractions(cache,publisher);
     }
     @Test void debePropagarInmediatamenteCuandoDesactivaUnPadre() {
         var datos=catalogo(ahora.plusSeconds(60));
         var anterior=datos.registros().get(1);
         var inactivo=new RegistroVigencia(APLICACION,anterior.id(),anterior.idPadre(),null,null,false,null,anterior.fin());
-        var despues=new CatalogoVigencia(List.of(datos.registros().get(0),inactivo),Map.of(),Map.of());
+        var despues=new CatalogoVigencia(List.of(datos.registros().get(0),inactivo),Map.of());
         when(repository.consultar()).thenReturn(datos,despues);
         assertEquals("guardado",caso.guardar(inactivo,false,()->"guardado"));
         verify(repository).normalizarFechasUtc();
@@ -85,7 +85,7 @@ class GestionarEstadosCatalogoImplTest {
         var datos=catalogo(ahora.plusSeconds(60));
         var activo=datos.registros().get(1);
         var anterior=new RegistroVigencia(APLICACION,activo.id(),activo.idPadre(),null,null,false,null,activo.fin());
-        when(repository.consultar()).thenReturn(new CatalogoVigencia(List.of(datos.registros().get(0),anterior),Map.of(),Map.of()));
+        when(repository.consultar()).thenReturn(new CatalogoVigencia(List.of(datos.registros().get(0),anterior),Map.of()));
         caso.guardar(activo,false,()->"guardado");
         verify(repository,never()).normalizarFechasUtc();
         verify(repository,times(1)).consultar();

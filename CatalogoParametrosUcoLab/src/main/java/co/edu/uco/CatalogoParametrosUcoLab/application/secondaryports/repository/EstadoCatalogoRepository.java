@@ -10,5 +10,5 @@ public interface EstadoCatalogoRepository {
     /** Canonicaliza fechas historicas sin alterar su instante ni agregar campos de estado. */
     int normalizarFechasUtc();
     /** Persiste todas las desactivaciones en una sola transaccion. Nunca reactiva registros. */
-    void desactivar(List<RegistroVigencia> registros, UUID estadoAsociacionInactivo, UUID estadoTokenInactivo);
+    void desactivar(List<RegistroVigencia> registros, UUID estadoAsociacionInactivo);
 }

@@ -69,6 +69,83 @@ MESSAGEUCOLAB_CLIENT_SECRET=<client-secret-tecnico>
 MESSAGEUCOLAB_URL=<url-publica-de-messageucolab-protegida-por-pep>
 ```
 
+## Avisos de cambios por Pulsar
+
+El consumidor opcional se activa en el despliegue del catÃ¡logo con:
+
+```env
+PULSAR_ENABLED=true
+PULSAR_URL=pulsar://pulsar:6650
+MESSAGEUCOLAB_EVENTS_TOPIC_PREFIX=persistent://public/default/message-events
+PULSAR_SUBSCRIPTION_NAME=catalogo-parametros
+MESSAGEUCOLAB_CLIENT_ID=<client-id-tecnico>
+```
+
+El backend se conecta a la red externa `messageucolab_pulsar-network`, escucha
+el tÃ³pico `<prefijo>-<MESSAGEUCOLAB_CLIENT_ID>` y publica los avisos recibidos
+por SSE en:
+
+```text
+GET /catalogo-parametros/api/v1/avisos
+```
+
+El evento solo contiene `eventType`, `messageCode`, `environmentId` y `eventId`.
+Para obtener el contenido actualizado, el consumidor debe consultar luego
+`GET /catalogo-parametros/api/v1/mensajes/{codigo}`.
+
 Mientras Security no entregue esa identidad y el permiso de destino, la
 integración permanece desactivada por defecto (`false`) para no arrancar el
 backend con secretos inexistentes.
+
+## PublicaciÃ³n de cambios del catÃ¡logo por Pulsar
+
+El catÃ¡logo tambiÃ©n publica invalidaciones cuando se crea, actualiza o elimina
+un `parametro` o un `metadato`. El evento no incluye el valor del parÃ¡metro ni
+credenciales; el consumidor debe volver a consultar el recurso que tenga
+autorizado.
+
+La publicaciÃ³n se activa con `PULSAR_PUBLISH_ENABLED=true` y acepta varios
+topics separados por coma. Cada consumidor debe usar una suscripciÃ³n distinta
+para recibir su propia copia:
+
+```env
+PULSAR_PUBLISH_ENABLED=true
+PULSAR_PUBLISH_URL=pulsar://pulsar-parametros:6650
+PULSAR_PUBLISH_EVENTS_TOPIC_PREFIX=persistent://public/default/catalogo-parametros-events
+```
+
+Cada consumidor se suscribe al topic terminado en su `client_id`:
+
+```text
+persistent://public/default/catalogo-parametros-events-<client_id>
+```
+
+El backend solo publica si la identidad registrada coincide simultáneamente con la aplicación
+y el ambiente del recurso. La configuración completa está en
+`docs/pulsar-eventos-catalogo.md`.
+
+El JSON publicado tiene esta forma:
+
+```json
+{
+  "source": "catalogo-parametros",
+  "eventType": "ParameterUpdated",
+  "resource": "parametros",
+  "operation": "UPDATED",
+  "resourceId": "<uuid>",
+  "parentId": "<uuid-funcionalidad-o-parametro>",
+  "applicationId": "<uuid-aplicacion>",
+  "environmentId": "<uuid-ambiente>",
+  "eventId": "<uuid-unico>",
+  "schemaVersion": 1,
+  "occurredAt": "<fecha-hora-utc>"
+}
+```
+
+Los tipos posibles son `ParameterCreated`, `ParameterUpdated`,
+`ParameterDeleted`, `MetadataCreated`, `MetadataUpdated`, `MetadataDeleted`,
+`MetadataEnvironmentCreated`, `MetadataEnvironmentUpdated` y
+`MetadataEnvironmentDeleted`.
+Los errores de Pulsar se registran y no deshacen la transacciÃ³n ya confirmada
+del catÃ¡logo; los consumidores deben usar `eventId` para idempotencia.
+

@@ -15,6 +15,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.Telemetr
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ForbiddenException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
@@ -118,6 +119,17 @@ public class GlobalExceptionHandler {
         response.getMensajes().add(exception.getMessage());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Response> manejarProhibido(final ForbiddenException exception) {
+        logger.warn("[EXCEPTION-HANDLER] Acceso prohibido: {}", exception.getMessage());
+        telemetryService.recordError("forbidden-exception", exception.getMessage());
+        var response = new Response();
+
+        response.getMensajes().add(exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     @ExceptionHandler(TechnicalException.class)

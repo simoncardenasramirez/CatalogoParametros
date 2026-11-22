@@ -36,9 +36,4 @@ public enum RegistroVigenciaMapper {
         return new RegistroVigencia(METADATO_AMBIENTE, e.getId(), e.getIdParametro(), e.getIdAmbiente(),
                 e.getIdEstadoMetadatoAmbiente(), true, null, null);
     }
-    public RegistroVigencia toRegistro(final TokenEntity e) {
-        return new RegistroVigencia(TOKEN, e.getId(), e.getAplicacionId(), e.getAmbienteId(),
-                e.getEstadoToken(), true, null, e.getFechaExpiracion() == null ? null
-                        : e.getFechaExpiracion().toInstant());
-    }
 }

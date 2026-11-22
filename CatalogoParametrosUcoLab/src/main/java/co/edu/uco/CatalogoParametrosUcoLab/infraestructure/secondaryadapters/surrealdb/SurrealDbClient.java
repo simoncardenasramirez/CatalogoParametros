@@ -79,8 +79,8 @@ public class SurrealDbClient {
                 DEFINE TABLE IF NOT EXISTS metadatos SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS ambientes SCHEMALESS;
                 DEFINE TABLE IF NOT EXISTS metadatos_ambiente SCHEMALESS;
-                DEFINE TABLE IF NOT EXISTS tokens SCHEMALESS;
-                DEFINE TABLE IF NOT EXISTS estados_token SCHEMALESS;
+                DEFINE TABLE IF NOT EXISTS identidades_servicio SCHEMALESS;
+                DEFINE INDEX IF NOT EXISTS identidades_servicio_client_id ON identidades_servicio FIELDS clientId UNIQUE;
                 %s
                 """.formatted(properties.getNamespace(), properties.getNamespace(), properties.getDatabase(),
                 properties.getDatabase(), query);

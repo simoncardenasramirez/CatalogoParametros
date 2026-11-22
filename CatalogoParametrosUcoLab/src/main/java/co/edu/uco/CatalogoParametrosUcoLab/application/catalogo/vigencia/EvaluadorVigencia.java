@@ -30,7 +30,6 @@ public final class EvaluadorVigencia {
     public boolean activo(final RegistroVigencia registro) {
         return switch (registro.tipo()) {
             case METADATO_AMBIENTE -> esActivo(catalogo.estadosAsociacion().get(registro.idEstado()));
-            case TOKEN -> esActivo(catalogo.estadosToken().get(registro.idEstado()));
             default -> registro.activo();
         };
     }
@@ -63,7 +62,6 @@ public final class EvaluadorVigencia {
             case FUNCIONALIDAD -> TipoRegistroVigencia.MODULO;
             case PARAMETRO -> TipoRegistroVigencia.FUNCIONALIDAD;
             case METADATO, METADATO_AMBIENTE -> TipoRegistroVigencia.PARAMETRO;
-            case TOKEN -> TipoRegistroVigencia.APLICACION;
         };
     }
 
