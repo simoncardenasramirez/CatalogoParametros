@@ -17,6 +17,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>CatalogoParametrosUcoLab</name>
     <description>CatalogoParametrosUcoLab</description>
+    <!-- Cambio documental para activar la validación del CI. -->
 
     <properties>
         <java.version>25</java.version>
