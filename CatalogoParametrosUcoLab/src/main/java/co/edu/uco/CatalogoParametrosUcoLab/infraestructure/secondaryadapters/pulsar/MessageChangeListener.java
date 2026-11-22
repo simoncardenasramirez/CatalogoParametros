@@ -1,6 +1,7 @@
 package co.edu.uco.CatalogoParametrosUcoLab.infraestructure.secondaryadapters.pulsar;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
@@ -31,8 +32,7 @@ public final class MessageChangeListener {
     private final String subscriptionName;
     private final String clientId;
     private final JsonMapper mapper = JsonMapper.builder().build();
-    private volatile Consumer<String> consumer;
-    private volatile CompletableFuture<Consumer<String>> subscription;
+    private final AtomicReference<Consumer<String>> consumer = new AtomicReference<>();
 
     public MessageChangeListener(final PulsarClient client, final MensajeCambioPublisher publisher,
             @Value("${messageucolab.events-topic-prefix}") final String topicPrefix,
@@ -54,7 +54,7 @@ public final class MessageChangeListener {
 
         final String topic = topicPrefix + "-" + clientId;
         try {
-            subscription = client.newConsumer(Schema.STRING)
+            final CompletableFuture<Consumer<String>> subscription = client.newConsumer(Schema.STRING)
                     .topic(topic)
                     .subscriptionName(subscriptionName)
                     .messageListener(this::recibir)
@@ -65,7 +65,7 @@ public final class MessageChangeListener {
                             + "El backend continuará disponible.", topic, error);
                     return;
                 }
-                consumer = suscriptor;
+                consumer.set(suscriptor);
                 LOGGER.info("[MESSAGEUCOLAB-PULSAR] Suscrito a {} con {}", topic, subscriptionName);
             });
         } catch (final RuntimeException exception) {
@@ -108,7 +108,7 @@ public final class MessageChangeListener {
 
     @jakarta.annotation.PreDestroy
     void cerrar() {
-        final Consumer<String> consumidor = consumer;
+        final Consumer<String> consumidor = consumer.get();
         if (consumidor != null) {
             try {
                 consumidor.close();
