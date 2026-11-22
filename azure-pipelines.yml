@@ -27,6 +27,7 @@ variables:
   IMAGE_VERSION_PATCH: $[counter(format('docker-{0}-{1}', variables['IMAGE_VERSION_PREFIX'], variables['Build.SourceBranch']), 0)]
 
 steps:
+  # Cambio documental para revalidar el pipeline del backend.
   - checkout: self
     fetchDepth: 0
 
