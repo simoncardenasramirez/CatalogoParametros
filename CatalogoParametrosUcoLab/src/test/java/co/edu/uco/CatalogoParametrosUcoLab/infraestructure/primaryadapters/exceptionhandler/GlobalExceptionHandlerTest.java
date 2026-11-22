@@ -16,6 +16,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.application.common.telemetry.Telemetr
 import co.edu.uco.CatalogoParametrosUcoLab.application.secondaryports.message.ConsultarMensajePort;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.BusinessException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ConflictException;
+import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ForbiddenException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.NotFoundException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.TechnicalException;
 import co.edu.uco.CatalogoParametrosUcoLab.crosscutting.exceptions.ValidationException;
@@ -75,6 +76,15 @@ class GlobalExceptionHandlerTest {
                 .expectStatus().is5xxServerError()
                 .expectBody().jsonPath("$.mensajes[0]")
                 .isEqualTo("Error tecnico consultando el tipo de parametro.");
+    }
+
+    @Test
+    void debeDevolver403ConElMensajeCuandoOcurreForbiddenException() {
+        webTestClient.get().uri("/prueba/prohibido")
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody().jsonPath("$.mensajes[0]")
+                .isEqualTo("Acceso no autorizado.");
     }
 
     @Test
@@ -140,6 +150,11 @@ class GlobalExceptionHandlerTest {
         @GetMapping("/prueba/tecnico")
         public Mono<Void> lanzarTechnicalException() {
             return Mono.error(TechnicalException.build("Error tecnico consultando el tipo de parametro."));
+        }
+
+        @GetMapping("/prueba/prohibido")
+        public Mono<Void> lanzarForbiddenException() {
+            return Mono.error(ForbiddenException.build("Acceso no autorizado."));
         }
 
         @GetMapping("/prueba/negocio")

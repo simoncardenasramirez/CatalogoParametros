@@ -17,6 +17,7 @@ import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.respo
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.metadatoambiente.MetadatoAmbienteResponse;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.modulo.ModuloResponse;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.organizacion.OrganizacionResponse;
+import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametrosConsumidorResponse;
 import co.edu.uco.CatalogoParametrosUcoLab.infraestructure.primaryadapters.response.parametro.ParametroResponse;
 
 class ResponsesBasicasTest {
@@ -42,6 +43,14 @@ class ResponsesBasicasTest {
 
         assertSame(catalogo, response.getCatalogo());
         assertNotNull(response.getMensajes());
+    }
+
+    @Test
+    void debeConservarLaAplicacionElAmbienteYLosParametrosDelConsumidor() {
+        final var response = new ParametrosConsumidorResponse(null, null, java.util.List.of());
+
+        assertTrue(response.getParametros().isEmpty());
+        assertTrue(response.getMensajes().isEmpty());
     }
 
     private static void assertEmpty(final java.util.List<?> values) {
