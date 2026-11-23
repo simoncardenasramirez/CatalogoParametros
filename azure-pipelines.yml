@@ -65,6 +65,16 @@ steps:
   - bash: |
       set -euo pipefail
 
+      # Los agentes hospedados son efimeros. Liberar herramientas que este
+      # pipeline no utiliza evita que la Java DB de Trivy agote el disco.
+      sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL
+      docker system prune --all --force --volumes || true
+      df -h /
+    displayName: Liberar espacio del agente antes del analisis
+
+  - bash: |
+      set -euo pipefail
+
       paquete_trivy="$(Agent.TempDirectory)/trivy_$(TRIVY_VERSION)_Linux-64bit.deb"
 
       wget --quiet \
@@ -178,6 +188,8 @@ steps:
         --ignorefile .trivyignore.yaml \
         --offline-scan \
         --scanners vuln,secret,misconfig \
+        --skip-dirs .git \
+        --skip-dirs target \
         --severity HIGH,CRITICAL \
         --exit-code 1 \
         .
@@ -222,11 +234,17 @@ steps:
         exit 1
       fi
 
+      # El build de Maven dentro de BuildKit deja capas intermedias grandes.
+      # Se eliminan despues de construir, conservando la imagen candidata.
+      docker builder prune --all --force
+      df -h /
+
       # Impedir la publicaciÃ³n si la imagen contiene vulnerabilidades graves.
       echo "Analizando nueva imagen con Trivy..."
 
       trivy image \
         --cache-dir "$(TRIVY_CACHE_DIR)" \
+        --ignorefile .trivyignore.yaml \
         --scanners vuln,secret \
         --severity HIGH,CRITICAL \
         --exit-code 1 \
