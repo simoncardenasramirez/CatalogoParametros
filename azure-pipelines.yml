@@ -214,6 +214,14 @@ steps:
         --tag "$imagen_nueva" \
         .
 
+      # La imagen debe contener pulsar-common porque pulsar-client 5.x lo
+      # necesita en tiempo de ejecucion para resolver metadatos particionados.
+      if ! docker run --rm --entrypoint sh "$imagen_nueva" -c \
+        "unzip -l /app/app.jar | grep -q 'BOOT-INF/lib/pulsar-common-'"; then
+        echo "##vso[task.logissue type=error]La imagen no contiene pulsar-common dentro del JAR ejecutable."
+        exit 1
+      fi
+
       # Impedir la publicaciÃ³n si la imagen contiene vulnerabilidades graves.
       echo "Analizando nueva imagen con Trivy..."
 
