@@ -135,6 +135,13 @@
             <artifactId>pulsar-client</artifactId>
             <version>${pulsar.version}</version>
         </dependency>
+
+        <!-- pulsar-client 5.x referencia PartitionedTopicMetadata en runtime. -->
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-common</artifactId>
+            <version>${pulsar.version}</version>
+        </dependency>
         
 
         <dependency>
